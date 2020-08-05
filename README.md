@@ -2,7 +2,7 @@
 
 Eradani Connect template application for the *Eradani Connect Client*.
 
-## Installation
+## Installing the template
 
 ##### 1. Download and extract source on IBM i
 
@@ -44,3 +44,32 @@ make TGTRLS=V7R3M0 -C native
 ```
 
 Where `TGTRLS` is set to the version of your IBM i OS.
+
+## Running the sample programs
+
+To run the sample applications perform the following steps:
+
+##### 1. Start the node.js server
+
+Using your ssh client, `cd` to the extracted `ecc-template-3.3.x` directory and run:
+
+```shell
+node src/server
+```
+
+##### 2. Add the library
+
+Add the sample application's library to your library list:
+
+```
+ADDLIBLE ECNCTAPP
+```
+
+##### 3. Run the sample commands
+
+```
+TESTWSC
+TESTWSR
+DSPWFR
+```
+
