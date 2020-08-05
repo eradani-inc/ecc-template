@@ -145,6 +145,14 @@ wthfrcapi.clleinc wthfrcapi.rpgleinc wthfrcapi.js: wthfrcapi.yaml
 	cp wthfrcapi.js ../src/services
 
 
+.PHONY: library
+library:
+	-system "CRTLIB $(LIB)"
+	-system "CRTSRCPF FILE($(LIB)/QCLSRC)"
+	-system "CRTSRCPF FILE($(LIB)/QCMDSRC)"
+	-system "CRTSRCPF FILE($(LIB)/QRPGSRC)"
+
+
 .PHONY: clean
 clean:
 	-rm $(FQPGMS) $(FQCMDS)

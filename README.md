@@ -8,9 +8,11 @@ Eradani Connect template application for the *Eradani Connect Client*.
 
 Download the `ecc-template-3.3.x.zip` or `ecc-template-3.3.x.tar.gz` file to your PC then either FTP or SCP the file to the IBM i. Unzip or untar the package into the IFS directory in which you would like it to reside.
 
-##### 2. Remove existing ECNCT library
+##### 2. Remove existing libraries
 
 If a previous version of *Eradani Connect Client* was installed, delete the `ECNCT` library provided the *Eradani Connect Server* is not installed on the same machine. If the server is installed you will have to either manually delete the previous versions of the *Eradani Connect Client* objects or delete the whole library and recreate the server's objects.
+
+If a previous version of the *Eradani Connect Client Template* was installed, delete the `ECNCTAPP` library.
 
 ##### 3. Install JavaScript dependencies
 
@@ -35,9 +37,10 @@ Create the `development.json` configuration file to override default configurati
 ##### 6. Create the IBM i objects
 
 ```shell
-make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native/ library
-make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native/
-make TGTRLS=V7R3M0 -C native/
+make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native library
+make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native
+make TGTRLS=V7R3M0 -C native library
+make TGTRLS=V7R3M0 -C native
 ```
 
 Where `TGTRLS` is set to the version of your IBM i OS.
