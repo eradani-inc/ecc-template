@@ -1,0 +1,35 @@
+{
+  "name": "@eradani-inc/ecc-template",
+  "version": "3.3.0",
+  "description": "Eradani Connect Client web service template",
+  "main": "src/server.js",
+  "scripts": {
+    "generate": "cd native && ec-generate",
+    "test": "mocha ./tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eradani-inc/ecc-template.git"
+  },
+  "keywords": [
+    "Eradani",
+    "IBMi"
+  ],
+  "author": "Eradani",
+  "license": "Proprietary",
+  "bugs": {
+    "url": "https://github.com/eradani-inc/ecc-template/issues"
+  },
+  "homepage": "https://github.com/eradani-inc/ecc-template#readme",
+  "dependencies": {
+    "@eradani-inc/ec-client": "^3.3.0",
+    "axios": "^0.19.0",
+    "https-proxy-agent": "^3.0.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@eradani-inc/ec-generate": "^3.3.0",
+    "eslint": "^7.6.0",
+    "prettier": "^2.0.5"
+  }
+}

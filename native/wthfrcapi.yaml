@@ -1,0 +1,47 @@
+---
+name: wthfrcapi
+formats:
+  Location:
+    recordType: request
+    length: 80
+    fields:
+      lat:
+        rpgName: Lat
+        length: 10
+        type: Number
+      lon:
+        rpgName: Lon
+        length: 10
+        type: Number
+  Result:
+    recordType: response
+    length: 80
+    fields:
+      httpstatus:
+        rpgName: HttpStatus
+        length: 3
+        type: Number
+      message:
+        rpgName: Message
+        length: 77
+        type: String
+  Forecast:
+    recordType: response
+    length: 80
+    fields:
+      date:
+        rpgName: Date
+        length: 10
+        type: String
+      min:
+        rpgName: Min
+        length: 6
+        type: Number
+      max:
+        rpgName: Max
+        length: 6
+        type: Number
+      description:
+        rpgName: Desc
+        length: 58
+        type: String

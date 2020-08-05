@@ -1,0 +1,28 @@
+{
+  "icndb": {
+    "baseURL": "https://api.icndb.com",
+    "responseType": "json"
+  },
+  "weather": {
+    "baseURL": "https://api.openweathermap.org/data/2.5/",
+    "responseType": "json",
+    "apikey": "00000000000000000000000000000000"
+  },
+  "logger": {
+    "maxLoggingLevel": "debug"
+  },
+  "proxy": {
+    "enabled": false,
+    "protocol": "http",
+    "auth": "",
+    "host": "localhost",
+    "port": 8080,
+    "rejectUnauthorized": true
+  },
+  "ecclient": {
+    "library": "ECNCT",
+    "responseLen": 80,
+    "requestLen": 80,
+    "debug": false
+  }
+}
