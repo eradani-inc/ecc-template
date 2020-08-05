@@ -15,5 +15,9 @@
 config/*.json
 logs/*.log
 logs/exceptions/*.exceptions
+native/*.clleinc
+native/*.js
+native/*.rpgleinc
+native/*.ts
 src/config/development.json
 src/config/production.json
