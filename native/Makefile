@@ -10,17 +10,17 @@ LIB?=ECNCTAPP
 
 TGTRLS?=V7R4M0
 
-CLPGMS = testwsc
+CLPGMS = dspjkc
 
 RPGPGMS = dspwfr \
-          testwsr
+          dspjkr
 
 PGMS = $(CLPGMS) \
        $(RPGPGMS)
 
 CMDS = dspwfr \
-       testwsc \
-       testwsr
+       dspjkc \
+       dspjkr
 
 
 # Calculated variables
@@ -70,9 +70,9 @@ $(libdir)/%.pgm: %.clle
 
 $(libdir)/dspwfr.pgm: wthfrcapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/testwsr.pgm: icndbapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dspjkr.pgm: icndbapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/testwsc.pgm: icndbapi.clleinc
+$(libdir)/dspjkc.pgm: icndbapi.clleinc
 
 else
 
@@ -109,9 +109,9 @@ $(libdir)/qclsrc.file/%.mbr: %.clleinc
 
 $(libdir)/dspwfr.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
-$(libdir)/testwsr.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
+$(libdir)/dspjkr.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
-$(libdir)/testwsc.pgm: $(libdir)/qclsrc.file/icndbapi.mbr
+$(libdir)/dspjkc.pgm: $(libdir)/qclsrc.file/icndbapi.mbr
 
 # Prevent gmake from deleting intermediate source members
 .PRECIOUS: $(FQSRCMBRS)

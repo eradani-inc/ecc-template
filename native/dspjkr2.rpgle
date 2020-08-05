@@ -25,7 +25,7 @@
       *
       * Passed Pararmers for API call
       *
-      /copy icndbapi.rpgleinc
+      /copy icndbapi
 
       * Local Variables
      D HttpSts         S             10I 0
@@ -44,18 +44,18 @@
       * Interfaces
       *****************************************************************
       *
-     D TestWsR         PR                  Extpgm('TESTWSR')
+     D DspJkR          PR                  Extpgm('DSPJKR')
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
       *
-     D TestWsR         PI
+     D DspJkR          PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
 
       * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
+      /copy ecnctc
 
       *
      D Write_Msg1      PR
