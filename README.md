@@ -68,8 +68,9 @@ ADDLIBLE ECNCTAPP
 ##### 3. Run the sample commands
 
 ```
-TESTWSC
-TESTWSR
+DSPJKC
+DSPJKR
 DSPWFR
 ```
 
+Run `WRKSPLF` to view the output of the RPG programs.
