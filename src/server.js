@@ -19,17 +19,18 @@ async function handleRequest(data) {
   }
 }
 
-const ecc = new ECClient(ecclient);
-
-logger.debug("receiving request data queue");
-(async function receiveDQ() {
+(async () => {
   try {
-    // wait for 5 seconds
-    const result = await ecc.getNextRequest();
-    if (result.data !== "") {
-      await handleRequest(result);
+    const ecc = new ECClient(ecclient);
+    await ecc.connect();
+
+    while (true) {
+      // getNextRequest will wait for 5 seconds before timing out
+      const result = await ecc.getNextRequest();
+      if (result.data !== "") {
+        await handleRequest(result);
+      }
     }
-    receiveDQ();
   } catch (err) {
     logger.error(`Error: ${err}`);
     logger.close();
