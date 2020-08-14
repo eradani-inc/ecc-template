@@ -34,6 +34,8 @@ Create the `development.json` configuration file to override default configurati
 }
 ```
 
+The full list of options can be found in `src/config/default.json`.
+
 ##### 5. Create the logs directory
 
 `mkdir logs`
