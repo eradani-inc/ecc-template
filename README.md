@@ -27,6 +27,10 @@ Create the `development.json` configuration file to override default configurati
   "weather": {
     "apikey": "00000000000000000000000000000000"
   }
+  "ecclient": {
+    "debug": true,
+    "pooling": false
+  }
 }
 ```
 
