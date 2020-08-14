@@ -6,7 +6,7 @@ Eradani Connect template application for the *Eradani Connect Client*.
 
 ##### 1. Download and extract source on IBM i
 
-Download the `ecc-template-3.3.x.zip` or `ecc-template-3.3.x.tar.gz` file to your PC then either FTP or SCP the file to the IBM i. Unzip or untar the package into the IFS directory in which you would like it to reside.
+Download the `ecc-template-x.x.x.zip` or `ecc-template-x.x.x.tar.gz` file to your PC then either FTP or SCP the file to the IBM i. Unzip or untar the package into the IFS directory in which you would like it to reside.
 
 ##### 2. Remove existing libraries
 
@@ -16,7 +16,7 @@ If a previous version of the *Eradani Connect Client Template* was installed, de
 
 ##### 3. Install JavaScript dependencies
 
-`cd` to the extracted `ecc-template-3.3.x` directory and run `npm install`.
+`cd` to the extracted `ecc-template-x.x.x` directory and run `npm install`.
 
 ##### 4.  Create JavaScript config file
 
@@ -51,7 +51,7 @@ To run the sample applications perform the following steps:
 
 ##### 1. Start the node.js server
 
-Using your ssh client, `cd` to the extracted `ecc-template-3.3.x` directory and run:
+Using your ssh client, `cd` to the extracted `ecc-template-x.x.x` directory and run:
 
 ```shell
 node src/server
