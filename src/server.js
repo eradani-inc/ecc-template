@@ -29,7 +29,9 @@ async function handleRequest(data) {
       const result = await ecc.getNextRequest();
       if (result.command) {
         // if there wasn't a time out handle the request
+        console.time("handleRequest");
         await handleRequest(result);
+        console.timeEnd("handleRequest");
       }
     }
   } catch (err) {
