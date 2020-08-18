@@ -27,7 +27,8 @@ async function handleRequest(data) {
     while (true) {
       // getNextRequest will wait for 5 seconds before timing out
       const result = await ecc.getNextRequest();
-      if (result.data !== "") {
+      if (result.command) {
+        // if there wasn't a time out handle the request
         await handleRequest(result);
       }
     }
