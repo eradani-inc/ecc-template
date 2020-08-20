@@ -8,10 +8,6 @@ async function handleRequest(data) {
   switch (data.command) {
     case "getjoke":
       return getjoke(data.key, data.data);
-    case "getgridinfo":
-      return getgridinfo(data.key, data.data);
-    case "getgridinfo2":
-      return getgridinfo2(data.key, data.data);
     case "getweatherforecast":
       return getforecast(data.key, data.data);
     default:
