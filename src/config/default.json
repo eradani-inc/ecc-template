@@ -20,10 +20,10 @@
     "rejectUnauthorized": true
   },
   "ecclient": {
-    "library": "ECNCT",
     "responseLen": 80,
     "requestLen": 80,
     "debug": false,
-    "pooling": true
+    "pooling": true,
+    "connectionString": "DSN=*LOCAL"
   }
 }
