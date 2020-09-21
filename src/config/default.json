@@ -24,6 +24,7 @@
     "requestLen": 80,
     "debug": false,
     "pooling": true,
-    "connectionString": "DSN=*LOCAL"
+    "connectionString": "DSN=*LOCAL",
+    "useIbmiServices": false
   }
 }
