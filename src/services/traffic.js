@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { traffic, ecclient } = require("../config").get();
+const { traffic, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
 const interface = require('./vinapi');
 const response = new ECClient(ecclient);
