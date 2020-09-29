@@ -1,11 +1,12 @@
 const axios = require("axios");
-const {
-  vehicle
-} = require("../../config").get();
+const { vehicle, ecclient } = require("../../config").get();
+const { ECClient } = require("@eradani-inc/ec-client");
+const interface = require('./vinapi');
+const response = new ECClient(ecclient);
 
 const axiosInstance = axios.create(vehicle);
 
-exports.getVehicleData = async (reqkey, data, interface, response) => {
+exports.getVehicleData = async (reqkey, data) => {
   console.log('VinAPI:', 'Got data', data);
   // get parameters from incomming data buffer
   const vinData = interface.convertVinDataToObject(data);
