@@ -21,3 +21,4 @@ native/*.rpgleinc
 native/*.ts
 src/config/development.json
 src/config/production.json
+src/services/*api.js
