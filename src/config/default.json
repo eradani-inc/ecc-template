@@ -3,14 +3,28 @@
     "baseURL": "https://api.icndb.com",
     "responseType": "json"
   },
+
   "weather": {
     "baseURL": "https://api.openweathermap.org/data/2.5/",
     "responseType": "json",
     "apikey": "00000000000000000000000000000000"
   },
+
+  "vehicle": {
+      "baseURL": "https://vpic.nhtsa.dot.gov/api",
+      "responseType": "json"
+  },
+
+  "traffic": {
+      "baseURL": "https://traffic.ls.hereapi.com",
+      "responseType": "json",
+      "apiKey": "0000000000000000000000000000000000000000000"
+  },
+
   "logger": {
     "maxLoggingLevel": "debug"
   },
+
   "proxy": {
     "enabled": false,
     "protocol": "http",
@@ -19,6 +33,7 @@
     "port": 8080,
     "rejectUnauthorized": true
   },
+  
   "ecclient": {
     "responseLen": 80,
     "requestLen": 80,
