@@ -10,6 +10,10 @@ async function handleRequest(data) {
       return getjoke(data.key, data.data);
     case "getweatherforecast":
       return getforecast(data.key, data.data);
+    case "getvehicledata":
+      return getVehicleData(data.key, data.data);
+    case "gettrafficdata":
+      return getTrafficData(data.key, data.data);
     default:
       throw new RangeError(`"${data.command}" is not a valid command.`);
   }
