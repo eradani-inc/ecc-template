@@ -11,7 +11,8 @@ LIB?=ECNCTAPP
 TGTRLS?=V7R4M0
 
 CLPGMS = dspjkc \
-         dspvhclc
+         dspvhclc \
+		 dsptrfcc
 
 RPGPGMS = dspwfr \
           dspjkr
@@ -22,7 +23,8 @@ PGMS = $(CLPGMS) \
 CMDS = dspwfr \
        dspjkc \
        dspjkr \
-	   dspvhclc
+	   dspvhclc \
+	   dsptrfcc
 
 
 # Calculated variables
@@ -78,6 +80,8 @@ $(libdir)/dspjkc.pgm: icndbapi.clleinc
 
 $(libdir)/dspvhclc.pgm: vinapi.clleinc
 
+$(libdir)/dsptrfcc.pgm: trfcapi.clleinc
+
 else
 
 $(libdir)/%.cmd: $(libdir)/qcmdsrc.file/%.mbr  $(libdir)/%.pgm
@@ -119,6 +123,8 @@ $(libdir)/dspjkc.pgm: $(libdir)/qclsrc.file/icndbapi.mbr
 
 $(libdir)/dspvhclc.pgm: $(libdir)/qclsrc.file/vinapi.mbr
 
+$(libdir)/dsptrfcc.pgm: $(libdir)/qclsrc.file/trfcapi.mbr
+
 # Prevent gmake from deleting intermediate source members
 .PRECIOUS: $(FQSRCMBRS)
 
@@ -153,6 +159,10 @@ wthfrcapi.clleinc wthfrcapi.rpgleinc wthfrcapi.js: wthfrcapi.yaml
 vinapi.clleinc vinapi.rpgleinc vinapi.js: vinapi.yaml
 	npm run generate -- -f $<
 	cp vinapi.js ../src/services
+
+trfcapi.clleinc trfcapi.rpgleinc trfcapi.js: trfcapi.yaml
+	npm run generate -- -f $<
+	cp trfcapi.js ../src/services
 
 
 .PHONY: library
