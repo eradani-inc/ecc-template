@@ -1,0 +1,81 @@
+PGM        PARM(&MODE &WAITTM &REQKEY &IN_VIN &IN_YEAR)
+
+  /*  Define parameters passed to this program.                  */
+  DCL &MODE     *CHAR  10
+  DCL &WAITTM   *DEC  ( 5 0 )
+  DCL &REQKEY   *CHAR   6
+  DCL &IN_VIN   *CHAR   17
+  DCL &IN_YEAR  *CHAR   4
+
+  /*  Define variables for request                              */
+  DCL &CMD      *CHAR 32
+
+  /*  Define variables for response                             */
+  DCL &EOD       *LGL
+  DCL &EOA       *LGL
+  DCL &NODATA    *LGL
+
+  /* Declare varialbes for both request and response            */
+  DCL &DATALEN  *DEC  ( 5 0 )
+  DCL &DATABUF  *CHAR 512
+
+  /*  Include request and response data definitions             */
+  INCLUDE SRCMBR(VINAPI)
+
+  /*  Declare local variables                                   */
+  DCL &FIRST   *LGL
+
+  /* Skip sending request if *NOSEND */
+  IF (&MODE *EQ '*RCVONLY') THEN(GOTO RECV)
+  ELSE IF (&MODE *NE '*SNDRCV') DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Invalid mode')
+  ENDDO
+
+  /* Send the web service request                               */
+  CHGVAR &CMD      'getvehicledata'
+  CHGVAR &Vin      &IN_VIN
+  CHGVAR &Year     &IN_YEAR
+  CHGVAR &DATALEN  %LEN(&VinData)
+  CHGVAR &DATABUF  &VinData
+  CALL PGM(ECNCT/ECCSNDREQ) PARM(&CMD &DATALEN &DATABUF &REQKEY)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCSNDREQ') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  /* Receive the response from the web service                  */
+RECV:
+
+  CHGVAR &DATALEN  %LEN(&Result)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &Result  %SST(&DATABUF 1 &DATALEN)
+  IF (&HttpSts2 *EQ '200') DO
+    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &ElecLvl *BCAT '-' +
+                  *BCAT &FlTypPrim *BCAT '-' +
+                  *BCAT &FlTypSec) MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+  ELSE DO
+    CHGVAR &Error  %SST(&DATABUF 1 &DATALEN)
+    SNDPGMMSG MSG(&HttpSts1 *BCAT '-' *BCAT &Message) MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+ENDPGM:
+
+
+ENDPGM
