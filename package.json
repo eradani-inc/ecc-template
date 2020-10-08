@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "generate": "cd native && ec-generate",
+    "build": "make -C native",
     "test": "mocha ./tests"
   },
   "repository": {

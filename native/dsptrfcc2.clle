@@ -1,0 +1,108 @@
+PGM        PARM(&MODE &WAITTM &REQKEY &IN_TYPE)
+
+  /*  Define parameters passed to this program.                  */
+  DCL &MODE     *CHAR  10
+  DCL &WAITTM   *DEC  ( 5 0 )
+  DCL &REQKEY   *CHAR   6
+  DCL &IN_TYPE  *CHAR   10
+
+  /*  Define variables for request                              */
+  DCL &CMD      *CHAR 32
+
+  /*  Define variables for response                             */
+  DCL &EOD       *LGL
+  DCL &EOA       *LGL
+  DCL &NODATA    *LGL
+
+  /* Declare varialbes for both request and response            */
+  DCL &DATALEN  *DEC  ( 5 0 )
+  DCL &DATABUF  *CHAR 512
+
+  /*  Include request and response data definitions             */
+  INCLUDE SRCMBR(TRFCAPI)
+
+  /*  Declare local variables                                   */
+  DCL &FIRST   *LGL
+
+  /* Skip sending request if *NOSEND */
+  IF (&MODE *EQ '*RCVONLY') THEN(GOTO RECV)
+  ELSE IF (&MODE *NE '*SNDRCV') DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Invalid mode')
+  ENDDO
+
+  /* Send the web service request                               */
+  CHGVAR &CMD      'gettrafficdata'
+  CHGVAR &Type     &IN_TYPE
+  CHGVAR &DATALEN  %LEN(&Compare)
+  CHGVAR &DATABUF  &Compare
+  CALL PGM(ECNCT/ECCSNDREQ) PARM(&CMD &DATALEN &DATABUF &REQKEY)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCSNDREQ') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  /* Receive the response from the web service                  */
+RECV:
+
+  CHGVAR &DATALEN  %LEN(&Response)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &Response  %SST(&DATABUF 1 &DATALEN)
+  SNDPGMMSG MSG(&HttpSts *BCAT '-' *BCAT &Message) MSGTYPE(*COMP)
+  IF (&HttpSts *EQ '200') DO
+    GOTO RCVDTA
+  ENDDO
+  ELSE DO
+    GOTO ENDPGM
+  ENDDO
+
+
+  /* Receive the response data from the web service             */
+RCVDTA:
+
+  CHGVAR &DATALEN  %LEN(&Traffic)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &Traffic  %SST(&DATABUF 1 &DATALEN)
+
+  SNDPGMMSG MSG('Rank:' *BCAT &TRank *TCAT ',' *BCAT &TStrtNm +
+                *TCAT ',' *BCAT &TAvgSpd *TCAT 'mph,' *BCAT +
+                &TLength *TCAT ',' *BCAT &TJamFct *TCAT +
+                '% Jam,' *BCAT &TCnfdnc *TCAT '% Confidence') +
+                MSGTYPE(*COMP)
+
+  IF (&EOA) DO
+    SNDPGMMSG MSG('End of Data') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+  ELSE DO
+    GOTO RCVDTA
+  ENDDO
+
+ENDPGM:
+
+
+ENDPGM

@@ -1,6 +1,8 @@
 const { ECClient } = require("@eradani-inc/ec-client");
 const getjoke = require("./commands/getjoke");
 const { getforecast } = require("./services/weather");
+const { getVehicleData } = require("./services/vehicle");
+const { getTrafficData } = require("./services/traffic");
 const logger = require("./services/logger").forContext("server");
 const { ecclient } = require("./config");
 
@@ -10,6 +12,10 @@ async function handleRequest(data) {
       return getjoke(data.key, data.data);
     case "getweatherforecast":
       return getforecast(data.key, data.data);
+    case "getvehicledata":
+      return getVehicleData(data.key, data.data);
+    case "gettrafficdata":
+      return getTrafficData(data.key, data.data);
     default:
       throw new RangeError(`"${data.command}" is not a valid command.`);
   }
