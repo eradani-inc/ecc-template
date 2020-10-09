@@ -14,18 +14,26 @@ CLPGMS = dspjkc \
          dsptrfcc \
          dspvhclc
 
-RPGPGMS = dspwfr \
-          dspjkr
+RPGPGMS = dspjkr \
+          dsptrfcr \
+          dspvhclr \
+	  dspwfr
 
 PGMS = $(CLPGMS) \
        $(RPGPGMS)
 
-CMDS = dspwfr \
-       dspjkc \
+CMDS = dspjkc \
        dspjkr \
        dsptrfcc \
-       dspvhclc
+       dsptrfcr \
+       dspvhclc \
+       dspvhclr \
+       dspwfr
 
+GENSRC = icndbapi \
+	 trfcapi \
+	 vinapi \
+         wthfrcapi
 
 # Calculated variables
 #
@@ -42,10 +50,14 @@ FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
 FQCMDSRCMBRS = $(foreach srcmbr, $(CMDS), $(libdir)/qcmdsrc.file/$(srcmbr).mbr)
 FQCLSRCMBRS = $(foreach srcmbr, $(CLPGMS), $(libdir)/qclsrc.file/$(srcmbr).mbr)
+FQCLGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qclsrc.file/$(srcmbr).mbr)
 FQRPGSRCMBRS = $(foreach srcmbr, $(RPGPGMS), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
+FQRPGGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
 FQSRCMBRS = $(FQCMDSRCMBRS) \
 	    $(FQCLSRCMBRS) \
-	    $(FQRPGSRCMBRS)
+	    $(FQCLGENSRCMBRS) \
+	    $(FQRPGSRCMBRS) \
+	    $(FQRPGGENSRCMBRS)
 
 
 # Rules
@@ -72,9 +84,13 @@ $(libdir)/%.pgm: %.rpgle
 $(libdir)/%.pgm: %.clle
 	system "CRTBNDCL PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTRLS($(TGTRLS))"
 
-$(libdir)/dspwfr.pgm: wthfrcapi.rpgleinc ecnctc.rpgleinc
-
 $(libdir)/dspjkr.pgm: icndbapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/dsptrfcr.pgm: trfcapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/dspvhclr.pgm: vinapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/dspwfr.pgm: wthfrcapi.rpgleinc ecnctc.rpgleinc
 
 $(libdir)/dspjkc.pgm: icndbapi.clleinc
 
@@ -115,9 +131,13 @@ $(libdir)/qclsrc.file/%.mbr: %.clle
 $(libdir)/qclsrc.file/%.mbr: %.clleinc
 	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
 
-$(libdir)/dspwfr.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
 $(libdir)/dspjkr.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
+
+$(libdir)/dsptrfcc.pgm: $(libdir)/qrpgsrc.file/trfcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
+
+$(libdir)/dspvhclc.pgm: $(libdir)/qrpgsrc.file/vinapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
+
+$(libdir)/dspwfr.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
 $(libdir)/dspjkc.pgm: $(libdir)/qclsrc.file/icndbapi.mbr
 
@@ -152,10 +172,6 @@ icndbapi.clleinc icndbapi.rpgleinc icndbapi.js: icndbapi.yaml
 	npm run generate -- -f $<
 	cp icndbapi.js ../src/services
 
-wthfrcapi.clleinc wthfrcapi.rpgleinc wthfrcapi.js: wthfrcapi.yaml
-	npm run generate -- -f $<
-	cp wthfrcapi.js ../src/services
-
 trfcapi.clleinc trfcapi.rpgleinc trfcapi.js: trfcapi.yaml
 	npm run generate -- -f $<
 	cp trfcapi.js ../src/services
@@ -163,6 +179,10 @@ trfcapi.clleinc trfcapi.rpgleinc trfcapi.js: trfcapi.yaml
 vinapi.clleinc vinapi.rpgleinc vinapi.js: vinapi.yaml
 	npm run generate -- -f $<
 	cp vinapi.js ../src/services
+
+wthfrcapi.clleinc wthfrcapi.rpgleinc wthfrcapi.js: wthfrcapi.yaml
+	npm run generate -- -f $<
+	cp wthfrcapi.js ../src/services
 
 
 .PHONY: library
