@@ -89,8 +89,8 @@
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         Lat     = In_Lat;
-         Lon     = In_Lon;
+         Location.Lat = In_Lat;
+         Location.Lon = In_Lon;
          DataLen = %len(Location);
          DataBuf = Location;
 
@@ -134,7 +134,7 @@
          Result = DataBuf;
          CallP Write_Result(Result);
 
-         HttpStatusN = %Dec(HttpStatus:10:0);
+         HttpStatusN = %Dec(Result.HttpStatus:10:0);
          If (HttpStatusN < 200) or (HttpStatusN >= 300);
            Return;
          EndIf;

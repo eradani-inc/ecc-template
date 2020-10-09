@@ -61,17 +61,14 @@
      D Write_Msg1      PR
      D  In_MsgDta                          Like(MsgDta) Const
 
-     D Write_Msg2      PR
-     D  In_HttpSts                         Const Like(R_HttpSts)
-     D  In_Type                            Const Like(R_Type)
-     D  In_Value                           Const Like(R_Value)
+     D Write_RetData   PR
+     D  In_RetData                         Const LikeDS(RetData)
 
-     D Write_Msg3      PR
-     D  In_Joke                            Like(R2_Joke) Const
+     D Write_RetData2  PR
+     D  In_RetData2                        LikeDS(RetData2) Const
 
-     D Write_Msg4      PR
-     D  In_HttpSts                         Const Like(R3_HttpSts)
-     D  In_Error                           Const Like(R3_Error)
+     D Write_RetData3  PR
+     D  In_RetData3                        Const LikeDS(RetData3)
 
      D Write_Excp      PR
      D  In_ProcNm                    32A   Const
@@ -85,7 +82,7 @@
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         D_Ctgry = 'nerdy';
+         Data.D_Ctgry = 'nerdy';
          DataLen = %len(Data);
          DataBuf = Data;
 
@@ -127,14 +124,14 @@
       // Display The Result
 
          RetData = DataBuf;
-         if (R_HttpSts = '200');
-           CallP Write_Msg2(R_HttpSts:R_Type:R_Value);
-           if (R_type <> 'success');
+         if (RetData.R_HttpSts = '200');
+           CallP Write_RetData(RetData);
+           if (RetData.R_Type <> 'success');
              return;
            endif;
          else;
            RetData3 = DataBuf;
-           CallP Write_Msg4(R3_HttpSts:R3_Error);
+           CallP Write_RetData3(RetData3);
            return;
          endif;
 
@@ -159,7 +156,7 @@
                Return;
              Else;
                RetData2 = DataBuf;
-               CallP Write_Msg3(R2_Joke);
+               CallP Write_RetData2(RetData2);
              EndIf;
          EndDo;
 
@@ -190,17 +187,15 @@
      P Write_Msg1      E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Msg2
+      * Procedure Name:   Write_RetData
       * Purpose.......:   Write Message
       * Returns.......:   None
-      * Parameters....:   Message Data
+      * Parameters....:   RetData data structure
       ***-----------------------------------------------------------***
-     P Write_Msg2      B
+     P Write_RetData   B
 
-     D Write_Msg2      PI
-     D  In_HttpSts                         Const Like(R_HttpSts)
-     D  In_Type                            Const Like(R_Type)
-     D  In_Value                           Const Like(R_Value)
+     D Write_RetData   PI
+     D  In_RetData                         Const LikeDS(RetData)
 
      D Text            DS           132
      D  Sts                           3A
@@ -209,63 +204,62 @@
      D  Sep2                          3A   Inz(' - ')
      D  Value                        61A
 
-       Sts = In_HttpSts;
-       Type = In_Type;
-       Value = In_Value;
+       Sts = In_RetData.R_HttpSts;
+       Type = In_RetData.R_Type;
+       Value = In_RetData.R_Value;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Msg2      E
+     P Write_RetData   E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Msg3
+      * Procedure Name:   Write_RetData2
       * Purpose.......:   Write Message
       * Returns.......:   None
-      * Parameters....:   Message Data
+      * Parameters....:   RetData2 data structure
       ***-----------------------------------------------------------***
-     P Write_Msg3      B
+     P Write_RetData2  B
 
-     D Write_Msg3      PI
-     D  In_Joke                            Like(R2_Joke) Const
+     D Write_RetData2  PI
+     D  In_RetData2                        LikeDS(RetData2) Const
 
      D Text            DS           132
      D  Joke                         80A
 
-       Joke = In_Joke;
+       Joke = In_RetData2.R2_Joke;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Msg3      E
+     P Write_RetData2  E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Msg4
+      * Procedure Name:   Write_RetData3
       * Purpose.......:   Write Message
       * Returns.......:   None
-      * Parameters....:   Message Data
+      * Parameters....:   RetData3 data structure
       ***-----------------------------------------------------------***
-     P Write_Msg4      B
+     P Write_RetData3  B
 
-     D Write_Msg4      PI
-     D  In_HttpSts                         Const Like(R3_HttpSts)
-     D  In_Error                           Const Like(R3_Error)
+     D Write_RetData3  PI
+     D  In_RetData3                        Const LikeDS(RetData3)
 
      D Text            DS           132
      D  Sts                           3A
      D  Sep                           3A   Inz(' - ')
      D  Error                        77A
 
-       Sts = In_HttpSts;
-       Error = In_Error;
+       Sts = In_RetData3.R3_HttpSts;
+       Error = In_RetData3.R3_Error;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Msg4      E
+     P Write_RetData3  E
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Excp
