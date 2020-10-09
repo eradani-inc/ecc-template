@@ -30,6 +30,10 @@ CMDS = dspjkc \
        dspvhclr \
        dspwfr
 
+GENSRC = icndbapi \
+	 trfcapi \
+	 vinapi \
+         wthfrcapi
 
 # Calculated variables
 #
@@ -46,10 +50,14 @@ FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
 FQCMDSRCMBRS = $(foreach srcmbr, $(CMDS), $(libdir)/qcmdsrc.file/$(srcmbr).mbr)
 FQCLSRCMBRS = $(foreach srcmbr, $(CLPGMS), $(libdir)/qclsrc.file/$(srcmbr).mbr)
+FQCLGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qclsrc.file/$(srcmbr).mbr)
 FQRPGSRCMBRS = $(foreach srcmbr, $(RPGPGMS), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
+FQRPGGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
 FQSRCMBRS = $(FQCMDSRCMBRS) \
 	    $(FQCLSRCMBRS) \
-	    $(FQRPGSRCMBRS)
+	    $(FQCLGENSRCMBRS) \
+	    $(FQRPGSRCMBRS) \
+	    $(FQRPGGENSRCMBRS)
 
 
 # Rules
