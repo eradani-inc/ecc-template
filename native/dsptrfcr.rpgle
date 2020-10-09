@@ -129,7 +129,7 @@
       // Display The Result
 
          Response = DataBuf;
-         CallP Write_Result(Response);
+         CallP Write_Response(Response);
 
          HttpStatusN = %Dec(Response.HttpSts:10:0);
          If (HttpStatusN < 200) or (HttpStatusN >= 300);
@@ -159,7 +159,7 @@
          *InLr = *On;
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Msg 
+      * Procedure Name:   Write_Msg
       * Purpose.......:   Write Message
       * Returns.......:   None
       * Parameters....:   Message Data
@@ -196,8 +196,8 @@
      D                                3A   Inz(' - ')
      D  Message                      77A
 
-       Text.Sts = In_Result.HttpSts;
-       Text.Message = In_Result.Message;
+       Text.Sts = In_Response.HttpSts;
+       Text.Message = In_Response.Message;
 
        Write QSysPrt Text;
 

@@ -133,7 +133,7 @@
 
          Result = DataBuf;
 
-         HttpStatusN = %Dec(Result.HttpStatus:10:0);
+         HttpStatusN = %Dec(Result.HttpSts2:10:0);
          If (HttpStatusN < 200) or (HttpStatusN >= 300);
            Error = DataBuf;
            CallP Write_Error(Error);
