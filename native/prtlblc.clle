@@ -91,7 +91,7 @@ RECV:
   CHGVAR &Response  %SST(&DATABUF 1 &DATALEN)
   IF (&HttpSts1 *EQ '200') DO
     CHGVAR &Result  %SST(&DATABUF 1 &DATALEN)
-    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &LBL_STS *BCAT) MSGTYPE(*COMP)
+    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &LBL_STS) MSGTYPE(*COMP)
     SNDPGMMSG MSG('Shipment ID:' *BCAT &SHP_ID *BCAT '- Label ID:' +
                   *BCAT &LBL_ID) MSGTYPE(*COMP)
     SNDPGMMSG MSG('Ship Cost:' *BCAT &SHP_CST *BCAT &SHP_CUR) MSGTYPE(*COMP)
@@ -127,7 +127,7 @@ RECVLBL:
                 *TCAT &LBL_PDF) MSGTYPE(*COMP)
   SNDPGMMSG MSG('Label ZPL: /QOpenSys/opt/eradani/ecc-template/' +
                 *TCAT &LBL_ZPL) MSGTYPE(*COMP)
-                
+
   GOTO ENDPGM
 
 ENDPGM:
