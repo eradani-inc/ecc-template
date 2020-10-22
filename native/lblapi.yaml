@@ -5,54 +5,54 @@ formats:
     recordType: request
     length: 80
     fields:
-      to_nm:
+      toName:
         rpgName: TO_NM
-        type: String
         length: 16
-      to_adr:
+        type: String
+      toAddress:
         rpgName: TO_ADR
-        type: String
         length: 20
-      to_cty:
+        type: String
+      toCity:
         rpgName: TO_CTY
-        type: String
         length: 10
-      to_stt:
+        type: String
+      toState:
         rpgName: TO_STT
-        type: String
         length: 2
-      to_zip:
+        type: String
+      toZip:
         rpgName: TO_ZIP
-        type: String
         length: 5
-      to_ctr:
+        type: String
+      toCountry:
         rpgName: TO_CTR
-        type: String
         length: 3
-      wgt:
+        type: String
+      weight:
         rpgName: WGT
-        type: String
         length: 5
-      wgt_u:
+        type: String
+      weightUnits:
         rpgName: WGT_U
-        type: String
         length: 2
-      dim_h:
+        type: String
+      height:
         rpgName: DIM_H
-        type: String
         length: 5
-      dim_w:
+        type: String
+      width:
         rpgName: DIM_W
-        type: String
         length: 5
-      dim_l:
+        type: String
+      length:
         rpgName: DIM_L
-        type: String
         length: 5
-      dim_u:
-        rpgName: DIM_U
         type: String
+      sizeUnits:
+        rpgName: DIM_U
         length: 2
+        type: String
   Response:
     recordType: response
     length: 80
@@ -73,31 +73,31 @@ formats:
         rpgName: HttpSts2
         length: 3
         type: Number
-      label_status:
+      labelStatus:
         rpgName: LBL_STS
         length: 10
         type: String
-      shipment_id:
+      shipmentId:
         rpgName: SHP_ID
         length: 11
         type: String
-      label_id:
+      labelId:
         rpgName: LBL_ID
         length: 11
         type: String
-      shipment_cost:
+      shipmentCost:
         rpgName: SHP_CST
         length: 10
         type: Number
-      shipment_cost_cur:
+      shipmentCostCurrency:
         rpgName: SHP_CUR
         length: 3
         type: String
-      insurance_cost:
+      insuranceCost:
         rpgName: INS_CST
         length: 10
         type: Number
-      insurance_cost_cur:
+      insuranceCostCurrency:
         rpgName: INS_CUR
         length: 3
         type: String
@@ -105,15 +105,15 @@ formats:
     recordType: response
     length: 80
     fields:
-      tracking_number:
+      trackingNumber:
         rpgName: TRK_NBR
         length: 30
         type: String
-      label_pdf_file:
+      labelPdfFile:
         rpgName: LBL_PDF
-        length: 18
+        length: 23
         type: String
-      label_zpl_file:
+      labelZplFile:
         rpgName: LBL_ZPL
-        length: 18
+        length: 23
         type: String
