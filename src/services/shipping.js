@@ -2,16 +2,19 @@ const axios = require("axios");
 const download = require('download');
 const { shipping, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
+const logger = require("./services/logger").forContext("services/shipping");
 const converter = require('./lblapi');
 const response = new ECClient(ecclient);
 
 const axiosInstance = axios.create(shipping);
 
 exports.getShippingLabel = async (reqkey, data) => {
-  console.log('ShippingAPI:', 'Got data', data);
+  logger.debug('Got data');
+  logger.silly(JSON.stringify(data));
   // get parameters from incomming data buffer
   const labelInput = converter.convertLabelDataToObject(data);
-  console.log('ShippingAPI:', 'Parsed data', labelInput);
+  logger.debug('Parsed data');
+  logger.silly(JSON.stringify(labelInput));
 
   // call web service
   let result;
@@ -47,7 +50,9 @@ exports.getShippingLabel = async (reqkey, data) => {
       }
     }
 
-    console.log('ShippingAPI:', 'Sending Request', "/labels", JSON.stringify(reqData));
+    logger.debug('Sending Request to "/labels"');
+    logger.silly(JSON.stringify(reqData));
+
     result = await axiosInstance.post("/labels", reqData, {
       headers: {
         'Content-Type': 'application/json',
@@ -55,8 +60,14 @@ exports.getShippingLabel = async (reqkey, data) => {
       }
     });
   } catch (err) {
-    console.log('ShippingAPI:', 'Got ERROR!', err);
+    
+    logger.warn('Got ERROR');
+    logger.warn(err);
+
     if (err.response) {
+
+      logger.warn('Sending http failure response');
+      
       // If the request was made and the server responded with a status code
       // that falls out of the range of 2xx
       // Note: These error formats are dependent on the web service
@@ -68,6 +79,8 @@ exports.getShippingLabel = async (reqkey, data) => {
         nextReqKey
       );
     }
+
+    logger.warn('Sending generic (999) failure response');
 
     // Else the request was made but no response was received
     // Note: This error format has nothing to do with the web service. This is
@@ -81,7 +94,9 @@ exports.getShippingLabel = async (reqkey, data) => {
     );
   }
 
-  console.log('ShippingAPI:', 'Got Result from API call', result);
+  logger.debug('Got success result from API call');
+  logger.silly(result);
+
   const resultData = {
     httpstatus: result.status,
     labelStatus: result.data.status,
@@ -102,7 +117,7 @@ exports.getShippingLabel = async (reqkey, data) => {
     labelZplFile: `temp/${labelFileName}.zpl`
   };
 
-  console.log('ShippingAPI:', 'Writing label files (async)');
+  logger.debug('Writing label files (async)');
 
   await Promise.all([
     download(result.data.label_download.pdf, 'temp/usps'),
@@ -112,13 +127,18 @@ exports.getShippingLabel = async (reqkey, data) => {
 
   // Send success result to client
   
-  console.log('ShippingAPI:', 'Sending Result Data', JSON.stringify(resultData));
+  logger.debug('Sending Result Data');
+  logger.silly(JSON.stringify(resultData));
+  
   nextReqKey = await response.sendObjectToCaller(
     resultData,
     converter.convertObjectToResult,
     nextReqKey
   );
-  console.log('ShippingAPI:', 'Sending Label Data', JSON.stringify(labelData));
+
+  logger.debug('Sending Label Data');
+  logger.silly(JSON.stringify(labelData));
+  
   return response.sendObjectToCaller(
     labelData,
     converter.convertObjectToLabel,
