@@ -2,7 +2,7 @@ const axios = require("axios");
 const download = require('download');
 const { shipping, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
-const logger = require("./services/logger").forContext("services/shipping");
+const logger = require("./logger").forContext("services/shipping");
 const converter = require('./lblapi');
 const response = new ECClient(ecclient);
 
