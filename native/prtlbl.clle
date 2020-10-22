@@ -1,0 +1,130 @@
+PGM        PARM(&MODE &WAITTM &REQKEY &IN_TO_NM +
+                &IN_TO_ADR &IN_TO_CTY &IN_TO_STT +
+                &IN_TO_ZIP &IN_TO_CTR &IN_WGT +
+                &IN_WGT_U &IN_DIM_H &IN_DIM_W +
+                &IN_DIM_L &IN_DIM_U)
+
+  /*  Define parameters passed to this program.                  */
+  DCL &MODE     *CHAR  10
+  DCL &WAITTM   *DEC  ( 5 0 )
+  DCL &REQKEY   *CHAR   6
+  DCL &IN_TO_NM  *CHAR 16
+  DCL &IN_TO_ADR *CHAR 20
+  DCL &IN_TO_CTY *CHAR 10
+  DCL &IN_TO_STT *CHAR  2
+  DCL &IN_TO_ZIP *CHAR  5
+  DCL &IN_TO_CTR *CHAR  3
+  DCL &IN_WGT    *CHAR  5
+  DCL &IN_WGT_U  *CHAR  2
+  DCL &IN_DIM_H  *CHAR  5
+  DCL &IN_DIM_W  *CHAR  5
+  DCL &IN_DIM_L  *CHAR  5
+  DCL &IN_DIM_U  *CHAR  2
+
+
+  /*  Define variables for request                              */
+  DCL &CMD      *CHAR 32
+
+  /*  Define variables for response                             */
+  DCL &EOD       *LGL
+  DCL &EOA       *LGL
+  DCL &NODATA    *LGL
+
+  /* Declare varialbes for both request and response            */
+  DCL &DATALEN  *DEC  ( 5 0 )
+  DCL &DATABUF  *CHAR 512
+
+  /*  Include request and response data definitions             */
+  INCLUDE SRCSTMF('lblapi.clleinc')
+
+  /*  Declare local variables                                   */
+  DCL &FIRST   *LGL
+
+  /* Skip sending request if *NOSEND */
+  IF (&MODE *EQ '*RCVONLY') THEN(GOTO RECV)
+  ELSE IF (&MODE *NE '*SNDRCV') DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Invalid mode')
+  ENDDO
+
+  /* Send the web service request                               */
+  CHGVAR &CMD      'getshippinglabel'
+  CHGVAR &TO_NM    &IN_TO_NM
+  CHGVAR &TO_ADR   &IN_TO_ADR
+  CHGVAR &TO_CTY   &IN_TO_CTY
+  CHGVAR &TO_STT   &IN_TO_STT
+  CHGVAR &TO_ZIP   &IN_TO_ZIP
+  CHGVAR &TO_CTR   &IN_TO_CTR
+  CHGVAR &WGT      &IN_WGT
+  CHGVAR &WGT_U    &IN_WGT_U
+  CHGVAR &DIM_H    &IN_DIM_H
+  CHGVAR &DIM_W    &IN_DIM_W
+  CHGVAR &DIM_L    &IN_DIM_L
+  CHGVAR &DIM_U    &IN_DIM_U
+
+  CHGVAR &DATALEN  %LEN(&LabelData)
+  CHGVAR &DATABUF  &LabelData
+  CALL PGM(ECNCT/ECCSNDREQ) PARM(&CMD &DATALEN &DATABUF &REQKEY)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCSNDREQ') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  /* Receive the response from the web service                  */
+RECV:
+
+  CHGVAR &DATALEN  %LEN(&Response)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &Response  %SST(&DATABUF 1 &DATALEN)
+  IF (&HttpSts1 *EQ '200') DO
+    CHGVAR &Result  %SST(&DATABUF 1 &DATALEN)
+    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &LBL_STS *BCAT '-' +
+                  *BCAT &SHP_ID *BCAT '-' *BCAT &LBL_ID *BCAT '-' +
+                  *BCAT &SHP_CST *BCAT '-' +
+                  *BCAT &SHP_CUR *BCAT '-' *BCAT &INS_CST *BCAT '-' +
+                  *BCAT &INS_CUR) MSGTYPE(*COMP)
+    GOTO RECVLBL
+  ENDDO
+  ELSE DO
+    SNDPGMMSG MSG(&HttpSts1 *BCAT '-' *BCAT &Message) MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+RECVLBL:
+  CHGVAR &DATALEN  %LEN(&Label)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+  
+  CHGVAR &Label  %SST(&DATABUF 1 &DATALEN)
+  SNDPGMMSG MSG(&TRK_NBR *BCAT '-' *BCAT &LBL_PDF *BCAT '-' +
+                *BCAT &LBL_ZPL) MSGTYPE(*COMP)
+  GOTO ENDPGM
+
+ENDPGM:
+
+
+ENDPGM

@@ -1,0 +1,119 @@
+---
+name: lblapi
+formats:
+  LabelData:
+    recordType: request
+    length: 80
+    fields:
+      to_nm:
+        rpgName: TO_NM
+        type: String
+        length: 16
+      to_adr:
+        rpgName: TO_ADR
+        type: String
+        length: 20
+      to_cty:
+        rpgName: TO_CTY
+        type: String
+        length: 10
+      to_stt:
+        rpgName: TO_STT
+        type: String
+        length: 2
+      to_zip:
+        rpgName: TO_ZIP
+        type: String
+        length: 5
+      to_ctr:
+        rpgName: TO_CTR
+        type: String
+        length: 3
+      wgt:
+        rpgName: WGT
+        type: String
+        length: 5
+      wgt_u:
+        rpgName: WGT_U
+        type: String
+        length: 2
+      dim_h:
+        rpgName: DIM_H
+        type: String
+        length: 5
+      dim_w:
+        rpgName: DIM_W
+        type: String
+        length: 5
+      dim_l:
+        rpgName: DIM_L
+        type: String
+        length: 5
+      dim_u:
+        rpgName: DIM_U
+        type: String
+        length: 2
+  Response:
+    recordType: response
+    length: 80
+    fields:
+      httpstatus:
+        rpgName: HttpSts1
+        length: 3
+        type: Number
+      message:
+        rpgName: Message
+        length: 77
+        type: String
+  Result:
+    recordType: response
+    length: 80
+    fields:
+      httpstatus:
+        rpgName: HttpSts2
+        length: 3
+        type: Number
+      label_status:
+        rpgName: LBL_STS
+        length: 10
+        type: String
+      shipment_id:
+        rpgName: SHP_ID
+        length: 11
+        type: String
+      label_id:
+        rpgName: LBL_ID
+        length: 11
+        type: String
+      shipment_cost:
+        rpgName: SHP_CST
+        length: 10
+        type: Number
+      shipment_cost_cur:
+        rpgName: SHP_CUR
+        length: 3
+        type: String
+      insurance_cost:
+        rpgName: INS_CST
+        length: 10
+        type: Number
+      insurance_cost_cur:
+        rpgName: INS_CUR
+        length: 3
+        type: String
+  Label:
+    recordType: response
+    length: 80
+    fields:
+      tracking_number:
+        rpgName: TRK_NBR
+        length: 30
+        type: String
+      label_pdf_file:
+        rpgName: LBL_PDF
+        length: 18
+        type: String
+      label_zpl_file:
+        rpgName: LBL_ZPL
+        length: 18
+        type: String
