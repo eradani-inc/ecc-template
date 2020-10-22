@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { shipping, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
-const converter = require('./shipping');
+const converter = require('./lblapi');
 const response = new ECClient(ecclient);
 
 const axiosInstance = axios.create(shipping);
