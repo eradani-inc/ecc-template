@@ -105,8 +105,9 @@ exports.getShippingLabel = async (reqkey, data) => {
   console.log('ShippingAPI:', 'Writing label files (async)');
 
   await Promise.all([
-    download(result.data.label_download.pdf, '../../temp'),
-    download(result.data.label_download.zpl, '../../temp')
+    download(result.data.label_download.pdf, 'temp/usps'),
+    download(result.data.label_download.png, 'temp/usps'),
+    download(result.data.label_download.zpl, 'temp/usps')
   ]);
 
   // Send success result to client
