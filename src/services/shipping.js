@@ -114,7 +114,7 @@ exports.getShippingLabel = async (reqkey, data) => {
   fs.writeFile(path.join(__dirname, '../../', labelData.labelPdfFile), pdf.data, (...args) => {console.log('Finished writing pdf', JSON.stringify(args))});
   fs.writeFile(path.join(__dirname, '../../', labelData.labelZplFile), zpl.data, (...args) => {console.log('Finished writing zpl', JSON.stringify(args))});
 
-  console.log('ShippingAPI:', 'Wrote label files', pdfWriteResult, zplWriteResult);
+  console.log('ShippingAPI:', 'Writing label files (async)');
 
   // Send success result to client
   
