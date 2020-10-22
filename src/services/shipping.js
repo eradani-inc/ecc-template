@@ -111,7 +111,7 @@ exports.getShippingLabel = async (reqkey, data) => {
     converter.convertObjectToResult,
     nextReqKey
   );
-  console.log('ShippingAPI:', 'Sending Label Data', JSON.stringify(responseData));
+  console.log('ShippingAPI:', 'Sending Label Data', JSON.stringify(labelData));
   return response.sendObjectToCaller(
     labelData,
     converter.convertObjectToLabel,
