@@ -1,4 +1,6 @@
 const axios = require("axios");
+const fs = require('fs');
+const path = require('path');
 const { shipping, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
 const converter = require('./lblapi');
@@ -102,6 +104,19 @@ exports.getShippingLabel = async (reqkey, data) => {
   };
 
   // TODO: Store label pdf and zpl files in IFS temp directory
+  const [pdf, zpl] = await Promise.all([
+    axiosInstance.get(result.data.label_download.pdf.split('/v1/')[1]),
+    axiosInstance.get(result.data.label_download.zpl.split('/v1/')[1])
+  ]);
+
+  console.log('ShippingAPI:', 'Got label files', pdf.data, zpl.data);
+
+  const [pdfWriteResult, zplWriteResult] = await Promise.all([
+    fs.writeFile(path.join(__dirname, '../../', labelData.labelPdfFile), pdf.data),
+    fs.writeFile(path.join(__dirname, '../../', labelData.labelZplFile), zpl.data)
+  ]);
+
+  console.log('ShippingAPI:', 'Wrote label files', pdfWriteResult, zplWriteResult);
 
   // Send success result to client
   
