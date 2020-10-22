@@ -91,11 +91,12 @@ RECV:
   CHGVAR &Response  %SST(&DATABUF 1 &DATALEN)
   IF (&HttpSts1 *EQ '200') DO
     CHGVAR &Result  %SST(&DATABUF 1 &DATALEN)
-    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &LBL_STS *BCAT '-' +
-                  *BCAT &SHP_ID *BCAT '-' *BCAT &LBL_ID *BCAT '-' +
-                  *BCAT &SHP_CST *BCAT '-' +
-                  *BCAT &SHP_CUR *BCAT '-' *BCAT &INS_CST *BCAT '-' +
-                  *BCAT &INS_CUR) MSGTYPE(*COMP)
+    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &LBL_STS *BCAT) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Shipment ID:' *BCAT &SHP_ID *BCAT '- Label ID:' +
+                  *BCAT &LBL_ID) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Ship Cost:' *BCAT &SHP_CST *BCAT &SHP_CUR) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Insurance:' *BCAT &INS_CST *BCAT &INS_CUR) MSGTYPE(*COMP)
+
     GOTO RECVLBL
   ENDDO
   ELSE DO
@@ -120,8 +121,13 @@ RECVLBL:
   ENDDO
   
   CHGVAR &Label  %SST(&DATABUF 1 &DATALEN)
-  SNDPGMMSG MSG(&TRK_NBR *BCAT '-' *BCAT &LBL_PDF *BCAT '-' +
-                *BCAT &LBL_ZPL) MSGTYPE(*COMP)
+  SNDPGMMSG MSG('-- Label Info --') MSGTYPE(*COMP)
+  SNDPGMMSG MSG('Tracking Number:' *BCAT &TRK_NBR) MSGTYPE(*COMP)
+  SNDPGMMSG MSG('Label PDF: /QOpenSys/opt/eradani/ecc-template/' +
+                *TCAT &LBL_PDF) MSGTYPE(*COMP)
+  SNDPGMMSG MSG('Label ZPL: /QOpenSys/opt/eradani/ecc-template/' +
+                *TCAT &LBL_ZPL) MSGTYPE(*COMP)
+                
   GOTO ENDPGM
 
 ENDPGM:
