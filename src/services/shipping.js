@@ -73,7 +73,7 @@ exports.getShippingLabel = async (reqkey, data) => {
       // Note: These error formats are dependent on the web service
       return response.sendObjectToCaller({
           httpstatus: err.response.status,
-          message: err.response.data.message
+          message: err.response.data.errors[0].message
         },
         converter.convertObjectToResponse,
         nextReqKey
