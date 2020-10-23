@@ -75,7 +75,7 @@ exports.getShippingLabel = async (reqkey, data) => {
           httpstatus: err.response.status,
           message: err.response.data.errors[0].message
         },
-        converter.convertObjectToResponse,
+        converter.convertObjectToError,
         nextReqKey
       );
     }
@@ -89,7 +89,7 @@ exports.getShippingLabel = async (reqkey, data) => {
         httpstatus: 999,
         error: err.message
       },
-      converter.convertObjectToResponse,
+      converter.convertObjectToError,
       nextReqKey
     );
   }
