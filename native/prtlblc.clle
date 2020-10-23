@@ -1,25 +1,25 @@
-PGM        PARM(&MODE &WAITTM &REQKEY &IN_TO_NM +
-                &IN_TO_ADR &IN_TO_CTY &IN_TO_STT +
-                &IN_TO_ZIP &IN_TO_CTR &IN_WGT +
-                &IN_WGT_U &IN_DIM_H &IN_DIM_W +
-                &IN_DIM_L &IN_DIM_U)
+PGM        PARM(&MODE &WAITTM &REQKEY &IN_NAME +
+                &IN_ADDR &IN_CITY &IN_STATE +
+                &IN_ZIP &IN_TO_CTR &IN_WGT +
+                &IN_WGTUNTS &IN_HEIGHT &IN_WIDTH +
+                &IN_LENGTH &IN_DIMUNTS)
 
   /*  Define parameters passed to this program.                  */
-  DCL &MODE     *CHAR  10
-  DCL &WAITTM   *DEC  ( 5 0 )
-  DCL &REQKEY   *CHAR   6
-  DCL &IN_TO_NM  *CHAR 16
-  DCL &IN_TO_ADR *CHAR 20
-  DCL &IN_TO_CTY *CHAR 10
-  DCL &IN_TO_STT *CHAR  2
-  DCL &IN_TO_ZIP *CHAR  5
-  DCL &IN_TO_CTR *CHAR  3
-  DCL &IN_WGT    *CHAR  5
-  DCL &IN_WGT_U  *CHAR  2
-  DCL &IN_DIM_H  *CHAR  5
-  DCL &IN_DIM_W  *CHAR  5
-  DCL &IN_DIM_L  *CHAR  5
-  DCL &IN_DIM_U  *CHAR  2
+  DCL &MODE        *CHAR  10
+  DCL &WAITTM      *DEC  ( 5 0 )
+  DCL &REQKEY      *CHAR   6
+  DCL &IN_NAME     *CHAR 16
+  DCL &IN_ADDR     *CHAR 20
+  DCL &IN_CITY     *CHAR 10
+  DCL &IN_STATE    *CHAR  2
+  DCL &IN_ZIP      *CHAR  5
+  DCL &IN_TO_CTR   *CHAR  3
+  DCL &IN_WGT      *CHAR  5
+  DCL &IN_WGTUNTS  *CHAR  2
+  DCL &IN_HEIGHT   *CHAR  5
+  DCL &IN_WIDTH    *CHAR  5
+  DCL &IN_LENGTH   *CHAR  5
+  DCL &IN_DIMUNTS  *CHAR  2
 
 
   /*  Define variables for request                              */
@@ -49,18 +49,18 @@ PGM        PARM(&MODE &WAITTM &REQKEY &IN_TO_NM +
 
   /* Send the web service request                               */
   CHGVAR &CMD      'getshippinglabel'
-  CHGVAR &TO_NM    &IN_TO_NM
-  CHGVAR &TO_ADR   &IN_TO_ADR
-  CHGVAR &TO_CTY   &IN_TO_CTY
-  CHGVAR &TO_STT   &IN_TO_STT
-  CHGVAR &TO_ZIP   &IN_TO_ZIP
-  CHGVAR &TO_CTR   &IN_TO_CTR
+  CHGVAR &NAME     &IN_NAME
+  CHGVAR &ADDR     &IN_ADDR
+  CHGVAR &CITY     &IN_CITY
+  CHGVAR &STATE    &IN_STATE
+  CHGVAR &ZIP      &IN_ZIP
+  CHGVAR &COUNTRY  &IN_TO_CTR
   CHGVAR &WGT      &IN_WGT
-  CHGVAR &WGT_U    &IN_WGT_U
-  CHGVAR &DIM_H    &IN_DIM_H
-  CHGVAR &DIM_W    &IN_DIM_W
-  CHGVAR &DIM_L    &IN_DIM_L
-  CHGVAR &DIM_U    &IN_DIM_U
+  CHGVAR &WGTUNTS  &IN_WGTUNTS
+  CHGVAR &HEIGHT   &IN_HEIGHT
+  CHGVAR &WIDTH    &IN_WIDTH
+  CHGVAR &LENGTH   &IN_LENGTH
+  CHGVAR &DIMUNTS  &IN_DIMUNTS
 
   CHGVAR &DATALEN  %LEN(&LabelData)
   CHGVAR &DATABUF  &LabelData
@@ -73,7 +73,7 @@ PGM        PARM(&MODE &WAITTM &REQKEY &IN_TO_NM +
   /* Receive the response from the web service                  */
 RECV:
 
-  CHGVAR &DATALEN  %LEN(&Response)
+  CHGVAR &DATALEN  %LEN(&RESULT)
   CHGVAR &DATABUF  ' '
   CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
                                  &DATALEN &DATABUF)
@@ -88,19 +88,20 @@ RECV:
     GOTO ENDPGM
   ENDDO
 
-  CHGVAR &Response  %SST(&DATABUF 1 &DATALEN)
-  IF (&HttpSts1 *EQ '200') DO
-    CHGVAR &Result  %SST(&DATABUF 1 &DATALEN)
-    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &LBL_STS) MSGTYPE(*COMP)
-    SNDPGMMSG MSG('Shipment ID:' *BCAT &SHP_ID *BCAT '- Label ID:' +
-                  *BCAT &LBL_ID) MSGTYPE(*COMP)
-    SNDPGMMSG MSG('Ship Cost:' *BCAT &SHP_CST *BCAT &SHP_CUR) MSGTYPE(*COMP)
-    SNDPGMMSG MSG('Insurance:' *BCAT &INS_CST *BCAT &INS_CUR) MSGTYPE(*COMP)
+  CHGVAR &RESULT  %SST(&DATABUF 1 &DATALEN)
+  IF (&HttpSts *EQ '200') DO
+    SNDPGMMSG MSG(&HttpSts *BCAT '-' *BCAT &LBLSTS) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Shipment ID:' *BCAT &SHIPID *BCAT '- Label ID:' +
+                  *BCAT &LBLID) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Ship Cost:' *BCAT &SHIPCOST *BCAT &SHIPCUR) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Insurance:' *BCAT &INSCOST *BCAT &INSCUR) MSGTYPE(*COMP)
 
     GOTO RECVLBL
   ENDDO
   ELSE DO
-    SNDPGMMSG MSG(&HttpSts1 *BCAT '-' *BCAT &Message) MSGTYPE(*COMP)
+    CHGVAR &DATALEN  %LEN(&ERROR)
+    CHGVAR &Error    %SST(&DATABUF 1 &DATALEN)
+    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &Message) MSGTYPE(*COMP)
     GOTO ENDPGM
   ENDDO
 
@@ -119,14 +120,14 @@ RECVLBL:
               MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
     GOTO ENDPGM
   ENDDO
-  
+
   CHGVAR &Label  %SST(&DATABUF 1 &DATALEN)
   SNDPGMMSG MSG('-- Label Info --') MSGTYPE(*COMP)
-  SNDPGMMSG MSG('Tracking Number:' *BCAT &TRK_NBR) MSGTYPE(*COMP)
+  SNDPGMMSG MSG('Tracking Number:' *BCAT &TRACKNBR) MSGTYPE(*COMP)
   SNDPGMMSG MSG('Label PDF: /QOpenSys/opt/eradani/ecc-template/' +
-                *TCAT &LBL_PDF) MSGTYPE(*COMP)
+                *TCAT &LBLPDF) MSGTYPE(*COMP)
   SNDPGMMSG MSG('Label ZPL: /QOpenSys/opt/eradani/ecc-template/' +
-                *TCAT &LBL_ZPL) MSGTYPE(*COMP)
+                *TCAT &LBLZPL) MSGTYPE(*COMP)
 
   GOTO ENDPGM
 

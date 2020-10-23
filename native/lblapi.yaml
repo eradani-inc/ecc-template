@@ -6,59 +6,59 @@ formats:
     length: 80
     fields:
       toName:
-        rpgName: TO_NM
+        rpgName: Name
         length: 16
         type: String
       toAddress:
-        rpgName: TO_ADR
+        rpgName: Addr
         length: 20
         type: String
       toCity:
-        rpgName: TO_CTY
+        rpgName: City
         length: 10
         type: String
       toState:
-        rpgName: TO_STT
+        rpgName: State
         length: 2
         type: String
       toZip:
-        rpgName: TO_ZIP
+        rpgName: Zip
         length: 5
         type: String
       toCountry:
-        rpgName: TO_CTR
+        rpgName: Country
         length: 3
         type: String
       weight:
-        rpgName: WGT
+        rpgName: Wgt
         length: 5
         type: String
       weightUnits:
-        rpgName: WGT_U
+        rpgName: WgtUnts
         length: 2
         type: String
       height:
-        rpgName: DIM_H
+        rpgName: Height
         length: 5
         type: String
       width:
-        rpgName: DIM_W
+        rpgName: Width
         length: 5
         type: String
       length:
-        rpgName: DIM_L
+        rpgName: Length
         length: 5
         type: String
       sizeUnits:
-        rpgName: DIM_U
+        rpgName: DimUnts
         length: 2
         type: String
-  Response:
+  Error:
     recordType: response
     length: 80
     fields:
       httpstatus:
-        rpgName: HttpSts1
+        rpgName: HttpSts2
         length: 3
         type: Number
       message:
@@ -70,35 +70,35 @@ formats:
     length: 80
     fields:
       httpstatus:
-        rpgName: HttpSts2
+        rpgName: HttpSts
         length: 3
         type: Number
       labelStatus:
-        rpgName: LBL_STS
+        rpgName: LblSts
         length: 10
         type: String
       shipmentId:
-        rpgName: SHP_ID
+        rpgName: ShipId
         length: 11
         type: String
       labelId:
-        rpgName: LBL_ID
+        rpgName: LblId
         length: 11
         type: String
       shipmentCost:
-        rpgName: SHP_CST
+        rpgName: ShipCost
         length: 10
         type: Number
       shipmentCostCurrency:
-        rpgName: SHP_CUR
+        rpgName: ShipCur
         length: 3
         type: String
       insuranceCost:
-        rpgName: INS_CST
+        rpgName: InsCost
         length: 10
         type: Number
       insuranceCostCurrency:
-        rpgName: INS_CUR
+        rpgName: InsCur
         length: 3
         type: String
   Label:
@@ -106,14 +106,14 @@ formats:
     length: 80
     fields:
       trackingNumber:
-        rpgName: TRK_NBR
+        rpgName: TrackNbr
         length: 30
         type: String
       labelPdfFile:
-        rpgName: LBL_PDF
+        rpgName: LblPdf
         length: 23
         type: String
       labelZplFile:
-        rpgName: LBL_ZPL
+        rpgName: LblZpl
         length: 23
         type: String
