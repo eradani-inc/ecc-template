@@ -13,12 +13,13 @@ TGTRLS?=V7R4M0
 CLPGMS = dspjkc \
          dsptrfcc \
          dspvhclc \
-		 prtlblc
+         prtlblc
 
 RPGPGMS = dspjkr \
           dsptrfcr \
           dspvhclr \
-	  	  dspwfr
+          dspwfr \
+	  prtlblr
 
 PGMS = $(CLPGMS) \
        $(RPGPGMS)
@@ -30,13 +31,14 @@ CMDS = dspjkc \
        dspvhclc \
        dspvhclr \
        dspwfr \
-	   prtlblc
+       prtlblc \
+       prtlblr
 
 GENSRC = icndbapi \
-	     trfcapi \
-	     vinapi \
-	     wthfrcapi \
-		 lblapi
+         lblapi \
+         trfcapi \
+         vinapi \
+         wthfrcapi
 
 # Calculated variables
 #
