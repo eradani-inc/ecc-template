@@ -12,12 +12,14 @@ TGTRLS?=V7R4M0
 
 CLPGMS = dspjkc \
          dsptrfcc \
-         dspvhclc
+         dspvhclc \
+         prtlblc
 
 RPGPGMS = dspjkr \
           dsptrfcr \
           dspvhclr \
-	  dspwfr
+          dspwfr \
+	  prtlblr
 
 PGMS = $(CLPGMS) \
        $(RPGPGMS)
@@ -28,11 +30,14 @@ CMDS = dspjkc \
        dsptrfcr \
        dspvhclc \
        dspvhclr \
-       dspwfr
+       dspwfr \
+       prtlblc \
+       prtlblr
 
 GENSRC = icndbapi \
-	 trfcapi \
-	 vinapi \
+         lblapi \
+         trfcapi \
+         vinapi \
          wthfrcapi
 
 # Calculated variables
@@ -98,6 +103,8 @@ $(libdir)/dsptrfcc.pgm: trfcapi.clleinc
 
 $(libdir)/dspvhclc.pgm: vinapi.clleinc
 
+$(libdir)/prtlblc.pgm: lblapi.clleinc
+
 else
 
 $(libdir)/%.cmd: $(libdir)/qcmdsrc.file/%.mbr  $(libdir)/%.pgm
@@ -145,6 +152,8 @@ $(libdir)/dsptrfcc.pgm: $(libdir)/qclsrc.file/trfcapi.mbr
 
 $(libdir)/dspvhclc.pgm: $(libdir)/qclsrc.file/vinapi.mbr
 
+$(libdir)/prtlblc.pgm: $(libdir)/qclsrc.file/lblapi.mbr
+
 # Prevent gmake from deleting intermediate source members
 .PRECIOUS: $(FQSRCMBRS)
 
@@ -183,6 +192,10 @@ vinapi.clleinc vinapi.rpgleinc vinapi.js: vinapi.yaml
 wthfrcapi.clleinc wthfrcapi.rpgleinc wthfrcapi.js: wthfrcapi.yaml
 	npm run generate -- -f $<
 	cp wthfrcapi.js ../src/services
+
+lblapi.clleinc lblapi.rpgleinc lblapi.js: lblapi.yaml
+	npm run generate -- -f $<
+	cp lblapi.js ../src/services
 
 
 .PHONY: library

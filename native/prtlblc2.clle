@@ -1,0 +1,137 @@
+PGM        PARM(&MODE &WAITTM &REQKEY &IN_NAME +
+                &IN_ADDR &IN_CITY &IN_STATE +
+                &IN_ZIP &IN_COUNTRY &IN_WGT +
+                &IN_WGTUNTS &IN_HEIGHT &IN_WIDTH +
+                &IN_LENGTH &IN_DIMUNTS)
+
+  /*  Define parameters passed to this program.                  */
+  DCL &MODE        *CHAR  10
+  DCL &WAITTM      *DEC  ( 5 0 )
+  DCL &REQKEY      *CHAR   6
+  DCL &IN_NAME     *CHAR 16
+  DCL &IN_ADDR     *CHAR 20
+  DCL &IN_CITY     *CHAR 10
+  DCL &IN_STATE    *CHAR  2
+  DCL &IN_ZIP      *CHAR  5
+  DCL &IN_COUNTRY  *CHAR  3
+  DCL &IN_WGT      *CHAR  5
+  DCL &IN_WGTUNTS  *CHAR  2
+  DCL &IN_HEIGHT   *CHAR  5
+  DCL &IN_WIDTH    *CHAR  5
+  DCL &IN_LENGTH   *CHAR  5
+  DCL &IN_DIMUNTS  *CHAR  2
+
+
+  /*  Define variables for request                              */
+  DCL &CMD      *CHAR 32
+
+  /*  Define variables for response                             */
+  DCL &EOD       *LGL
+  DCL &EOA       *LGL
+  DCL &NODATA    *LGL
+
+  /* Declare varialbes for both request and response            */
+  DCL &DATALEN  *DEC  ( 5 0 )
+  DCL &DATABUF  *CHAR 512
+
+  /*  Include request and response data definitions             */
+  INCLUDE SRCMBR(LBLAPI)
+
+  /*  Declare local variables                                   */
+  DCL &FIRST   *LGL
+
+  /* Skip sending request if *NOSEND */
+  IF (&MODE *EQ '*RCVONLY') THEN(GOTO RECV)
+  ELSE IF (&MODE *NE '*SNDRCV') DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Invalid mode')
+  ENDDO
+
+  /* Send the web service request                               */
+  CHGVAR &CMD      'getshippinglabel'
+  CHGVAR &NAME     &IN_NAME
+  CHGVAR &ADDR     &IN_ADDR
+  CHGVAR &CITY     &IN_CITY
+  CHGVAR &STATE    &IN_STATE
+  CHGVAR &ZIP      &IN_ZIP
+  CHGVAR &COUNTRY  &IN_COUNTRY
+  CHGVAR &WGT      &IN_WGT
+  CHGVAR &WGTUNTS  &IN_WGTUNTS
+  CHGVAR &HEIGHT   &IN_HEIGHT
+  CHGVAR &WIDTH    &IN_WIDTH
+  CHGVAR &LENGTH   &IN_LENGTH
+  CHGVAR &DIMUNTS  &IN_DIMUNTS
+
+  CHGVAR &DATALEN  %LEN(&LabelData)
+  CHGVAR &DATABUF  &LabelData
+  CALL PGM(ECNCT/ECCSNDREQ) PARM(&CMD &DATALEN &DATABUF &REQKEY)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCSNDREQ') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  /* Receive the response from the web service                  */
+RECV:
+
+  CHGVAR &DATALEN  %LEN(&RESULT)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &RESULT  %SST(&DATABUF 1 &DATALEN)
+  IF (&HttpSts *EQ '200') DO
+    SNDPGMMSG MSG(&HttpSts *BCAT '-' *BCAT &LBLSTS) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Shipment ID:' *BCAT &SHIPID *BCAT '- Label ID:' +
+                  *BCAT &LBLID) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Ship Cost:' *BCAT &SHIPCOST *BCAT &SHIPCUR) MSGTYPE(*COMP)
+    SNDPGMMSG MSG('Insurance:' *BCAT &INSCOST *BCAT &INSCUR) MSGTYPE(*COMP)
+
+    GOTO RECVLBL
+  ENDDO
+  ELSE DO
+    CHGVAR &DATALEN  %LEN(&ERROR)
+    CHGVAR &Error    %SST(&DATABUF 1 &DATALEN)
+    SNDPGMMSG MSG(&HttpSts2 *BCAT '-' *BCAT &Message) MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+RECVLBL:
+  CHGVAR &DATALEN  %LEN(&Label)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &Label  %SST(&DATABUF 1 &DATALEN)
+  SNDPGMMSG MSG('-- Label Info --') MSGTYPE(*COMP)
+  SNDPGMMSG MSG('Tracking Number:' *BCAT &TRACKNBR) MSGTYPE(*COMP)
+  SNDPGMMSG MSG('Label PDF: /QOpenSys/opt/eradani/ecc-template/' +
+                *TCAT &LBLPDF) MSGTYPE(*COMP)
+  SNDPGMMSG MSG('Label ZPL: /QOpenSys/opt/eradani/ecc-template/' +
+                *TCAT &LBLZPL) MSGTYPE(*COMP)
+
+  GOTO ENDPGM
+
+ENDPGM:
+
+
+ENDPGM

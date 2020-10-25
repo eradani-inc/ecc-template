@@ -1,0 +1,119 @@
+---
+name: lblapi
+formats:
+  LabelData:
+    recordType: request
+    length: 80
+    fields:
+      toName:
+        rpgName: Name
+        length: 16
+        type: String
+      toAddress:
+        rpgName: Addr
+        length: 20
+        type: String
+      toCity:
+        rpgName: City
+        length: 10
+        type: String
+      toState:
+        rpgName: State
+        length: 2
+        type: String
+      toZip:
+        rpgName: Zip
+        length: 5
+        type: String
+      toCountry:
+        rpgName: Country
+        length: 3
+        type: String
+      weight:
+        rpgName: Wgt
+        length: 5
+        type: String
+      weightUnits:
+        rpgName: WgtUnts
+        length: 2
+        type: String
+      height:
+        rpgName: Height
+        length: 5
+        type: String
+      width:
+        rpgName: Width
+        length: 5
+        type: String
+      length:
+        rpgName: Length
+        length: 5
+        type: String
+      sizeUnits:
+        rpgName: DimUnts
+        length: 2
+        type: String
+  Error:
+    recordType: response
+    length: 80
+    fields:
+      httpstatus:
+        rpgName: HttpSts2
+        length: 3
+        type: Number
+      message:
+        rpgName: Message
+        length: 77
+        type: String
+  Result:
+    recordType: response
+    length: 80
+    fields:
+      httpstatus:
+        rpgName: HttpSts
+        length: 3
+        type: Number
+      labelStatus:
+        rpgName: LblSts
+        length: 10
+        type: String
+      shipmentId:
+        rpgName: ShipId
+        length: 11
+        type: String
+      labelId:
+        rpgName: LblId
+        length: 11
+        type: String
+      shipmentCost:
+        rpgName: ShipCost
+        length: 10
+        type: Number
+      shipmentCostCurrency:
+        rpgName: ShipCur
+        length: 3
+        type: String
+      insuranceCost:
+        rpgName: InsCost
+        length: 10
+        type: Number
+      insuranceCostCurrency:
+        rpgName: InsCur
+        length: 3
+        type: String
+  Label:
+    recordType: response
+    length: 80
+    fields:
+      trackingNumber:
+        rpgName: TrackNbr
+        length: 30
+        type: String
+      labelPdfFile:
+        rpgName: LblPdf
+        length: 23
+        type: String
+      labelZplFile:
+        rpgName: LblZpl
+        length: 23
+        type: String
