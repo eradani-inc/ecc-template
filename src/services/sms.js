@@ -75,7 +75,7 @@ exports.confirmSMS = async (reqkey, data) => {
       nextReqKey
     );
   } else {
-    openRequests[smsData.toNumber] = nextReqKey;
+    openRequests[_cleanNumber(smsData.toNumber)] = nextReqKey;
   }
 };
 
@@ -86,12 +86,22 @@ function startServer() {
 
   app.post('/sms', (req, res) => {
     const twiml = new MessagingResponse();
+    const resKey = openRequests[_cleanNumber(req.body.From)];
 
-    console.log(req);
-    console.log(req.body);
-    console.log(req.body.Body);
-
-    twiml.message('Confirmation Received. Proceeding with operation.');
+    if (resKey) {
+      twiml.message('Confirmation Received. Proceeding with operation.');
+      ecc.sendObjectToCaller(
+        {
+          smsStatus: 'SUCCESS',
+          smsNumber: req.body.From,
+          message: req.body.Body
+        },
+        convertObjectToResult,
+        resKey
+      );
+    } else {
+      twiml.message('ERROR: No open operations found');
+    }
 
     res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end(twiml.toString());
@@ -100,4 +110,8 @@ function startServer() {
   http.createServer(app).listen(twilio.replyPort, () => {
     console.log('Twilio reply server listening on port ' + twilio.replyPort);
   });
+}
+
+function _cleanNumber(number) {
+  return number.replace(/[^0-9]/g, '');
 }
