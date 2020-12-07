@@ -38,9 +38,10 @@ exports.confirmSMS = async (reqkey, data) => {
       // If the request was made and the server responded with a status code
       // that falls out of the range of 2xx
       // Note: These error formats are dependent on the web service
+      console.log(err);
       nextReqKey = await ecc.sendObjectToCaller(
         {
-          smsStatus: err.error_code.toUpperCase(),
+          smsStatus: err.error_code,
           smsNumber: smsData.toNumber,
           message: err.error_message
         },
