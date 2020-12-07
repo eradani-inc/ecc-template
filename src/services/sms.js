@@ -90,7 +90,7 @@ function startServer() {
     const resKey = openRequests[_cleanNumber(req.body.From)];
 
     if (resKey) {
-      twiml.message('Confirmation Received. Proceeding with operation.');
+      twiml.message(`Confirmation Received. ${req.body.Body === 'DENY' ? 'Cancelling operation' : 'Proceeding with operation'}.`);
       ecc.sendObjectToCaller(
         {
           smsStatus: 'SUCCESS',
