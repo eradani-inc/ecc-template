@@ -1,4 +1,10 @@
 {
+  "twilio": {
+    "accountSid": "",
+    "authToken": "",
+    "fromNumber": ""
+  },
+
   "icndb": {
     "baseURL": "https://api.icndb.com",
     "responseType": "json"
