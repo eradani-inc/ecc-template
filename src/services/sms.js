@@ -29,7 +29,7 @@ exports.confirmSMS = async (reqkey, data) => {
   try {
     result = await client.messages
       .create({
-        body: `**IBM i Confirmation Requested**\n\nReason: ${smsData.reason}\n\nReply "CANCEL" to cancel the operation.\n\nReply anything else to confirm and proceed.`,
+        body: `**IBM i Confirmation Requested**\n\nReason: ${smsData.reason}\n\nReply "DENY" to cancel the operation.\n\nReply anything else to confirm and proceed.`,
         from: twilio.fromNumber,
         to: smsData.toNumber
       });
