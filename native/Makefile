@@ -10,7 +10,8 @@ LIB?=ECNCTAPP
 
 TGTRLS?=V7R4M0
 
-CLPGMS = dspjkc \
+CLPGMS = cnfsmsc \
+		 dspjkc \
          dsptrfcc \
          dspvhclc \
          prtlblc
@@ -19,12 +20,13 @@ RPGPGMS = dspjkr \
           dsptrfcr \
           dspvhclr \
           dspwfr \
-	  prtlblr
+		  prtlblr
 
 PGMS = $(CLPGMS) \
        $(RPGPGMS)
 
-CMDS = dspjkc \
+CMDS = cnfsmsc \
+       dspjkc \
        dspjkr \
        dsptrfcc \
        dsptrfcr \
@@ -89,6 +91,8 @@ $(libdir)/%.pgm: %.rpgle
 $(libdir)/%.pgm: %.clle
 	system "CRTBNDCL PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTRLS($(TGTRLS))"
 
+$(libdir)/cnfsmsc.pgm: smsapi.rpgleinc ecnctc.rpgleinc
+
 $(libdir)/dspjkr.pgm: icndbapi.rpgleinc ecnctc.rpgleinc
 
 $(libdir)/dsptrfcr.pgm: trfcapi.rpgleinc ecnctc.rpgleinc
@@ -138,6 +142,8 @@ $(libdir)/qclsrc.file/%.mbr: %.clle
 $(libdir)/qclsrc.file/%.mbr: %.clleinc
 	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
 
+$(libdir)/cnfsmsc.pgm: $(libdir)/qrpgsrc.file/smsapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
+
 $(libdir)/dspjkr.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
 $(libdir)/dsptrfcc.pgm: $(libdir)/qrpgsrc.file/trfcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
@@ -176,6 +182,10 @@ endif
 
 # Miscelaneous rules and dependencies
 #
+
+smsapi.clleinc smsapi.rpgleinc smsapi.js: smsapi.yaml
+	npm run generate -- -f $<
+	cp smsapi.js ../src/services
 
 icndbapi.clleinc icndbapi.rpgleinc icndbapi.js: icndbapi.yaml
 	npm run generate -- -f $<

@@ -1,0 +1,31 @@
+---
+name: smsapi
+formats:
+  SMSData:
+    recordType: request
+    length: 80
+    fields:
+      toNumber:
+        rpgName: ToNbr
+        length: 15
+        type: String
+      reason:
+        rpgName: Reason
+        length: 65
+        type: String
+  Result:
+    recordType: response
+    length: 80
+    fields:
+      smsStatus:
+        rpgName: SmsSts
+        length: 10
+        type: Number
+      smsNumber:
+        rpgName: FrmNbr
+        length: 15
+        type: String
+      message:
+        rpgName: Message
+        length: 55
+        type: String

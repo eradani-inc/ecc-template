@@ -27,7 +27,8 @@
     "axios": "^0.19.2",
     "download": "^8.0.0",
     "https-proxy-agent": "^3.0.1",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "twilio": "^3.53.0"
   },
   "devDependencies": {
     "@eradani-inc/ec-generate": "^3.4.0",
