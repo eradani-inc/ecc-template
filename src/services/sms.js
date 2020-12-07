@@ -1,3 +1,6 @@
+const http = require('http');
+const express = require('express');
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
 
 const { twilio, ecclient } = require("../config");
 const {
@@ -7,7 +10,13 @@ const {
 const { ECClient } = require("@eradani-inc/ec-client");
 
 const ecc = new ECClient(ecclient);
-const client = require('twilio')(twilio.accountSid, twilio.authToken)
+const client = require('twilio')(twilio.accountSid, twilio.authToken);
+
+const openRequests = {};
+
+if (twilio.requireReply) {
+  startServer();
+}
 
 exports.confirmSMS = async (reqkey, data) => {
   // get parameters from incomming data buffer
@@ -53,14 +62,38 @@ exports.confirmSMS = async (reqkey, data) => {
     );
   }
 
-  // Send the result info
-  return ecc.sendObjectToCaller(
-    {
-      smsStatus: 'SUCCESS',
-      smsNumber: smsData.toNumber,
-      message: 'SMS Sent Successfully'
-    },
-    convertObjectToResult,
-    nextReqKey
-  );
+  if (!twilio.requireReply) {
+    // Send the result info
+    return ecc.sendObjectToCaller(
+      {
+        smsStatus: 'SUCCESS',
+        smsNumber: smsData.toNumber,
+        message: 'SMS Sent Successfully'
+      },
+      convertObjectToResult,
+      nextReqKey
+    );
+  } else {
+    openRequests[smsData.toNumber] = nextReqKey;
+  }
 };
+
+function startServer() {
+  const app = express();
+
+  app.post('/sms', (req, res) => {
+    const twiml = new MessagingResponse();
+
+    console.log(req);
+    console.log(req.body);
+
+    twiml.message('Confirmation Received. Proceeding with operation.');
+
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twiml.toString());
+  });
+
+  http.createServer(app).listen(twilio.replyPort, () => {
+    console.log('Twilio reply server listening on port ' + twilio.replyPort);
+  });
+}

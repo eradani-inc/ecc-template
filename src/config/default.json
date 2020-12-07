@@ -2,7 +2,9 @@
   "twilio": {
     "accountSid": "",
     "authToken": "",
-    "fromNumber": ""
+    "fromNumber": "",
+    "requireReply": true,
+    "replyPort": 1337
   },
 
   "icndb": {
