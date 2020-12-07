@@ -11,7 +11,7 @@ LIB?=ECNCTAPP
 TGTRLS?=V7R4M0
 
 CLPGMS = cnfsmsc \
-		 dspjkc \
+         dspjkc \
          dsptrfcc \
          dspvhclc \
          prtlblc
@@ -36,7 +36,8 @@ CMDS = cnfsmsc \
        prtlblc \
        prtlblr
 
-GENSRC = icndbapi \
+GENSRC = smsapi \
+         icndbapi \
          lblapi \
          trfcapi \
          vinapi \
