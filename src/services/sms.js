@@ -1,6 +1,7 @@
 const http = require('http');
 const express = require('express');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
+const bodyParser = require('body-parser');
 
 const { twilio, ecclient } = require("../config");
 const {
@@ -81,11 +82,14 @@ exports.confirmSMS = async (reqkey, data) => {
 function startServer() {
   const app = express();
 
+  app.use(bodyParser.urlencoded({ extended: false }));
+
   app.post('/sms', (req, res) => {
     const twiml = new MessagingResponse();
 
     console.log(req);
     console.log(req.body);
+    console.log(req.body.Body);
 
     twiml.message('Confirmation Received. Proceeding with operation.');
 
