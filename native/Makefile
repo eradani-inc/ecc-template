@@ -13,7 +13,8 @@ TGTRLS?=V7R4M0
 CLPGMS = dspjkc \
          dsptrfcc \
          dspvhclc \
-         prtlblc
+         prtlblc \
+		 prtcdec
 
 RPGPGMS = dspjkr \
           dsptrfcr \
@@ -32,9 +33,11 @@ CMDS = dspjkc \
        dspvhclr \
        dspwfr \
        prtlblc \
-       prtlblr
+       prtlblr \
+	   prtcdec
 
-GENSRC = icndbapi \
+GENSRC = barcdeapi \
+         icndbapi \
          lblapi \
          trfcapi \
          vinapi \
@@ -105,6 +108,8 @@ $(libdir)/dspvhclc.pgm: vinapi.clleinc
 
 $(libdir)/prtlblc.pgm: lblapi.clleinc
 
+$(libdir)/prtcdec.pgm: barcdeapi.clleinc
+
 else
 
 $(libdir)/%.cmd: $(libdir)/qcmdsrc.file/%.mbr  $(libdir)/%.pgm
@@ -154,6 +159,8 @@ $(libdir)/dspvhclc.pgm: $(libdir)/qclsrc.file/vinapi.mbr
 
 $(libdir)/prtlblc.pgm: $(libdir)/qclsrc.file/lblapi.mbr
 
+$(libdir)/prtcdec.pgm: $(libdir)/qclsrc.file/barcdeapi.mbr
+
 # Prevent gmake from deleting intermediate source members
 .PRECIOUS: $(FQSRCMBRS)
 
@@ -176,6 +183,10 @@ endif
 
 # Miscelaneous rules and dependencies
 #
+
+barcdeapi.clleinc barcdeapi.rpgleinc barcdeapi.js: barcdeapi.yaml
+        npm run generate -- -f $<
+        cp barcdeapi.js ../src/services
 
 icndbapi.clleinc icndbapi.rpgleinc icndbapi.js: icndbapi.yaml
         npm run generate -- -f $<
