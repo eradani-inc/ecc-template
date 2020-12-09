@@ -3,6 +3,7 @@ const {
   ecclient
 } = require("../config");
 const fs = require('fs/promises');
+const path = require('path');
 const {
   ECClient
 } = require("@eradani-inc/ec-client");
@@ -47,7 +48,7 @@ exports.getBarcodeLabel = async (reqkey, data) => {
     // Send success result to client
 
     logger.debug('Sending Result Data');
-    logger.silly(JSON.stringify(resultData));
+    logger.silly(JSON.stringify(result));
 
     nextReqKey = await response.sendObjectToCaller(
       result,
