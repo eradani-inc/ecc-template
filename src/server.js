@@ -4,6 +4,7 @@ const { getforecast } = require("./services/weather");
 const { getVehicleData } = require("./services/vehicle");
 const { getTrafficData } = require("./services/traffic");
 const { getShippingLabel } = require("./services/shipping");
+const { getBarcodeLabel } = require('./services/barcode');
 const logger = require("./services/logger").forContext("server");
 const { ecclient } = require("./config");
 
@@ -19,6 +20,8 @@ async function handleRequest(data) {
       return getTrafficData(data.key, data.data);
     case "getshippinglabel":
       return getShippingLabel(data.key, data.data);
+    case "getbarcodelabel":
+      return getBarcodeLabel(data.key, data.data);
     default:
       throw new RangeError(`"${data.command}" is not a valid command.`);
   }
