@@ -28,7 +28,7 @@ PGM        PARM(&MODE &WAITTM &REQKEY &IN_CUST +
   DCL &DATABUF  *CHAR 512
 
   /*  Include request and response data definitions             */
-  INCLUDE SRCSTMF('prtcdec.clleinc')
+  INCLUDE SRCSTMF('barcdeapi.clleinc')
 
   /*  Declare local variables                                   */
   DCL &FIRST   *LGL
