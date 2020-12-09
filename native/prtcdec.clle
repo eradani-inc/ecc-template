@@ -1,0 +1,111 @@
+PGM        PARM(&MODE &WAITTM &REQKEY &IN_CUST +
+                &IN_ADDR &IN_CITY &IN_STATE &IN_ZIP +
+                &IN_PRD &IN_QTY &IN_CODE)
+
+  /*  Define parameters passed to this program.                  */
+  DCL &MODE        *CHAR  10
+  DCL &WAITTM      *DEC  ( 5 0 )
+  DCL &REQKEY      *CHAR   6
+  DCL &IN_CUST     *CHAR  16
+  DCL &IN_ADDR     *CHAR  20
+  DCL &IN_CITY     *CHAR  10
+  DCL &IN_STATE    *CHAR   2
+  DCL &IN_ZIP      *CHAR   5
+  DCL &IN_PRD      *CHAR  12
+  DCL &IN_QTY      *CHAR   3
+  DCL &IN_CODE     *CHAR  12
+
+  /*  Define variables for request                              */
+  DCL &CMD      *CHAR 32
+
+  /*  Define variables for response                             */
+  DCL &EOD       *LGL
+  DCL &EOA       *LGL
+  DCL &NODATA    *LGL
+
+  /* Declare varialbes for both request and response            */
+  DCL &DATALEN  *DEC  ( 5 0 )
+  DCL &DATABUF  *CHAR 512
+
+  /*  Include request and response data definitions             */
+  INCLUDE SRCSTMF('prtcdec.clleinc')
+
+  /*  Declare local variables                                   */
+  DCL &FIRST   *LGL
+
+  /* Skip sending request if *NOSEND */
+  IF (&MODE *EQ '*RCVONLY') THEN(GOTO RECV)
+  ELSE IF (&MODE *NE '*SNDRCV') DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Invalid mode')
+  ENDDO
+
+  /* Send the web service request                               */
+  CHGVAR &CMD      'getbarcodelabel'
+
+  CHGVAR &Cust     &IN_CUST
+  CHGVAR &Addr     &IN_ADDR
+  CHGVAR &City     &IN_CITY
+  CHGVAR &State    &IN_STATE
+  CHGVAR &Zip      &IN_ZIP
+  CHGVAR &Prd      &IN_PRD
+  CHGVAR &Qty      &IN_QTY
+  CHGVAR &Code     &IN_CODE
+
+  CHGVAR &DATALEN  %LEN(&CodeData)
+  CHGVAR &DATABUF  &CodeData
+  CALL PGM(ECNCT/ECCSNDREQ) PARM(&CMD &DATALEN &DATABUF &REQKEY)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCSNDREQ') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+RECV:
+
+  CHGVAR &DATALEN  %LEN(&Result)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &Result  %SST(&DATABUF 1 &DATALEN)
+  SNDPGMMSG MSG(&Status *BCAT '-' *BCAT &Message) MSGTYPE(*COMP)
+
+  IF (&Status *NE 'SUCCESS') THEN(GOTO ENDPGM)
+
+RECVCDE:
+
+  CHGVAR &DATALEN  %LEN(&Barcode)
+  CHGVAR &DATABUF  ' '
+  CALL PGM(ECNCT/ECCRCVRES) PARM(&WAITTM &REQKEY &EOD &EOA &NODATA +
+                                 &DATALEN &DATABUF)
+  MONMSG MSGID(CPF0000) EXEC(DO)
+    SNDPGMMSG MSG('Error calling ECCRCVRES') MSGTYPE(*COMP)
+    GOTO ENDPGM
+  ENDDO
+
+  IF (&EOD *AND &EOA *AND &NODATA) DO
+    SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGTYPE(*ESCAPE) +
+              MSGDTA('Timeout waiting on response:' *BCAT &REQKEY)
+    GOTO ENDPGM
+  ENDDO
+
+  CHGVAR &Barcode  %SST(&DATABUF 1 &DATALEN)
+  SNDPGMMSG MSG('Label Image: /QOpenSys/opt/eradani/ecc-template/temp/barcode/' +
+                *TCAT &IfsFile) MSGTYPE(*COMP)
+
+  GOTO ENDPGM
+
+ENDPGM:
+
+
+ENDPGM
