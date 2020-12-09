@@ -10,10 +10,10 @@ PRTCDEC:CMD PROMPT('Generate Barcode Label')
   PARM KWD(REQKEY) TYPE(*CHAR) LEN(6) DFT('0     ') +
        PROMPT('Request key')
 
-  PARM KWD(CUSTOMER) TYPE(*CHAR) LEN(16) +
+  PARM KWD(CUST) TYPE(*CHAR) LEN(16) +
        PROMPT('Customer')
 
-  PARM KWD(ADDRESS) TYPE(*CHAR) LEN(20) +
+  PARM KWD(ADDR) TYPE(*CHAR) LEN(20) +
        PROMPT('Address')
 
   PARM KWD(CITY) TYPE(*CHAR) LEN(10) +
@@ -25,10 +25,10 @@ PRTCDEC:CMD PROMPT('Generate Barcode Label')
   PARM KWD(ZIP) TYPE(*CHAR) LEN(5) +
        PROMPT('Zip')
 
-  PARM KWD(PRODUCT) TYPE(*CHAR) LEN(12) +
+  PARM KWD(PRD) TYPE(*CHAR) LEN(12) +
        PROMPT('Product')
 
-  PARM KWD(QUANTITY) TYPE(*CHAR) LEN(3) +
+  PARM KWD(QTY) TYPE(*CHAR) LEN(3) +
        PROMPT('Quantity')
 
   PARM KWD(CODE) TYPE(*CHAR) LEN(12) +

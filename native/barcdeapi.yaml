@@ -6,11 +6,11 @@ formats:
     length: 80
     fields:
       customer:
-        rpgName: Customer
+        rpgName: Cust
         length: 16 
         type: String
       address:
-        rpgName: Address
+        rpgName: Addr
         length: 20
         type: String
       city:
@@ -26,11 +26,11 @@ formats:
         length: 5
         type: String
       product:
-        rpgName: Product
+        rpgName: Prd
         length: 12
         type: String
       quantity:
-        rpgName: Quantity
+        rpgName: Qty
         length: 3
         type: Number
       code:
@@ -54,6 +54,6 @@ formats:
     length: 80
     fields:
       ifsFile:
-        rpgName: ifsFile
+        rpgName: IfsFile
         length: 32
         type: String
