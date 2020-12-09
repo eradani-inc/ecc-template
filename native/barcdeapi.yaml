@@ -1,0 +1,59 @@
+---
+name: barcdeapi
+formats:
+  CodeData:
+    recordType: request
+    length: 80
+    fields:
+      customer:
+        rpgName: Customer
+        length: 16 
+        type: String
+      address:
+        rpgName: Address
+        length: 20
+        type: String
+      city:
+        rpgName: City
+        length: 10
+        type: String
+      state:
+        rpgName: State
+        length: 2
+        type: String
+      zip:
+        rpgName: Zip
+        length: 5
+        type: String
+      product:
+        rpgName: Product
+        length: 12
+        type: String
+      quantity:
+        rpgName: Quantity
+        length: 3
+        type: Number
+      code:
+        rpgName: Code
+        length: 12
+        type: String
+  Result:
+    recordType: response
+    length: 80
+    fields:
+      status:
+        rpgName: Status
+        length: 10
+        type: String
+      message:
+        rpgName: Message
+        length: 70
+        type: String
+  Barcode:
+    recordType: response
+    length: 80
+    fields:
+      ifsFile:
+        rpgName: ifsFile
+        length: 32
+        type: String
