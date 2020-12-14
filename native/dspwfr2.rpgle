@@ -101,12 +101,14 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  return;
+                  *InLr = *On;
+                  Return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
              MsgDta = 'Invalid Mode';
              CallP Write_Msg1(MsgDta);
+             *InLr = *On;
              Return;
          EndSl;
 
@@ -119,12 +121,14 @@
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           return;
+           *InLr = *On;
+           Return;
          endif;
 
          If (Eod and EoA And NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg1(MsgDta);
+           *InLr = *On;
            Return;
          EndIf;
 
@@ -136,6 +140,7 @@
 
          HttpStatusN = %Dec(Result.HttpStatus:10:0);
          If (HttpStatusN < 200) or (HttpStatusN >= 300);
+           *InLr = *On;
            Return;
          EndIf;
 
@@ -146,10 +151,12 @@
                                 DataLen:DataBuf);
              if %error;
                CallP Write_Excp('EccRcvRes':Psds);
-               return;
+               *InLr = *On;
+               Return;
              endif;
 
              If (NoData);
+               *InLr = *On;
                Return;
              Else;
                Forecast = DataBuf;
@@ -157,9 +164,9 @@
              EndIf;
          EndDo;
 
+         *InLr = *On;
          Return;
 
-         *InLr = *On;
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Msg1

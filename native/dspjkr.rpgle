@@ -93,12 +93,14 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  return;
+                  *InLr = *On;
+                  Return;
                 endif;
            When In_Mode = '*RCVONLY';
          Other;
            MsgDta = 'Invalid Mode';
            CallP Write_Msg1(MsgDta);
+           *InLr = *On;
            Return;
          EndSl;
 
@@ -111,12 +113,14 @@
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           return;
+           *InLr = *On;
+           Return;
          endif;
 
          If (NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg1(MsgDta);
+           *InLr = *On;
            Return;
          EndIf;
 
@@ -127,16 +131,19 @@
          if (RetData.R_HttpSts = '200');
            CallP Write_RetData(RetData);
            if (RetData.R_Type <> 'success');
-             return;
+             *InLr = *On;
+             Return;
            endif;
          else;
            RetData3 = DataBuf;
            CallP Write_RetData3(RetData3);
-           return;
+           *InLr = *On;
+           Return;
          endif;
 
       //   HttpSts = %Dec(R_HttpSts:10:0);
       //   If (HttpSts < 200) or (HttpSts >= 300);
+      //     *InLr = *On;
       //     Return;
       //   EndIf;
 
@@ -149,10 +156,12 @@
                                 DataLen:DataBuf);
              if %error;
                CallP Write_Excp('EccRcvRes':Psds);
-               return;
+               *InLr = *On;
+               Return;
              endif;
 
              If (NoData);
+               *InLr = *On;
                Return;
              Else;
                RetData2 = DataBuf;
@@ -160,9 +169,9 @@
              EndIf;
          EndDo;
 
+         *InLr = *On;
          Return;
 
-         *InLr = *On;
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Msg1

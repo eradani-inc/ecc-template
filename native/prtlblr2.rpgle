@@ -134,12 +134,14 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  return;
+                  *InLr = *On;
+                  Return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
              MsgDta = 'Invalid Mode';
              CallP Write_Msg(MsgDta);
+             *InLr = *On;
              Return;
          EndSl;
 
@@ -152,12 +154,14 @@
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           return;
+           *InLr = *On;
+           Return;
          endif;
 
          If (Eod and EoA And NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg(MsgDta);
+           *InLr = *On;
            Return;
          EndIf;
 
@@ -170,6 +174,7 @@
          If (HttpStatusN < 200) or (HttpStatusN >= 300);
            Error = DataBuf;
            CallP Write_Error(Error);
+           *InLr = *On;
            Return;
          EndIf;
 
@@ -181,15 +186,16 @@
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           return;
+           *InLr = *On;
+           Return;
          endif;
 
          Label = DataBuf;
          CallP Write_Label(Label);
 
+         *InLr = *On;
          Return;
 
-         *InLr = *On;
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Msg
