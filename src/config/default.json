@@ -55,8 +55,8 @@
     "responseLen": 80,
     "requestLen": 80,
     "debug": false,
-    "pooling": true,
-    "connectionString": "DSN=*LOCAL",
+    "pooling": false,
+    "connectionString": "Driver={IBM i Access ODBC Driver};System=eradani-connect-test.eradani.com;Uid=ECTEST;Pwd=testtest",
     "useIbmiServices": false
   }
 }
