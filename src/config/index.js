@@ -1,6 +1,10 @@
 const _ = require("lodash");
 const defaults = require("./default");
+const overrides = require('./overrides');
+let config = {};
 
-const config = require(`./${process.env.NODE_ENV || "development"}`);
+try {
+    config = require(`./${process.env.NODE_ENV || "development"}`);
+} catch(e) {}
 
-module.exports = _.merge({}, defaults, config);
+module.exports = _.merge({}, defaults, overrides, config);
