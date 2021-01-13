@@ -24,3 +24,12 @@ src/config/production.json
 src/services/*api.js
 temp/*.*
 temp/*/*
+node_modules/**
+logs/exceptions/*.exceptions
+jsconfig.json
+EC2/**
+dist/**
+.nyc_output/**
+.coverage/**
+docs/**
+.DS_Store
