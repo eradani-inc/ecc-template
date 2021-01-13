@@ -1,13 +1,15 @@
-const axios = require('axios');
-const { icndb, proxy, ecclient } = require('../config');
+import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
+import axios from 'axios';
+import config from 'src/config';
+const { icndb } = config;
 
 const axiosInstance = axios.create(icndb);
 
-exports.getJoke = async (reqkey, data, converter, ecc) => {
-    // get parameters from incomming data buffer
+export const getJoke: ECCHandlerFunction = async function(reqkey, data, converter, ecc) {
+    // Get parameters from incomming data buffer
     const reqFields = converter.convertDataToObject(data);
 
-    // call web service
+    // Call web service
     let result;
     let nextReqKey = reqkey;
     try {
@@ -15,7 +17,7 @@ exports.getJoke = async (reqkey, data, converter, ecc) => {
     } catch (err) {
         if (err.response) {
             // If the request was made and the server responded with a status code
-            // that falls out of the range of 2xx
+            // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
             nextReqKey = await ecc.sendObjectToCaller(
                 {
@@ -29,7 +31,7 @@ exports.getJoke = async (reqkey, data, converter, ecc) => {
 
         // Else the request was made but no response was received
         // Note: This error format has nothing to do with the web service. This is
-        // mainly TCP/IP errors.
+        // Mainly TCP/IP errors.
         return ecc.sendObjectToCaller(
             {
                 httpstatus: 999,

@@ -15,10 +15,6 @@
 config/*.json
 logs/*.log
 logs/exceptions/*.exceptions
-native/*.clleinc
-native/*.js
-native/*.rpgleinc
-native/*.ts
 src/config/development.json
 src/config/production.json
 src/services/*api.js
@@ -33,3 +29,7 @@ dist/**
 .coverage/**
 docs/**
 .DS_Store
+qsys/*.clleinc
+qsys/*.rpgleinc
+qsys/*.js
+qsys/*.ts

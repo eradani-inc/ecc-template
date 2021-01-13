@@ -11,7 +11,6 @@ module.exports = {
     plugins: ['@typescript-eslint', '@typescript-eslint/tslint'],
     rules: {
         '@typescript-eslint/await-thenable': 'error',
-        '@typescript-eslint/class-name-casing': 'error',
         '@typescript-eslint/consistent-type-assertions': 'error',
         '@typescript-eslint/indent': 'off',
         '@typescript-eslint/member-delimiter-style': [
