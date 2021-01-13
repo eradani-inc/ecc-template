@@ -1,62 +1,62 @@
 {
-  "icndb": {
-    "baseURL": "https://api.icndb.com",
-    "responseType": "json"
-  },
+    "icndb": {
+        "baseURL": "https://api.icndb.com",
+        "responseType": "json"
+    },
 
-  "weather": {
-    "baseURL": "https://api.openweathermap.org/data/2.5/",
-    "responseType": "json",
-    "apikey": "00000000000000000000000000000000"
-  },
+    "weather": {
+        "baseURL": "https://api.openweathermap.org/data/2.5/",
+        "responseType": "json",
+        "apikey": "00000000000000000000000000000000"
+    },
 
-  "vehicle": {
-    "baseURL": "https://vpic.nhtsa.dot.gov/api",
-    "responseType": "json"
-  },
+    "vehicle": {
+        "baseURL": "https://vpic.nhtsa.dot.gov/api",
+        "responseType": "json"
+    },
 
-  "traffic": {
-    "baseURL": "https://traffic.ls.hereapi.com",
-    "responseType": "json",
-    "apiKey": "0000000000000000000000000000000000000000000"
-  },
+    "traffic": {
+        "baseURL": "https://traffic.ls.hereapi.com",
+        "responseType": "json",
+        "apiKey": "0000000000000000000000000000000000000000000"
+    },
 
-  "shipping": {
-    "baseURL": "https://api.shipengine.com/v1",
-    "responseType": "json",
-    "apiKey": "TEST_r/PzCS7lSzZQsDV5Usz11SoByOtIu1b1XGjX+dNn0gA",
-    "shipFrom": {
-      "name": "Test Demo",
-      "company_name": "Demo, Inc",
-      "phone": "123-456-7890",
-      "address_line1": "123 Example St",
-      "city_locality": "Demo",
-      "state_province": "CA",
-      "postal_code": "94707",
-      "country_code": "US",
-      "address_residential_indicator": "no"
+    "shipping": {
+        "baseURL": "https://api.shipengine.com/v1",
+        "responseType": "json",
+        "apiKey": "TEST_r/PzCS7lSzZQsDV5Usz11SoByOtIu1b1XGjX+dNn0gA",
+        "shipFrom": {
+            "name": "Test Demo",
+            "company_name": "Demo, Inc",
+            "phone": "123-456-7890",
+            "address_line1": "123 Example St",
+            "city_locality": "Demo",
+            "state_province": "CA",
+            "postal_code": "94707",
+            "country_code": "US",
+            "address_residential_indicator": "no"
+        }
+    },
+
+    "logger": {
+        "maxLoggingLevel": "debug"
+    },
+
+    "proxy": {
+        "enabled": false,
+        "protocol": "http",
+        "auth": "",
+        "host": "localhost",
+        "port": 8080,
+        "rejectUnauthorized": true
+    },
+
+    "ecclient": {
+        "responseLen": 80,
+        "requestLen": 80,
+        "debug": false,
+        "pooling": false,
+        "connectionString": "Driver={IBM i Access ODBC Driver};System=eradani-connect-test.eradani.com;Uid=ECTEST;Pwd=testtest",
+        "useIbmiServices": false
     }
-  },
-
-  "logger": {
-    "maxLoggingLevel": "debug"
-  },
-
-  "proxy": {
-    "enabled": false,
-    "protocol": "http",
-    "auth": "",
-    "host": "localhost",
-    "port": 8080,
-    "rejectUnauthorized": true
-  },
-
-  "ecclient": {
-    "responseLen": 80,
-    "requestLen": 80,
-    "debug": false,
-    "pooling": false,
-    "connectionString": "Driver={IBM i Access ODBC Driver};System=eradani-connect-test.eradani.com;Uid=ECTEST;Pwd=testtest",
-    "useIbmiServices": false
-  }
 }

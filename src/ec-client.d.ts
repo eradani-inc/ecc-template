@@ -1,8 +1,6 @@
-declare module "@eradani-inc/ec-client" {
+declare module '@eradani-inc/ec-client' {
     import JSONObject from '@eradani-inc/ecc-router/types/json-object';
-    import {
-        ECCInternalRouter
-    } from '@eradani-inc/ecc-router/ecc-router';
+    import { ECCInternalRouter } from '@eradani-inc/ecc-router/ecc-router';
     export type RequestKey = number;
 
     export interface RawDataRecord {
@@ -46,19 +44,19 @@ declare module "@eradani-inc/ec-client" {
 
     export class ECClient {
         constructor(config: JSONObject);
-        connect: () => Promise < void > ;
+        connect: () => Promise<void>;
         sendObjectToCaller: (
             object: JSONObject,
             converter: ECCResponseConverter,
             key: RequestKey
-        ) => Promise < RequestKey > ;
+        ) => Promise<RequestKey>;
         sendObjectsToCaller: (
             objects: JSONObject[],
             converter: ECCResponseConverter,
             key: RequestKey
-        ) => Promise < RequestKey > ;
-        sendFieldToCaller: (data: string, key: RequestKey) => Promise < RequestKey > ;
-        getNextRequest: () => Promise < RawRequestRecord > ;
-        getNextRecord: (key: RequestKey) => Promise < RawDataRecord > ;
+        ) => Promise<RequestKey>;
+        sendFieldToCaller: (data: string, key: RequestKey) => Promise<RequestKey>;
+        getNextRequest: () => Promise<RawRequestRecord>;
+        getNextRecord: (key: RequestKey) => Promise<RawDataRecord>;
     }
 }

@@ -1,20 +1,20 @@
-import ECCRouter from "@eradani-inc/ecc-router";
-import { ECClient } from "@eradani-inc/ec-client";
+import ECCRouter from '@eradani-inc/ecc-router';
+import { ECClient } from '@eradani-inc/ec-client';
 
-import createLogger from "src/services/logger";
-import config from "src/config";
+import createLogger from 'src/services/logger';
+import config from 'src/config';
 const { ecclient, debug } = config;
 import registerCommands from './commands';
 
-const logger = createLogger("app");
+const logger = createLogger('app');
 let router: ECCRouter;
 
 async function start() {
     const ecc = new ECClient(ecclient);
     router = new ECCRouter(ecc, { debug });
-    
+
     await registerCommands(router);
-    
+
     await router.listen();
 
     logger.info('ECC App Listening for Commands');

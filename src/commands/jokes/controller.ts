@@ -5,7 +5,7 @@ const { icndb } = config;
 
 const axiosInstance = axios.create(icndb);
 
-export const getJoke: ECCHandlerFunction = async function(reqkey, data, converter, ecc) {
+export const getJoke: ECCHandlerFunction = async function (reqkey, data, converter, ecc) {
     // Get parameters from incomming data buffer
     const reqFields = converter.convertDataToObject(data);
 

@@ -43,15 +43,7 @@ module.exports = {
         curly: ['error', 'multi-line'],
         'eol-last': 'off',
         eqeqeq: ['warn', 'smart'],
-        'id-blacklist': [
-            'error',
-            'number',
-            'String',
-            'string',
-            'Boolean',
-            'boolean',
-            'Undefined'
-        ],
+        'id-blacklist': ['error', 'number', 'String', 'string', 'Boolean', 'boolean', 'Undefined'],
         'id-match': 'error',
         'linebreak-style': 'off',
         'max-len': 'off',
