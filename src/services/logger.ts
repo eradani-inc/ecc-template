@@ -13,6 +13,9 @@
  * be stored. "info", "verbose", "debug", and "silly" log statements will be
  * ignored by the logger.
  *
+ * Another setting under the "logger" config is "disableConsole". When set to
+ * true, this setting will stop logs from going to the console / QPRINT.
+ *
  * To construct a new logger, add the following code to the top of your JS file:
  * const logger = require('path/to/logger.js').forContext('my.custom.context');
  *
@@ -20,24 +23,40 @@
  * source code, and are named by their creation dates in the following format:
  * YYYY-MM-DD.log
  *
- * For example, the log file for October 7th, 2019 would be: 2019-10-07.log
+ * For example, the log file for October 7th, 2020 would be: 2020-10-07.log
  *
  * Happy Logging!
  */
 
-const winston = require('winston');
-require('winston-daily-rotate-file');
-const path = require('path');
-const config = require('../../config').get().logger;
+import winston from 'winston';
+import 'winston-daily-rotate-file';
+import path from 'path';
+import safeJSONStringify from 'safe-json-stringify';
+import config from '../config';
 
-const formatter = winston.format.printf((options: any) => {
-    let logString =
-        '' +
-        `[${options.level.toUpperCase()}]`.padEnd(7, ' ') +
-        `(${new Date().toISOString()})` +
-        ` -- In ${options.context}: ${options.message}$`;
-    return logString;
-});
+function _stringify(data: any) {
+    try {
+        if (data instanceof Error) {
+            return data.toString();
+        } else {
+            return safeJSONStringify(data);
+        }
+    } catch (e) {
+        return '' + data;
+    }
+}
+
+const formatter = winston.format.combine(
+    winston.format.metadata({ fillExcept: ['message', 'level', 'timestamp', 'label', 'context'] }),
+    winston.format.printf((options: any) => {
+        let logString =
+            '' +
+            `[${options.level.toUpperCase()}]`.padEnd(10, ' ') +
+            `(${new Date().toISOString()})` +
+            ` -- ${options.context} -- ${options.message} -- ${_stringify(options.metadata)}`;
+        return logString;
+    })
+);
 
 const normalTransport = new winston.transports.DailyRotateFile({
     filename: path.join(
@@ -46,9 +65,8 @@ const normalTransport = new winston.transports.DailyRotateFile({
         '%DATE%.log'
     ),
     datePattern: 'YYYY-MM-DD',
-    prepend: true,
     json: true,
-    level: config.maxLoggingLevel,
+    level: config.logger.maxLoggingLevel,
     format: formatter
 });
 
@@ -60,16 +78,14 @@ const exceptionTransport = new winston.transports.DailyRotateFile({
         '%DATE%.exceptions'
     ),
     datePattern: 'YYYY-MM-DD',
-    prepend: true,
     handleExceptions: true,
-    humanReadableUnhandledException: true,
     json: true,
-    level: config.maxLoggingLevel,
+    level: config.logger.maxLoggingLevel,
     format: formatter
 });
 
 const consoleTransport = new winston.transports.Console({
-    level: config.maxLoggingLevel,
+    level: config.logger.maxLoggingLevel,
     format: formatter
 });
 
@@ -80,11 +96,20 @@ const logger = winston.createLogger({
 });
 
 // Don't output to the console if we're in testing mode
-if (config.disableConsole) {
+if (config.logger.disableConsole) {
     logger.remove(consoleTransport);
 }
 
-export default function (context: string) {
+export default function createLogger(context: string) {
     // Set the default context of the child
     return logger.child({ context });
 }
+
+// Logger for Morgan
+// Attach with: app.use(require("morgan")("combined", { stream: requestLogger }));
+const _requestLogger = createLogger('api-requests');
+export const requestLogger = {
+    write: function (message: string) {
+        _requestLogger.info(message);
+    }
+};

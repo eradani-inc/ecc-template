@@ -39,7 +39,8 @@
     },
 
     "logger": {
-        "maxLoggingLevel": "debug"
+        "maxLoggingLevel": "debug",
+        "disableConsole": false
     },
 
     "proxy": {

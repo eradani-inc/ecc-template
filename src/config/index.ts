@@ -1,12 +1,16 @@
 import _ from 'lodash';
-import defaults from './default.json';
-import overrides from './overrides.json';
+import fs from 'fs';
+import path from 'path';
+import { JSONObject } from 'src/types';
+
+const defaults = JSON.parse(fs.readFileSync(path.join(__dirname, 'default.json')).toString());
+const overrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'overrides.json')).toString());
 let config = {};
 
 try {
-    config = require(`./${process.env.NODE_ENV || 'development'}`);
+    config = JSON.parse(fs.readFileSync(path.join(__dirname, `${process.env.NODE_ENV || 'development'}`)).toString());
 } catch (e) {
-    console.log(`Requested environment config (${process.env.NODE_ENV || 'development'}) not found`);
+    console.warn(`Requested environment config (${process.env.NODE_ENV || 'development'}) not found`);
 }
 
-export default _.merge({}, defaults, overrides, config);
+export = _.merge({}, defaults, overrides, config) as JSONObject;

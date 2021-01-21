@@ -1,11 +1,14 @@
 import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'src/config';
+import createLogger from 'src/services/logger';
+const logger = createLogger('commands/jokes');
 const { icndb } = config;
 
 const axiosInstance = axios.create(icndb);
 
 export const getJoke: ECCHandlerFunction = async function (reqkey, data, converter, ecc) {
+    logger.debug(`Received getJoke request`, { reqkey, data });
     // Get parameters from incomming data buffer
     const reqFields = converter.convertDataToObject(data);
 

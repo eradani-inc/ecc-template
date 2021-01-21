@@ -1,1 +1,5 @@
+src/config/**
+qsys/**
+src/interfaces/**
+dist/**
 *.js

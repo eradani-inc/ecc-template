@@ -7,11 +7,12 @@ const { ecclient, debug } = config;
 import registerCommands from './commands';
 
 const logger = createLogger('app');
+const requestLogger = createLogger('requests');
 let router: ECCRouter;
 
 async function start() {
     const ecc = new ECClient(ecclient);
-    router = new ECCRouter(ecc, { debug });
+    router = new ECCRouter(ecc, { logger: requestLogger, debug });
 
     await registerCommands(router);
 
