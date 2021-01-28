@@ -8,7 +8,7 @@ module.exports = {
         project: 'tsconfig.json',
         sourceType: 'module'
     },
-    plugins: ['@typescript-eslint', '@typescript-eslint/tslint'],
+    plugins: ['@typescript-eslint', '@typescript-eslint/tslint', 'filenames'],
     rules: {
         '@typescript-eslint/await-thenable': 'error',
         '@typescript-eslint/consistent-type-assertions': 'error',
@@ -37,6 +37,7 @@ module.exports = {
         '@typescript-eslint/space-within-parens': ['off', 'never'],
         '@typescript-eslint/type-annotation-spacing': 'off',
         '@typescript-eslint/unified-signatures': 'error',
+        'filenames/match-regex': ['warn', '^[a-z\-0-9.]+$'],
         'arrow-parens': ['off', 'as-needed'],
         camelcase: 'error',
         'capitalized-comments': 'warn',
