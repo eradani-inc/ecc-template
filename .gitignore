@@ -12,7 +12,7 @@
 /generated-docs/
 /node_modules/
 /output/
-config/*.json
+config/*
 logs/*.log
 logs/exceptions/*.exceptions
 src/config/development.json
