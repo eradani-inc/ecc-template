@@ -50,6 +50,7 @@
         "@eradani-inc/ecc-router": "^0.4.3",
         "@types/safe-json-stringify": "^1.1.2",
         "axios": "^0.21.1",
+        "config": "^3.3.3",
         "download": "^8.0.0",
         "https-proxy-agent": "^5.0.0",
         "lodash": "^4.17.20",
@@ -60,6 +61,7 @@
     "devDependencies": {
         "@eradani-inc/ec-generate": "^3.4.6",
         "@types/chai": "^4.2.14",
+        "@types/config": "0.0.38",
         "@types/lodash": "^4.14.168",
         "@types/mocha": "^8.2.0",
         "@types/node": "^14.14.22",

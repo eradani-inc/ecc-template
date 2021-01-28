@@ -1,16 +1,22 @@
-import _ from 'lodash';
-import fs from 'fs';
-import path from 'path';
 import { JSONObject } from 'src/types';
+const configModule = require('../../node_modules/config');
 
-const defaults = JSON.parse(fs.readFileSync(path.join(__dirname, 'default.json')).toString());
-const overrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'overrides.json')).toString());
-let config = {};
+function init(): JSONObject {
+    // Arbitrary custom logic can be placed here to modify config.
+    // For example:   configModule.port = 3001;
 
-try {
-    config = JSON.parse(fs.readFileSync(path.join(__dirname, `${process.env.NODE_ENV || 'development'}`)).toString());
-} catch (e) {
-    console.warn(`Requested environment config (${process.env.NODE_ENV || 'development'}) not found`);
+    // Config is globally immutable after this function completes.
+    lockConfig();
+    return configModule;
 }
 
-export = _.merge({}, defaults, overrides, config) as JSONObject;
+function lockConfig() {
+    try {
+        configModule.__locked = true;
+        configModule.get('__locked');
+    } catch (e) {
+        e = e;
+    }
+}
+
+export = init();
