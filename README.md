@@ -20,6 +20,8 @@ If a previous version of the *Eradani Connect Client Template* was installed, de
 
 ##### 4.  Create JavaScript config file
 
+Configuration is based on the popular `config` open source module. A full guide on configuration using this module can be found here: [https://github.com/lorenwest/node-config/wiki](https://github.com/lorenwest/node-config/wiki)
+
 Create the `development.json` configuration file to override default configuration options. The only required override is the `weather.apikey` field. For example:
 
 ```json
