@@ -1,3 +1,5 @@
+process.env.NODE_CONFIG_DIR = __dirname;
+console.log(process.env.NODE_CONFIG_DIR);
 import { JSONObject } from 'src/types';
 const configModule = require('../../node_modules/config');
 

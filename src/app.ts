@@ -1,7 +1,7 @@
 import ECCRouter from '@eradani-inc/ecc-router';
 import { ECClient } from '@eradani-inc/ec-client';
 
-import config from 'src/config';
+import config from 'config';
 import createLogger from 'src/services/logger';
 const { ecclient, debug } = config;
 import registerCommands from 'src/commands';

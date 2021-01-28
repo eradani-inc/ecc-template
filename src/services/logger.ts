@@ -32,7 +32,7 @@ import winston from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
 import safeJSONStringify from 'safe-json-stringify';
-import config from '../config';
+import config from 'config';
 
 function _stringify(data: any) {
     try {

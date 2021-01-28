@@ -1,6 +1,6 @@
 import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
-import config from 'src/config';
+import config from 'config';
 import createLogger from 'src/services/logger';
 const logger = createLogger('commands/jokes');
 const { icndb } = config;
