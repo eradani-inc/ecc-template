@@ -37,7 +37,7 @@ module.exports = {
         '@typescript-eslint/space-within-parens': ['off', 'never'],
         '@typescript-eslint/type-annotation-spacing': 'off',
         '@typescript-eslint/unified-signatures': 'error',
-        'filenames/match-regex': ['warn', '^[a-z\-0-9.]+$'],
+        'filenames/match-regex': ['warn', '^[a-z-0-9.]+$'],
         'arrow-parens': ['off', 'as-needed'],
         camelcase: 'error',
         'capitalized-comments': 'warn',
