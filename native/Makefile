@@ -72,20 +72,21 @@ ecnctc.rpgleinc: ../node_modules/@eradani-inc/ec-client/native/ecnctc.rpgleinc
 ifeq ($(TGTRLS), V7R4M0)
 
 $(libdir)/%.cmd: %.cmd  $(libdir)/%.pgm
-	system "CRTCMD CMD($(LIB)/$(basename $(@F))) PGM($(LIB)/$(basename $(@F)))\
-	  SRCSTMF('$<')"
+	system "CRTCMD CMD($(LIB)/$(basename $(@F))) PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<')"
 
-$(libdir)/dspjkr.pgm: $(libdir)/dspjkr.module $(libdir)/icndbapi.rpgle ecnctc.rpgleinc
-	system "CRTPGM PGM($(LIB)/TSTMYRECS) MODULE($(LIB)/TSTMYRECS $(LIB)/MYRECORDS)"
-
-$(libdir)/dsptrfcr.pgm: trfcapi.rpgleinc ecnctc.rpgleinc
-
-$(libdir)/dspvhclr.pgm: vinapi.rpgleinc ecnctc.rpgleinc
-
-$(libdir)/dspwfr.pgm: wthfrcapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dspjkr.pgm: $(libdir)/dspjkr.module $(libdir)/icndbapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/icndbapi)"
 
 $(libdir)/%.module: %.rpgle
 	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS))"
+
+$(libdir)/dspjkr.module: icndbapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/dsptrfcr.module: trfcapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/dspvhclr.module: vinapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/dspwfr.module: wthfrcapi.rpgleinc ecnctc.rpgleinc
 
 else
 

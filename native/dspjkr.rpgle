@@ -1,13 +1,19 @@
      H Option(*srcstmt:*nodebugio)
      H Debug
-     H Actgrp(*NEW) Dftactgrp(*NO)
 
      FQSYSPRT   O    F  132        Printer
+
+      * Include EccSndReq & EccRcvReq prototypes
+      /copy ecnctc.rpgleinc
+
+      * Include data structs and buffer conversion prototypes
+      /copy icndbapi.rpgleinc
 
       *
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
+     D  MyData         DS                  LikeDS(Data)
 
       *
       * Passed Parameters - Response
@@ -15,6 +21,9 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
+     D  MyRetData      DS                  LikeDS(RetData)
+     D  MyRetData2     DS                  LikeDS(RetData2)
+     D  MyRetData3     DS                  LikeDS(RetData3)
 
       *
       * Passed Parameter - both Request & Response
@@ -22,14 +31,7 @@
      D  DataLen        S              5P 0
      D  DataBuf        S            512A
 
-      *
-      * Passed Pararmers for API call
-      *
-      /copy icndbapi.rpgleinc
-
       * Local Variables
-     D HttpSts         S             10I 0
-
      D MsgDta          S            132A
 
      D Psds           SDS                  Qualified
@@ -54,9 +56,6 @@
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
 
-      * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
-
       *
      D Write_Msg1      PR
      D  In_MsgDta                          Like(MsgDta) Const
@@ -79,12 +78,14 @@
       * Main Line
       *****************************************************************
 
+         *InLr = *On;
+
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         Data.D_Ctgry = 'nerdy';
-         DataLen = %len(Data);
-         DataBuf = Data;
+         MyData.Ctgry = 'nerdy';
+         DataLen = 80;
+         DataToBuf(MyData:DataBuf);
 
       // Send request
 
@@ -93,83 +94,68 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  *InLr = *On;
                   Return;
                 endif;
            When In_Mode = '*RCVONLY';
          Other;
            MsgDta = 'Invalid Mode';
            CallP Write_Msg1(MsgDta);
-           *InLr = *On;
            Return;
          EndSl;
 
 
       // Receive response
 
-         DataLen = %len(RetData);
+         DataLen = 80;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           *InLr = *On;
            Return;
          endif;
 
          If (NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg1(MsgDta);
-           *InLr = *On;
            Return;
          EndIf;
 
 
       // Display The Result
 
-         RetData = DataBuf;
-         if (RetData.R_HttpSts = '200');
-           CallP Write_RetData(RetData);
-           if (RetData.R_Type <> 'success');
-             *InLr = *On;
+         BufToRetData(DataBuf:MyRetData);
+         if (MyRetData.HttpSts = 200);
+           CallP Write_RetData(MyRetData);
+           if (MyRetData.Type <> 'success');
              Return;
            endif;
          else;
-           RetData3 = DataBuf;
-           CallP Write_RetData3(RetData3);
-           *InLr = *On;
+           BufToRetData3(DataBuf:MyRetData3);
+           CallP Write_RetData3(MyRetData3);
            Return;
          endif;
-
-      //   HttpSts = %Dec(R_HttpSts:10:0);
-      //   If (HttpSts < 200) or (HttpSts >= 300);
-      //     *InLr = *On;
-      //     Return;
-      //   EndIf;
 
       // Receive and display the remaining lines, if any
          Eod = '0';
          DoW not Eod;
-             DataLen = %len(RetData2);
+             DataLen = 80;
              DataBuf = '';
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);
              if %error;
                CallP Write_Excp('EccRcvRes':Psds);
-               *InLr = *On;
                Return;
              endif;
 
              If (NoData);
-               *InLr = *On;
                Return;
              Else;
-               RetData2 = DataBuf;
-               CallP Write_RetData2(RetData2);
+               BufToRetData2(DataBuf:MyRetData2);
+               CallP Write_RetData2(MyRetData2);
              EndIf;
          EndDo;
 
-         *InLr = *On;
          Return;
 
 
@@ -213,9 +199,9 @@
      D  Sep2                          3A   Inz(' - ')
      D  Value                        61A
 
-       Sts = In_RetData.R_HttpSts;
-       Type = In_RetData.R_Type;
-       Value = In_RetData.R_Value;
+       Sts = %char(In_RetData.HttpSts);
+       Type = In_RetData.Type;
+       Value = In_RetData.Value;
 
        Write QSysPrt Text;
 
@@ -237,7 +223,7 @@
      D Text            DS           132
      D  Joke                         80A
 
-       Joke = In_RetData2.R2_Joke;
+       Joke = In_RetData2.Joke;
 
        Write QSysPrt Text;
 
@@ -261,8 +247,8 @@
      D  Sep                           3A   Inz(' - ')
      D  Error                        77A
 
-       Sts = In_RetData3.R3_HttpSts;
-       Error = In_RetData3.R3_Error;
+       Sts = %char(In_RetData3.HttpSts);
+       Error = In_RetData3.Error;
 
        Write QSysPrt Text;
 

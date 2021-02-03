@@ -24,7 +24,7 @@ formats:
       value:
         rpgName: Value
         type: Character
-        length: -1
+        length: 50
   RetData2:
     recordType: response
     length: 80
@@ -32,7 +32,7 @@ formats:
       joke:
         rpgName: Joke
         type: Character
-        length: -1
+        length: 80
   RetData3:
     recordType: response
     length: 80
@@ -44,5 +44,5 @@ formats:
       error:
         rpgName: Error
         type: Character
-        length: -1
+        length: 59
 

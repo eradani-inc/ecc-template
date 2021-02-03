@@ -33,7 +33,7 @@ exports.convertObjectToRetData = function convertObjectToRetData(dataIn) {
   // Convert fields in object to fields in record as string
   dataOut += dataIn.httpstatus.toFixed(0).substring(0, 5).padEnd(5);
   dataOut += dataIn.type.substring(0, 16).padEnd(16);
-  dataOut += dataIn.value;
+  dataOut += dataIn.value.substring(0, 50).padEnd(50);
 
   // Return the response record as a string
   return dataOut;
@@ -45,7 +45,7 @@ exports.convertObjectToRetData2 = function convertObjectToRetData2(dataIn) {
   let dataOut = "";
 
   // Convert fields in object to fields in record as string
-  dataOut += dataIn.joke;
+  dataOut += dataIn.joke.substring(0, 80).padEnd(80);
 
   // Return the response record as a string
   return dataOut;
@@ -58,7 +58,7 @@ exports.convertObjectToRetData3 = function convertObjectToRetData3(dataIn) {
 
   // Convert fields in object to fields in record as string
   dataOut += dataIn.httpstatus.toFixed(0).substring(0, 5).padEnd(5);
-  dataOut += dataIn.error;
+  dataOut += dataIn.error.substring(0, 59).padEnd(59);
 
   // Return the response record as a string
   return dataOut;
