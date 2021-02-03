@@ -23,14 +23,14 @@
   },
   "homepage": "https://github.com/eradani-inc/ecc-template#readme",
   "dependencies": {
-    "@eradani-inc/ec-client": "^3.4.6",
+    "@eradani-inc/ec-client": "^3.4.7-alpha.1",
     "axios": "^0.19.2",
     "download": "^8.0.0",
     "https-proxy-agent": "^3.0.1",
     "lodash": "^4.17.20"
   },
   "devDependencies": {
-    "@eradani-inc/ec-generate": "^3.4.0",
+    "@eradani-inc/ec-generate": "^3.5.0-alpha.2",
     "eslint": "^7.6.0",
     "prettier": "^2.0.5"
   }
