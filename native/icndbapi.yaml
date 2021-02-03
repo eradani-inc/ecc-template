@@ -4,45 +4,45 @@ formats:
   Data:
     recordType: request
     length: 80
-    fields:
+    subfields:
       limitTo:
-        rpgName: D_Ctgry
+        rpgName: Ctgry
+        type: Character
         length: 15
-        type: String
   RetData:
     recordType: response
     length: 80
-    fields:
+    subfields:
       httpstatus:
-        rpgName: R_HttpSts
+        rpgName: HttpSts
+        type: Packed
         length: 3
-        type: Number
       type:
-        rpgName: R_Type
+        rpgName: Type
+        type: Character
         length: 16
-        type: String
       value:
-        rpgName: R_Value
+        rpgName: Value
+        type: Character
         length: -1
-        type: String
   RetData2:
     recordType: response
     length: 80
-    fields:
+    subfields:
       joke:
-        rpgName: R2_Joke
+        rpgName: Joke
+        type: Character
         length: -1
-        type: String
   RetData3:
     recordType: response
     length: 80
-    fields:
+    subfields:
       httpstatus:
-        rpgName: R3_HttpSts
+        rpgName: HttpSts
+        type: Packed
         length: 3
-        type: Number
       error:
-        rpgName: R3_Error
+        rpgName: Error
+        type: Character
         length: -1
-        type: String
 
