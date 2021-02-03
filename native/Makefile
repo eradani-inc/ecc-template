@@ -10,28 +10,23 @@ LIB?=ECNCTAPP
 
 TGTRLS?=V7R4M0
 
-CLPGMS = dspjkc \
-         dsptrfcc \
-         dspvhclc \
-         prtlblc
 
-RPGPGMS = dspjkr \
-          dsptrfcr \
-          dspvhclr \
-          dspwfr \
-	  prtlblr
-
-PGMS = $(CLPGMS) \
-       $(RPGPGMS)
-
-CMDS = dspjkc \
-       dspjkr \
-       dsptrfcc \
+MODS = dspjkr \
        dsptrfcr \
-       dspvhclc \
        dspvhclr \
        dspwfr \
-       prtlblc \
+       prtlblr
+
+PGMS = dspjkr \
+       dsptrfcr \
+       dspvhclr \
+       dspwfr \
+       prtlblr
+
+CMDS = dspjkr \
+       dsptrfcr \
+       dspvhclr \
+       dspwfr \
        prtlblr
 
 GENSRC = icndbapi \
@@ -53,14 +48,11 @@ ecclient = $(rootdir)/bin/ec-client
 
 FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
+FQMODS = $(foreach mod, $(MODS), $(libdir)/$(mod).module)
 FQCMDSRCMBRS = $(foreach srcmbr, $(CMDS), $(libdir)/qcmdsrc.file/$(srcmbr).mbr)
-FQCLSRCMBRS = $(foreach srcmbr, $(CLPGMS), $(libdir)/qclsrc.file/$(srcmbr).mbr)
-FQCLGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qclsrc.file/$(srcmbr).mbr)
-FQRPGSRCMBRS = $(foreach srcmbr, $(RPGPGMS), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
+FQRPGSRCMBRS = $(foreach srcmbr, $(MODS), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
 FQRPGGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
 FQSRCMBRS = $(FQCMDSRCMBRS) \
-	    $(FQCLSRCMBRS) \
-	    $(FQCLGENSRCMBRS) \
 	    $(FQRPGSRCMBRS) \
 	    $(FQRPGGENSRCMBRS)
 LCLRPGGENMODSRC = $(foreach src, $(GENSRC), $(src).rpgle)
@@ -83,13 +75,8 @@ $(libdir)/%.cmd: %.cmd  $(libdir)/%.pgm
 	system "CRTCMD CMD($(LIB)/$(basename $(@F))) PGM($(LIB)/$(basename $(@F)))\
 	  SRCSTMF('$<')"
 
-$(libdir)/%.pgm: %.rpgle
-	system "CRTBNDRPG PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS))"
-
-$(libdir)/%.pgm: %.clle
-	system "CRTBNDCL PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTRLS($(TGTRLS))"
-
-$(libdir)/dspjkr.pgm: icndbapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dspjkr.pgm: $(libdir)/dspjkr.module $(libdir)/icndbapi.rpgle ecnctc.rpgleinc
+	system "CRTPGM PGM($(LIB)/TSTMYRECS) MODULE($(LIB)/TSTMYRECS $(LIB)/MYRECORDS)"
 
 $(libdir)/dsptrfcr.pgm: trfcapi.rpgleinc ecnctc.rpgleinc
 
@@ -97,13 +84,8 @@ $(libdir)/dspvhclr.pgm: vinapi.rpgleinc ecnctc.rpgleinc
 
 $(libdir)/dspwfr.pgm: wthfrcapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/dspjkc.pgm: icndbapi.clleinc
-
-$(libdir)/dsptrfcc.pgm: trfcapi.clleinc
-
-$(libdir)/dspvhclc.pgm: vinapi.clleinc
-
-$(libdir)/prtlblc.pgm: lblapi.clleinc
+$(libdir)/%.module: %.rpgle
+	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS))"
 
 else
 
@@ -113,9 +95,6 @@ $(libdir)/%.cmd: $(libdir)/qcmdsrc.file/%.mbr  $(libdir)/%.pgm
 
 $(libdir)/%.pgm: $(libdir)/qrpgsrc.file/%.mbr
 	system "CRTBNDRPG PGM($(LIB)/$(basename $(@F))) SRCFILE($(LIB)/QRPGSRC) TGTRLS($(TGTRLS))"
-
-$(libdir)/%.pgm: $(libdir)/qclsrc.file/%.mbr
-	system "CRTBNDCL PGM($(LIB)/$(basename $(@F))) SRCFILE($(LIB)/QCLSRC) TGTRLS($(TGTRLS))"
 
 $(libdir)/qcmdsrc.file/%.mbr: %.cmd
 	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
@@ -129,30 +108,9 @@ $(libdir)/qrpgsrc.file/%.mbr: %.rpgle
 $(libdir)/qrpgsrc.file/%.mbr: %.rpgleinc
 	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
 
-$(libdir)/qclsrc.file/%.mbr: %2.clle
-	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
-
-$(libdir)/qclsrc.file/%.mbr: %.clle
-	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
-
-$(libdir)/qclsrc.file/%.mbr: %.clleinc
-	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
-
 $(libdir)/dspjkr.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
-$(libdir)/dsptrfcc.pgm: $(libdir)/qrpgsrc.file/trfcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
-$(libdir)/dspvhclc.pgm: $(libdir)/qrpgsrc.file/vinapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
 $(libdir)/dspwfr.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
-$(libdir)/dspjkc.pgm: $(libdir)/qclsrc.file/icndbapi.mbr
-
-$(libdir)/dsptrfcc.pgm: $(libdir)/qclsrc.file/trfcapi.mbr
-
-$(libdir)/dspvhclc.pgm: $(libdir)/qclsrc.file/vinapi.mbr
-
-$(libdir)/prtlblc.pgm: $(libdir)/qclsrc.file/lblapi.mbr
 
 # Prevent gmake from deleting intermediate source members
 .PRECIOUS: $(FQSRCMBRS)
