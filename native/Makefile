@@ -63,7 +63,7 @@ FQSRCMBRS = $(FQCMDSRCMBRS) \
 	    $(FQCLGENSRCMBRS) \
 	    $(FQRPGSRCMBRS) \
 	    $(FQRPGGENSRCMBRS)
-
+LCLRPGGENMODSRC = $(foreach src, $(GENSRC), $(src).rpgle)
 
 # Rules
 #
@@ -177,23 +177,23 @@ endif
 # Miscelaneous rules and dependencies
 #
 
-icndbapi.clleinc icndbapi.rpgleinc icndbapi.js: icndbapi.yaml
+icndbapi.rpgle icndbapi.rpgleinc icndbapi.ts icndbapi.js: icndbapi.yaml
 	npm run generate -- -f $<
 	cp icndbapi.js ../src/services
 
-trfcapi.clleinc trfcapi.rpgleinc trfcapi.js: trfcapi.yaml
+trfcapi.rpgle trfcapi.rpgleinc trfcapi.ts trfcapi.js: trfcapi.yaml
 	npm run generate -- -f $<
 	cp trfcapi.js ../src/services
 
-vinapi.clleinc vinapi.rpgleinc vinapi.js: vinapi.yaml
+vinapi.rpgle vinapi.rpgleinc vinapi.ts vinapi.js: vinapi.yaml
 	npm run generate -- -f $<
 	cp vinapi.js ../src/services
 
-wthfrcapi.clleinc wthfrcapi.rpgleinc wthfrcapi.js: wthfrcapi.yaml
+wthfrcapi.rpgle wthfrcapi.rpgleinc wthfrcapi.ts wthfrcapi.js: wthfrcapi.yaml
 	npm run generate -- -f $<
 	cp wthfrcapi.js ../src/services
 
-lblapi.clleinc lblapi.rpgleinc lblapi.js: lblapi.yaml
+lblapi.rpgle lblapi.rpgleinc lblapi.ts lblapi.js: lblapi.yaml
 	npm run generate -- -f $<
 	cp lblapi.js ../src/services
 
@@ -210,4 +210,5 @@ library:
 clean:
 	-rm $(FQPGMS) $(FQCMDS)
 	-rm $(FQSRCMBRS)
-	-rm *.clleinc *.rpgleinc *.js *.ts
+	-rm $(LCLRPGGENMODSRC)
+	-rm *.rpgleinc *.js *.ts
