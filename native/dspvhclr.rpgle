@@ -1,12 +1,17 @@
      H Option(*srcstmt:*nodebugio)
      H Debug
-     H Actgrp(*NEW) Dftactgrp(*NO)
 
       *****************************************************************
       * File Definition Section
       *****************************************************************
 
      FQSYSPRT   O    F  132        Printer
+
+      * Include EccSndReq & EccRcvReq prototypes
+      /copy ecnctc.rpgleinc
+
+      * Include data structs and buffer conversion prototypes
+      /copy vinapi.rpgleinc
 
       *****************************************************************
       * Data Definition Section
@@ -15,7 +20,7 @@
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
-     D  DataLen        S              5P 0
+     D  MyVinData      DS                  LikeDS(VinData)
 
       *
       * Passed Parameters - Response
@@ -23,20 +28,16 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
+     D  MyResult       DS                  LikeDS(Result)
+     D  MyError        DS                  LikeDS(Error)
 
       *
       * Passed Parameter - both Request & Response
       *
+     D  DataLen        S              5P 0
      D  DataBuf        S            512A
 
-      *
-      * Passed Pararmers for API call
-      *
-      /copy vinapi.rpgleinc
-
       * Local Variables
-     D HttpStatusN     S             10I 0
-
      D MsgDta          S            132A
 
      D Psds           SDS                  Qualified
@@ -55,17 +56,14 @@
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
      D  In_Vin                       17A
-     D  In_Year                       4A
+     D  In_Year                       4P 0
       *
      D DspVhclR        PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
      D  In_Vin                       17A
-     D  In_Year                       4A
-
-      * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
+     D  In_Year                       4P 0
 
       *
      D Write_Msg       PR
@@ -86,13 +84,15 @@
       * Main Line
       *****************************************************************
 
+         *InLr = *On;
+
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         VinData.Vin = In_Vin;
-         VinData.Year = In_Year;
-         DataLen = %len(VinData);
-         DataBuf = VinData;
+         MyVinData.Vin = In_Vin;
+         MyVinData.Year = In_Year;
+         DataLen = 100;
+         VinDataToBuf(MyVinData:DataBuf);
 
       // Send request
 
@@ -101,53 +101,47 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  *InLr = *On;
                   return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
              MsgDta = 'Invalid Mode';
              CallP Write_Msg(MsgDta);
-             *InLr = *On;
              Return;
          EndSl;
 
 
       // Receive response
 
-         DataLen = %len(Result);
+         DataLen = 100;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           *InLr = *On;
            Return;
          endif;
 
          If (Eod and EoA And NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg(MsgDta);
-           *InLr = *On;
            Return;
          EndIf;
 
 
       // Display The Result
 
-         Result = DataBuf;
+         BufToResult(DataBuf:MyResult);
 
-         HttpStatusN = %Dec(Result.HttpSts2:10:0);
-         If (HttpStatusN < 200) or (HttpStatusN >= 300);
-           Error = DataBuf;
-           CallP Write_Error(Error);
-           *InLr = *On;
+         If (MyResult.HttpSts < 200) or (MyResult.HttpSts >= 300);
+           BufToError(DataBuf:MyError);
+           CallP Write_Error(MyError);
            Return;
          EndIf;
 
-         CallP Write_Result(Result);
+         CallP Write_Result(MyResult);
 
-         *InLr = *On;
+         Dsply 'end of program';
          Return;
 
 
@@ -189,7 +183,7 @@
      D                                3A   Inz(' - ')
      D  Message                      77A
 
-       Text.Sts = In_Error.HttpSts1;
+       Text.Sts = %char(In_Error.HttpSts);
        Text.Message = In_Error.Message;
 
        Write QSysPrt Text;
@@ -221,7 +215,7 @@
      D                               18A   Inz(', Secondary fuel: ')
      D  FlTypSec                     25A
 
-       Text1.Status = In_Result.HttpSts2;
+       Text1.Status = %char(In_Result.HttpSts);
        Text1.ElecLvl = In_Result.ElecLvl;
        Text2.FlTypPrim = In_Result.FlTypPrim;
        Text2.FlTypSec = In_Result.FlTypSec;

@@ -80,8 +80,11 @@ $(libdir)/dspjkr.pgm: $(libdir)/dspjkr.module $(libdir)/icndbapi.module
 $(libdir)/dsptrfcr.pgm: $(libdir)/dsptrfcr.module $(libdir)/trfcapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/trfcapi)"
 
+$(libdir)/dspvhclr.pgm: $(libdir)/dspvhclr.module $(libdir)/vinapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/vinapi)"
+
 $(libdir)/%.module: %.rpgle
-	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS))"
+	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS)) DBGVIEW(*LIST)"
 
 $(libdir)/dspjkr.module: icndbapi.rpgleinc ecnctc.rpgleinc
 

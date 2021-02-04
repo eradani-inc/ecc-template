@@ -4,44 +4,44 @@ formats:
   VinData:
     recordType: request
     length: 80
-    fields:
+    subfields:
       vin:
         rpgName: Vin
+        type: Character
         length: 17
-        type: String
       modelYear:
         rpgName: Year
+        type: Packed
         length: 4
-        type: Number
   Error:
     recordType: response
     length: 80
-    fields:
+    subfields:
       httpstatus:
-        rpgName: HttpSts1
+        rpgName: HttpSts
+        type: Packed
         length: 3
-        type: Number
       message:
         rpgName: Message
+        type: Character
         length: 77
-        type: String
   Result:
     recordType: response
     length: 80
-    fields:
+    subfields:
       httpstatus:
-        rpgName: HttpSts2
+        rpgName: HttpSts
+        type: Packed
         length: 3
-        type: Number
       ElectrificationLevel:
         rpgName: ElecLvl
+        type: Character
         length: 35
-        type: String
       FuelTypePrimary:
         rpgName: FlTypPrim
+        type: Character
         length: 15
-        type: String
       FuelTypeSecondary:
         rpgName: FlTypSec
+        type: Character
         length: 25
-        type: String
