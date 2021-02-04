@@ -1,12 +1,17 @@
      H Option(*srcstmt:*nodebugio)
      H Debug
-     H Actgrp(*NEW) Dftactgrp(*NO)
 
       *****************************************************************
       * File Definition Section
       *****************************************************************
 
      FQSYSPRT   O    F  132        Printer
+
+      * Include EccSndReq & EccRcvReq prototypes
+      /copy ecnctc.rpgleinc
+
+      * Include data structs and buffer conversion prototypes
+      /copy trfcapi.rpgleinc
 
       *****************************************************************
       * Data Definition Section
@@ -15,7 +20,7 @@
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
-     D  DataLen        S              5P 0
+     D  MyCompare      DS                  LikeDS(Compare)
 
       *
       * Passed Parameters - Response
@@ -23,20 +28,16 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
+     D  MyResponse     DS                  LikeDS(Response)
+     D  MyTraffic      DS                  LikeDS(Traffic)
 
       *
       * Passed Parameter - both Request & Response
       *
+     D  DataLen        S              5P 0
      D  DataBuf        S            512A
 
-      *
-      * Passed Pararmers for API call
-      *
-      /copy trfcapi.rpgleinc
-
       * Local Variables
-     D HttpStatusN     S             10I 0
-
      D MsgDta          S            132A
 
      D Psds           SDS                  Qualified
@@ -62,9 +63,6 @@
      D  In_ReqKey                     6A
      D  In_Type                      10A
 
-      * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
-
       *
      D Write_Msg       PR
      D  In_MsgDta                          Like(MsgDta) Const
@@ -84,12 +82,14 @@
       * Main Line
       *****************************************************************
 
+         *InLr = *On;
+
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         Compare.Type = In_Type;
-         DataLen = %len(Compare);
-         DataBuf = Compare;
+         MyCompare.Type = In_Type;
+         DataLen = 80;
+         CompareToBuf(MyCompare:DataBuf);
 
       // Send request
 
@@ -98,70 +98,61 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  *InLr = *On;
                   Return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
              MsgDta = 'Invalid Mode';
              CallP Write_Msg(MsgDta);
-             *InLr = *On;
              Return;
          EndSl;
 
 
       // Receive response
 
-         DataLen = %len(Response);
+         DataLen = 80;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           *InLr = *On;
            Return;
          endif;
 
          If (Eod and EoA And NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg(MsgDta);
-           *InLr = *On;
            Return;
          EndIf;
 
 
       // Display The Result
 
-         Response = DataBuf;
-         CallP Write_Response(Response);
+         BufToResponse(DataBuf:MyResponse);
+         CallP Write_Response(MyResponse);
 
-         HttpStatusN = %Dec(Response.HttpSts:10:0);
-         If (HttpStatusN < 200) or (HttpStatusN >= 300);
-           *InLr = *On;
+         If (MyResponse.HttpSts < 200) or (MyResponse.HttpSts >= 300);
            Return;
          EndIf;
 
          DoU Eoa;
-             DataLen = %len(Traffic);
+             DataLen = 80;
              DataBuf = '';
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);
              if %error;
                CallP Write_Excp('EccRcvRes':Psds);
-               *InLr = *On;
                Return;
              endif;
 
              If (NoData);
-               *InLr = *On;
                Return;
              Else;
-               Traffic = DataBuf;
-               CallP Write_Traffic(Traffic);
+               BufToTraffic(DataBuf:MyTraffic);
+               CallP Write_Traffic(MyTraffic);
              EndIf;
          EndDo;
 
-         *InLr = *On;
          Return;
 
 
@@ -203,7 +194,7 @@
      D                                3A   Inz(' - ')
      D  Message                      77A
 
-       Text.Sts = In_Response.HttpSts;
+       Text.Sts = %char(In_Response.HttpSts);
        Text.Message = In_Response.Message;
 
        Write QSysPrt Text;
@@ -237,12 +228,12 @@
      D                               14A   Inz(', Confidence: ')
      D  Cnfdnc                        3A
 
-       Text.Rank   = In_Traffic.TRank;
+       Text.Rank   = %char(In_Traffic.TRank);
        Text.Street = In_Traffic.TStrtNm;
-       Text.AvgSpd = In_Traffic.TAvgSpd;
-       Text.Length = In_Traffic.TLength;
-       Text.JamFct = In_Traffic.TJamFct;
-       Text.Cnfdnc = In_Traffic.TCnfdnc;
+       Text.AvgSpd = %char(In_Traffic.TAvgSpd);
+       Text.Length = %char(In_Traffic.TLength);
+       Text.JamFct = %char(In_Traffic.TJamFct);
+       Text.Cnfdnc = %char(In_Traffic.TCnfdnc);
 
        Write QSysPrt Text;
 

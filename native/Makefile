@@ -60,7 +60,7 @@ LCLRPGGENMODSRC = $(foreach src, $(GENSRC), $(src).rpgle)
 # Rules
 #
 
-all: $(FQPGMS) $(FQCMDS)
+all: $(FQCMDS)
 
 
 # Programs
@@ -76,6 +76,9 @@ $(libdir)/%.cmd: %.cmd  $(libdir)/%.pgm
 
 $(libdir)/dspjkr.pgm: $(libdir)/dspjkr.module $(libdir)/icndbapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/icndbapi)"
+
+$(libdir)/dsptrfcr.pgm: $(libdir)/dsptrfcr.module $(libdir)/trfcapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/trfcapi)"
 
 $(libdir)/%.module: %.rpgle
 	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS))"
