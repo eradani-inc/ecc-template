@@ -86,6 +86,9 @@ $(libdir)/dspvhclr.pgm: $(libdir)/dspvhclr.module $(libdir)/vinapi.module
 $(libdir)/dspwfr.pgm: $(libdir)/dspwfr.module $(libdir)/wthfrcapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/wthfrcapi)"
 
+$(libdir)/prtlblr.pgm: $(libdir)/prtlblr.module $(libdir)/lblapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/lblapi)"
+
 $(libdir)/%.module: %.rpgle
 	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS)) DBGVIEW(*LIST)"
 
@@ -96,6 +99,8 @@ $(libdir)/dsptrfcr.module: trfcapi.rpgleinc ecnctc.rpgleinc
 $(libdir)/dspvhclr.module: vinapi.rpgleinc ecnctc.rpgleinc
 
 $(libdir)/dspwfr.module: wthfrcapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/prtlblr.module: lblapi.rpgleinc ecnctc.rpgleinc
 
 else
 

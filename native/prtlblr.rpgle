@@ -1,12 +1,17 @@
      H Option(*srcstmt:*nodebugio)
      H Debug
-     H Actgrp(*NEW) Dftactgrp(*NO)
 
       *****************************************************************
       * File Definition Section
       *****************************************************************
 
      FQSYSPRT   O    F  132        Printer
+
+      * Include EccSndReq & EccRcvReq prototypes
+      /copy ecnctc.rpgleinc
+
+      * Include data structs and buffer conversion prototypes
+      /copy lblapi.rpgleinc
 
       *****************************************************************
       * Data Definition Section
@@ -15,7 +20,7 @@
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
-     D  DataLen        S              5P 0
+     D  MyLabelData    DS                  LikeDS(LabelData)
 
       *
       * Passed Parameters - Response
@@ -23,20 +28,17 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
+     D  MyError        DS                  LikeDS(Error)
+     D  MyResult       DS                  LikeDS(Result)
+     D  MyLabel        DS                  LikeDS(Label)
 
       *
       * Passed Parameter - both Request & Response
       *
+     D  DataLen        S              5P 0
      D  DataBuf        S            512A
 
-      *
-      * Passed Pararmers for API call
-      *
-      /copy lblapi.rpgleinc
-
       * Local Variables
-     D HttpStatusN     S             10I 0
-
      D MsgDta          S            132A
 
      D Psds           SDS                  Qualified
@@ -84,9 +86,6 @@
      D  In_Length                     5A
      D  In_DimUnts                    2A
 
-      * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
-
       *
      D Write_Msg       PR
      D  In_MsgDta                          Like(MsgDta) Const
@@ -109,23 +108,25 @@
       * Main Line
       *****************************************************************
 
+         *InLr = *On;
+
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         LabelData.Name = In_Name;
-         LabelData.Addr = In_Addr;
-         LabelData.City = In_City;
-         LabelData.State = In_State;
-         LabelData.Zip = In_Zip;
-         LabelData.Country = In_Country;
-         LabelData.Wgt = In_Wgt;
-         LabelData.WgtUnts = In_WgtUnts;
-         LabelData.Height = In_Height;
-         LabelData.Width = In_Width;
-         LabelData.Length = In_Length;
-         LabelData.DimUnts = In_DimUnts;
-         DataLen = %len(LabelData);
-         DataBuf = LabelData;
+         MyLabelData.Name = In_Name;
+         MyLabelData.Addr = In_Addr;
+         MyLabelData.City = In_City;
+         MyLabelData.State = In_State;
+         MyLabelData.Zip = In_Zip;
+         MyLabelData.Country = In_Country;
+         MyLabelData.Wgt = In_Wgt;
+         MyLabelData.WgtUnts = In_WgtUnts;
+         MyLabelData.Height = In_Height;
+         MyLabelData.Width = In_Width;
+         MyLabelData.Length = In_Length;
+         MyLabelData.DimUnts = In_DimUnts;
+         DataLen = 80;
+         LabelDataToBuf(MyLabelData:DataBuf);
 
       // Send request
 
@@ -134,66 +135,58 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  *InLr = *On;
                   Return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
              MsgDta = 'Invalid Mode';
              CallP Write_Msg(MsgDta);
-             *InLr = *On;
              Return;
          EndSl;
 
 
       // Receive response
 
-         DataLen = %len(Result);
+         DataLen = 80;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           *InLr = *On;
            Return;
          endif;
 
          If (Eod and EoA And NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg(MsgDta);
-           *InLr = *On;
            Return;
          EndIf;
 
 
       // Display The Result
 
-         Result = DataBuf;
+         BufToResult(DataBuf:MyResult);
 
-         HttpStatusN = %Dec(Result.HttpSts:10:0);
-         If (HttpStatusN < 200) or (HttpStatusN >= 300);
-           Error = DataBuf;
-           CallP Write_Error(Error);
-           *InLr = *On;
+         If (MyResult.HttpSts < 200) or (MyResult.HttpSts >= 300);
+           BufToError(DataBuf:MyError);
+           CallP Write_Error(MyError);
            Return;
          EndIf;
 
-         CallP Write_Result(Result);
+         CallP Write_Result(MyResult);
 
-         DataLen = %len(Label);
+         DataLen = 80;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           *InLr = *On;
            Return;
          endif;
 
-         Label = DataBuf;
-         CallP Write_Label(Label);
+         BufToLabel(DataBuf:MyLabel);
+         CallP Write_Label(MyLabel);
 
-         *InLr = *On;
          Return;
 
 
@@ -235,7 +228,7 @@
      D                                3A   Inz(' - ')
      D  Message                      77A
 
-       Text.Sts = In_Error.HttpSts2;
+       Text.Sts = %char(In_Error.HttpSts);
        Text.Message = In_Error.Message;
 
        Write QSysPrt Text;
@@ -275,13 +268,13 @@
      D                               25A   Inz(', Insurance currency: ')
      D  InsCur                        3A
 
-       Text1.Status = In_Result.HttpSts;
+       Text1.Status = %char(In_Result.HttpSts);
        Text1.LblSts = In_Result.LblSts;
        Text1.ShipId = In_Result.ShipId;
        Text1.LblId = In_Result.LblId;
-       Text2.ShipCost = In_Result.ShipCost;
+       Text2.ShipCost = %char(In_Result.ShipCost);
        Text2.ShipCur = In_Result.ShipCur;
-       Text2.InsCost = In_Result.InsCost;
+       Text2.InsCost = %char(In_Result.InsCost);
        Text2.InsCur = In_Result.InsCur;
 
        Write QSysPrt Text1;
