@@ -83,6 +83,9 @@ $(libdir)/dsptrfcr.pgm: $(libdir)/dsptrfcr.module $(libdir)/trfcapi.module
 $(libdir)/dspvhclr.pgm: $(libdir)/dspvhclr.module $(libdir)/vinapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/vinapi)"
 
+$(libdir)/dspwfr.pgm: $(libdir)/dspwfr.module $(libdir)/wthfrcapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/wthfrcapi)"
+
 $(libdir)/%.module: %.rpgle
 	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS)) DBGVIEW(*LIST)"
 

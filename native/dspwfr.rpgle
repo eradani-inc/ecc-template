@@ -1,12 +1,17 @@
      H Option(*srcstmt:*nodebugio)
      H Debug
-     H Actgrp(*NEW) Dftactgrp(*NO)
 
       *****************************************************************
       * File Definition Section
       *****************************************************************
 
      FQSYSPRT   O    F  132        Printer
+
+      * Include EccSndReq & EccRcvReq prototypes
+      /copy ecnctc.rpgleinc
+
+      * Include data structs and buffer conversion prototypes
+      /copy wthfrcapi.rpgleinc
 
       *****************************************************************
       * Data Definition Section
@@ -15,7 +20,7 @@
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
-     D  DataLen        S              5P 0
+     D  MyLocation     DS                  LikeDS(Location)
 
       *
       * Passed Parameters - Response
@@ -23,20 +28,16 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
+     D  MyResult       DS                  LikeDS(Result)
+     D  MyForecast     DS                  LikeDS(Forecast)
 
       *
       * Passed Parameter - both Request & Response
       *
+     D  DataLen        S              5P 0
      D  DataBuf        S            512A
 
-      *
-      * Passed Pararmers for API call
-      *
-      /copy wthfrcapi.rpgleinc
-
       * Local Variables
-     D HttpStatusN     S             10I 0
-
      D MsgDta          S            132A
 
      D Psds           SDS                  Qualified
@@ -54,18 +55,15 @@
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
-     D  In_Lat                       10A
-     D  In_Lon                       10A
+     D  In_Lat                        9P 6
+     D  In_Lon                        9P 6
       *
      D DspWfR          PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
-     D  In_Lat                       10A
-     D  In_Lon                       10A
-
-      * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
+     D  In_Lat                        9P 6
+     D  In_Lon                        9P 6
 
       *
      D Write_Msg1      PR
@@ -86,13 +84,15 @@
       * Main Line
       *****************************************************************
 
+         *InLr = *On;
+
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         Location.Lat = In_Lat;
-         Location.Lon = In_Lon;
-         DataLen = %len(Location);
-         DataBuf = Location;
+         MyLocation.Lat = In_Lat;
+         MyLocation.Lon = In_Lon;
+         DataLen = 80;
+         LocationToBuf(MyLocation:DataBuf);
 
       // Send request
 
@@ -101,70 +101,61 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   CallP Write_Excp('EccSndReq':Psds);
-                  *InLr = *On;
                   Return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
              MsgDta = 'Invalid Mode';
              CallP Write_Msg1(MsgDta);
-             *InLr = *On;
              Return;
          EndSl;
 
 
       // Receive response
 
-         DataLen = %len(Result);
+         DataLen = 80;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
            CallP Write_Excp('EccRcvRes':Psds);
-           *InLr = *On;
            Return;
          endif;
 
          If (Eod and EoA And NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
            CallP Write_Msg1(MsgDta);
-           *InLr = *On;
            Return;
          EndIf;
 
 
       // Display The Result
 
-         Result = DataBuf;
-         CallP Write_Result(Result);
+         BufToResult(DataBuf:MyResult);
+         CallP Write_Result(MyResult);
 
-         HttpStatusN = %Dec(Result.HttpStatus:10:0);
-         If (HttpStatusN < 200) or (HttpStatusN >= 300);
-           *InLr = *On;
+         If (MyResult.HttpStatus < 200) or (MyResult.HttpStatus >= 300);
            Return;
          EndIf;
 
          DoU Eoa;
-             DataLen = %len(Forecast);
+             DataLen = 80;
              DataBuf = '';
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);
              if %error;
                CallP Write_Excp('EccRcvRes':Psds);
-               *InLr = *On;
                Return;
              endif;
 
              If (NoData);
-               *InLr = *On;
                Return;
              Else;
-               Forecast = DataBuf;
-               CallP Write_Forecast(Forecast);
+               BufToForecast(DataBuf:MyForecast);
+               CallP Write_Forecast(MyForecast);
              EndIf;
          EndDo;
 
-         *InLr = *On;
          Return;
 
 
@@ -206,7 +197,7 @@
      D                                3A   Inz(' - ')
      D  Message                      77A
 
-       Text.Sts = In_Result.HttpStatus;
+       Text.Sts = %char(In_Result.HttpStatus);
        Text.Message = In_Result.Message;
 
        Write QSysPrt Text;
@@ -236,9 +227,9 @@
      D                                8A   Inz(', Desc: ')
      D  Desc                         58A
 
-       Text.Date = In_Forecast.Date;
-       Text.Min = In_Forecast.Min;
-       Text.Max = In_Forecast.Max;
+       Text.Date = %char(In_Forecast.Date);
+       Text.Min = %char(In_Forecast.Min);
+       Text.Max = %char(In_Forecast.Max);
        Text.Desc = In_Forecast.Desc;
 
        Write QSysPrt Text;

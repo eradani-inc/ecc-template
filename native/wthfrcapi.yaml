@@ -4,44 +4,47 @@ formats:
   Location:
     recordType: request
     length: 80
-    fields:
+    subfields:
       lat:
         rpgName: Lat
-        length: 10
-        type: Number
+        type: Packed
+        length: 9
+        precision: 6
       lon:
         rpgName: Lon
-        length: 10
-        type: Number
+        type: Packed
+        length: 9
+        precision: 6
   Result:
     recordType: response
     length: 80
-    fields:
+    subfields:
       httpstatus:
         rpgName: HttpStatus
+        type: Packed
         length: 3
-        type: Number
       message:
         rpgName: Message
+        type: Character
         length: 77
-        type: String
   Forecast:
     recordType: response
     length: 80
-    fields:
+    subfields:
       date:
         rpgName: Date
-        length: 10
-        type: String
+        type: Date
       min:
         rpgName: Min
-        length: 6
-        type: Number
+        type: Packed
+        length: 5
+        precision: 2
       max:
         rpgName: Max
-        length: 6
-        type: Number
+        type: Packed
+        length: 5
+        precision: 2
       description:
         rpgName: Desc
+        type: Character
         length: 58
-        type: String

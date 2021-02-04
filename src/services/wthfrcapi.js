@@ -1,43 +1,55 @@
-// Module wthfrcapi
+// Module: wthfrcapi
+// Generated source -- do not modify
 
-function toIndicator(b) {
-  return b ? "1" : "0";
-}
+const { ibmiConversions } = require("@eradani-inc/ec-client");
+const {
+  fromIbmiDate,
+  fromIbmiTime,
+  fromIbmiTimestamp,
+  toIbmiDate,
+  toIbmiTime,
+  toIbmiTimestamp
+} = ibmiConversions;
 
-exports.convertLocationToObject = dataIn => {
+  // Convert Location record to JavaScript object
+exports.convertLocationToObject = function convertLocationToObject(dataIn) {
   // Initialize the request object
-  const dataOut = {};
+  const dataOut =   {
+  
+    };
 
   // Convert fields in record as string to fields in object
-  dataOut.lat = Number(dataIn.substring(0, 10).trimEnd());
-  dataOut.lon = Number(dataIn.substring(10, 20).trimEnd());
+  dataOut.lat = Number(dataIn.substring(0, 11).trimEnd());
+  dataOut.lon = Number(dataIn.substring(11, 22).trimEnd());
 
   // Return the request as an object
   return dataOut;
-};
+}
 
-exports.convertObjectToResult = dataIn => {
+  // Convert JavaScript object to Result record
+exports.convertObjectToResult = function convertObjectToResult(dataIn) {
   // Initialize the response record as string
   let dataOut = "";
 
   // Convert fields in object to fields in record as string
-  dataOut += dataIn.httpstatus.toString().substring(0, 3).padEnd(3);
+  dataOut += dataIn.httpstatus.toFixed(0).substring(0, 5).padEnd(5);
   dataOut += dataIn.message.substring(0, 77).padEnd(77);
 
   // Return the response record as a string
   return dataOut;
-};
+}
 
-exports.convertObjectToForecast = dataIn => {
+  // Convert JavaScript object to Forecast record
+exports.convertObjectToForecast = function convertObjectToForecast(dataIn) {
   // Initialize the response record as string
   let dataOut = "";
 
   // Convert fields in object to fields in record as string
-  dataOut += dataIn.date.substring(0, 10).padEnd(10);
-  dataOut += dataIn.min.toString().substring(0, 6).padEnd(6);
-  dataOut += dataIn.max.toString().substring(0, 6).padEnd(6);
+  dataOut += toIbmiDate(dataIn.date);
+  dataOut += dataIn.min.toFixed(2).substring(0, 7).padEnd(7);
+  dataOut += dataIn.max.toFixed(2).substring(0, 7).padEnd(7);
   dataOut += dataIn.description.substring(0, 58).padEnd(58);
 
   // Return the response record as a string
   return dataOut;
-};
+}

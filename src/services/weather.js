@@ -4,7 +4,7 @@ const { ECClient } = require("@eradani-inc/ec-client");
 const {
   convertLocationToObject,
   convertObjectToResult,
-  convertObjectToForecast
+  convertObjectToForecast,
 } = require("./wthfrcapi");
 
 const ecc = new ECClient(ecclient);
@@ -35,7 +35,7 @@ exports.getforecast = async (reqkey, data) => {
       return ecc.sendObjectToCaller(
         {
           httpstatus: err.response.status,
-          message: err.response.data.message
+          message: err.response.data.message,
         },
         convertObjectToResult,
         nextReqKey
@@ -48,7 +48,7 @@ exports.getforecast = async (reqkey, data) => {
     return ecc.sendObjectToCaller(
       {
         httpstatus: 999,
-        error: err.message
+        error: err.message,
       },
       convertObjectToResult,
       nextReqKey
@@ -59,33 +59,32 @@ exports.getforecast = async (reqkey, data) => {
   nextReqKey = await ecc.sendObjectToCaller(
     {
       httpstatus: result.status,
-      message: ""
+      message: "",
     },
     convertObjectToResult,
     nextReqKey
   );
 
+  console.log("Unmapped forecast received:");
+  console.log(JSON.stringify(result.data.daily));
+
   // Reduce response to an array of forecasts
-  const forecasts = result.data.daily.map(obj => {
-    const dt = new Date(obj.dt * 1000);
-    const DD = dt
-      .getDate()
-      .toString()
-      .padStart(2, "0");
-    const MM = (dt
-      .getMonth() + 1)
-      .toString()
-      .padStart(2, "0");
-    const YYYY = dt.getFullYear().toString();
-    const dtAsStr = `${YYYY}-${MM}-${DD}`;
+  const forecasts = result.data.daily.map((obj) => {
     return {
-      date: dtAsStr,
+      date: new Date(obj.dt * 1000),
       min: obj.temp.min,
       max: obj.temp.max,
-      description: obj.weather[0].description
+      description: obj.weather[0].description,
     };
   });
 
+  console.log("Forcasts received:");
+  console.log(JSON.stringify(forecasts));
+
   // Send array of forecasts back to client
-  return ecc.sendObjectsToCaller(forecasts, convertObjectToForecast, nextReqKey);
+  return ecc.sendObjectsToCaller(
+    forecasts,
+    convertObjectToForecast,
+    nextReqKey
+  );
 };
