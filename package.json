@@ -30,7 +30,7 @@
     "lodash": "^4.17.20"
   },
   "devDependencies": {
-    "@eradani-inc/ec-generate": "^3.5.0-alpha.2",
+    "@eradani-inc/ec-generate": "^3.5.0-alpha.3",
     "eslint": "^7.6.0",
     "prettier": "^2.0.5"
   }
