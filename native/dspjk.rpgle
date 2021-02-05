@@ -13,7 +13,7 @@
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
-     D  MyData         DS                  LikeDS(Data)
+     D  MyReqData      DS                  LikeDS(ReqData)
 
       *
       * Passed Parameters - Response
@@ -21,9 +21,8 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
-     D  MyRetData      DS                  LikeDS(RetData)
-     D  MyRetData2     DS                  LikeDS(RetData2)
-     D  MyRetData3     DS                  LikeDS(RetData3)
+     D  MyEccResult    DS                  LikeDS(EccResult)
+     D  MyResData      DS                  LikeDS(ResData)
 
       *
       * Passed Parameter - both Request & Response
@@ -46,12 +45,12 @@
       * Interfaces
       *****************************************************************
       *
-     D DspJkR          PR                  Extpgm('DSPJKR')
+     D DspJk           PR                  ExtPgm('DSPJK')
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
       *
-     D DspJkR          PI
+     D DspJk           PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
@@ -60,14 +59,11 @@
      D Write_Msg1      PR
      D  In_MsgDta                          Like(MsgDta) Const
 
-     D Write_RetData   PR
-     D  In_RetData                         Const LikeDS(RetData)
+     D Write_Joke      PR
+     D  In_ResData                         LikeDS(ResData) Const
 
-     D Write_RetData2  PR
-     D  In_RetData2                        LikeDS(RetData2) Const
-
-     D Write_RetData3  PR
-     D  In_RetData3                        Const LikeDS(RetData3)
+     D Write_EccMsg    PR
+     D  In_Message                         Const LikeDS(EccResult)
 
      D Write_Excp      PR
      D  In_ProcNm                    32A   Const
@@ -83,9 +79,9 @@
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         MyData.Ctgry = 'nerdy';
+         MyReqData.Category = 'nerdy';
          DataLen = 80;
-         DataToBuf(MyData:DataBuf);
+         ReqDataToBuf(MyReqData:DataBuf);
 
       // Send request
 
@@ -124,20 +120,14 @@
 
       // Display The Result
 
-         BufToRetData(DataBuf:MyRetData);
-         if (MyRetData.HttpSts = 200);
-           Write_RetData(MyRetData);
-           if (MyRetData.Type <> 'success');
-             Return;
-           endif;
-         else;
-           BufToRetData3(DataBuf:MyRetData3);
-           Write_RetData3(MyRetData3);
+         BufToEccResult(DataBuf:MyEccResult);
+         if (MyEccResult.MsgId <> 'ECC0000');
+           Write_EccMsg(MyEccResult);
            Return;
          endif;
 
       // Receive and display the remaining lines, if any
-         Eod = '0';
+         Eod = *Off;
          DoW not Eod;
              DataLen = 80;
              DataBuf = '';
@@ -151,8 +141,8 @@
              If (NoData);
                Return;
              Else;
-               BufToRetData2(DataBuf:MyRetData2);
-               Write_RetData2(MyRetData2);
+               BufToResData(DataBuf:MyResData);
+               Write_Joke(MyResData);
              EndIf;
          EndDo;
 
@@ -182,79 +172,55 @@
      P Write_Msg1      E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_RetData
-      * Purpose.......:   Write Message
+      * Procedure Name:   Write_Joke
+      * Purpose.......:   Write joke
       * Returns.......:   None
-      * Parameters....:   RetData data structure
+      * Parameters....:   ResData data structure
       ***-----------------------------------------------------------***
-     P Write_RetData   B
+     P Write_Joke      B
 
-     D Write_RetData   PI
-     D  In_RetData                         Const LikeDS(RetData)
-
-     D Text            DS           132
-     D  Sts                           3A
-     D  Sep                           3A   Inz(' - ')
-     D  Type                         16A
-     D  Sep2                          3A   Inz(' - ')
-     D  Value                        61A
-
-       Sts = %char(In_RetData.HttpSts);
-       Type = In_RetData.Type;
-       Value = In_RetData.Value;
-
-       Write QSysPrt Text;
-
-       Return;
-
-     P Write_RetData   E
-
-      ***-----------------------------------------------------------***
-      * Procedure Name:   Write_RetData2
-      * Purpose.......:   Write Message
-      * Returns.......:   None
-      * Parameters....:   RetData2 data structure
-      ***-----------------------------------------------------------***
-     P Write_RetData2  B
-
-     D Write_RetData2  PI
-     D  In_RetData2                        LikeDS(RetData2) Const
+     D Write_Joke      PI
+     D  Data                               LikeDS(ResData) Const
 
      D Text            DS           132
      D  Joke                         80A
 
-       Joke = In_RetData2.Joke;
+       Joke = Data.Joke;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_RetData2  E
+     P Write_Joke      E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_RetData3
+      * Procedure Name:   Write_EccMsg
       * Purpose.......:   Write Message
       * Returns.......:   None
       * Parameters....:   RetData3 data structure
       ***-----------------------------------------------------------***
-     P Write_RetData3  B
+     P Write_EccMsg    B
 
-     D Write_RetData3  PI
-     D  In_RetData3                        Const LikeDS(RetData3)
+     D Write_EccMsg    PI
+     D  Message                            Const LikeDS(EccResult)
 
-     D Text            DS           132
-     D  Sts                           3A
-     D  Sep                           3A   Inz(' - ')
-     D  Error                        77A
+     D Text            DS           132    Qualified
+     D  TmStmp                       23A
+     D                                3A   Inz('  ')
+     D  Id                            7A
+     D                                3A   Inz('  ')
+     D  Desc                         50A
 
-       Sts = %char(In_RetData3.HttpSts);
-       Error = In_RetData3.Error;
+
+       Text.TmStmp = %char(Message.MsgTime);
+       Text.Id = Message.MsgId;
+       Text.Desc = Message.MsgDesc;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_RetData3  E
+     P Write_EccMsg    E
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Excp

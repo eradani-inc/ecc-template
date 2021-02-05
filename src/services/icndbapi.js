@@ -11,8 +11,8 @@ const {
   toIbmiTimestamp
 } = ibmiConversions;
 
-  // Convert Data record to JavaScript object
-exports.convertDataToObject = function convertDataToObject(dataIn) {
+  // Convert ReqData record to JavaScript object
+exports.convertReqDataToObject = function convertReqDataToObject(dataIn) {
   // Initialize the request object
   const dataOut =   {
   
@@ -25,40 +25,27 @@ exports.convertDataToObject = function convertDataToObject(dataIn) {
   return dataOut;
 }
 
-  // Convert JavaScript object to RetData record
-exports.convertObjectToRetData = function convertObjectToRetData(dataIn) {
+  // Convert JavaScript object to EccResult record
+exports.convertObjectToEccResult = function convertObjectToEccResult(dataIn) {
   // Initialize the response record as string
   let dataOut = "";
 
   // Convert fields in object to fields in record as string
-  dataOut += dataIn.httpstatus.toFixed(0).substring(0, 5).padEnd(5);
-  dataOut += dataIn.type.substring(0, 16).padEnd(16);
-  dataOut += dataIn.value.substring(0, 50).padEnd(50);
+  dataOut += dataIn.MsgId.substring(0, 7).padEnd(7);
+  dataOut += toIbmiTimestamp(dataIn.MsgTime, 23);
+  dataOut += dataIn.MsgDesc.substring(0, 50).padEnd(50);
 
   // Return the response record as a string
   return dataOut;
 }
 
-  // Convert JavaScript object to RetData2 record
-exports.convertObjectToRetData2 = function convertObjectToRetData2(dataIn) {
+  // Convert JavaScript object to ResData record
+exports.convertObjectToResData = function convertObjectToResData(dataIn) {
   // Initialize the response record as string
   let dataOut = "";
 
   // Convert fields in object to fields in record as string
   dataOut += dataIn.joke.substring(0, 80).padEnd(80);
-
-  // Return the response record as a string
-  return dataOut;
-}
-
-  // Convert JavaScript object to RetData3 record
-exports.convertObjectToRetData3 = function convertObjectToRetData3(dataIn) {
-  // Initialize the response record as string
-  let dataOut = "";
-
-  // Convert fields in object to fields in record as string
-  dataOut += dataIn.httpstatus.toFixed(0).substring(0, 5).padEnd(5);
-  dataOut += dataIn.error.substring(0, 59).padEnd(59);
 
   // Return the response record as a string
   return dataOut;
