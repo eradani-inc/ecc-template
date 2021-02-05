@@ -100,13 +100,13 @@
            When In_Mode = '*SNDRCV';
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
-                  CallP Write_Excp('EccSndReq':Psds);
+                  Write_Excp('EccSndReq':Psds);
                   Return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
              MsgDta = 'Invalid Mode';
-             CallP Write_Msg1(MsgDta);
+             Write_Msg1(MsgDta);
              Return;
          EndSl;
 
@@ -118,13 +118,13 @@
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
-           CallP Write_Excp('EccRcvRes':Psds);
+           Write_Excp('EccRcvRes':Psds);
            Return;
          endif;
 
          If (Eod and EoA And NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
-           CallP Write_Msg1(MsgDta);
+           Write_Msg1(MsgDta);
            Return;
          EndIf;
 
@@ -132,7 +132,7 @@
       // Display The Result
 
          BufToResult(DataBuf:MyResult);
-         CallP Write_Result(MyResult);
+         Write_Result(MyResult);
 
          If (MyResult.HttpStatus < 200) or (MyResult.HttpStatus >= 300);
            Return;
@@ -144,7 +144,7 @@
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);
              if %error;
-               CallP Write_Excp('EccRcvRes':Psds);
+               Write_Excp('EccRcvRes':Psds);
                Return;
              endif;
 
@@ -152,7 +152,7 @@
                Return;
              Else;
                BufToForecast(DataBuf:MyForecast);
-               CallP Write_Forecast(MyForecast);
+               Write_Forecast(MyForecast);
              EndIf;
          EndDo;
 
@@ -256,7 +256,7 @@
      D  ExcpDta                      80A
 
        MsgDta = 'Error calling ' + In_ProcNm;
-       CallP Write_Msg1(MsgDta);
+       Write_Msg1(MsgDta);
 
        MsgId = In_Psds.MsgId;
        ExcpDta = In_Psds.ExcpDta;

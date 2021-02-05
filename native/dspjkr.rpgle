@@ -93,13 +93,13 @@
            When In_Mode = '*SNDRCV';
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
-                  CallP Write_Excp('EccSndReq':Psds);
+                  Write_Excp('EccSndReq':Psds);
                   Return;
                 endif;
            When In_Mode = '*RCVONLY';
          Other;
            MsgDta = 'Invalid Mode';
-           CallP Write_Msg1(MsgDta);
+           Write_Msg1(MsgDta);
            Return;
          EndSl;
 
@@ -111,13 +111,13 @@
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
-           CallP Write_Excp('EccRcvRes':Psds);
+           Write_Excp('EccRcvRes':Psds);
            Return;
          endif;
 
          If (NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
-           CallP Write_Msg1(MsgDta);
+           Write_Msg1(MsgDta);
            Return;
          EndIf;
 
@@ -126,13 +126,13 @@
 
          BufToRetData(DataBuf:MyRetData);
          if (MyRetData.HttpSts = 200);
-           CallP Write_RetData(MyRetData);
+           Write_RetData(MyRetData);
            if (MyRetData.Type <> 'success');
              Return;
            endif;
          else;
            BufToRetData3(DataBuf:MyRetData3);
-           CallP Write_RetData3(MyRetData3);
+           Write_RetData3(MyRetData3);
            Return;
          endif;
 
@@ -144,7 +144,7 @@
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);
              if %error;
-               CallP Write_Excp('EccRcvRes':Psds);
+               Write_Excp('EccRcvRes':Psds);
                Return;
              endif;
 
@@ -152,7 +152,7 @@
                Return;
              Else;
                BufToRetData2(DataBuf:MyRetData2);
-               CallP Write_RetData2(MyRetData2);
+               Write_RetData2(MyRetData2);
              EndIf;
          EndDo;
 
@@ -274,7 +274,7 @@
      D  ExcpDta                      80A
 
        MsgDta = 'Error calling ' + In_ProcNm;
-       CallP Write_Msg1(MsgDta);
+       Write_Msg1(MsgDta);
 
        MsgId = In_Psds.MsgId;
        ExcpDta = In_Psds.ExcpDta;
