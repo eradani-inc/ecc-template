@@ -141,7 +141,6 @@
 
          CallP Write_Result(MyResult);
 
-         Dsply 'end of program';
          Return;
 
 
