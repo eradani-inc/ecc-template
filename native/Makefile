@@ -46,9 +46,10 @@ endif
 rootdir = $(shell cd ..; pwd)
 ecclient = $(rootdir)/bin/ec-client
 
-FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
+FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
 FQMODS = $(foreach mod, $(MODS), $(libdir)/$(mod).module)
+FQGENMODS = $(foreach mod, $(GENSRC), $(libdir)/$(mod).module)
 FQCMDSRCMBRS = $(foreach srcmbr, $(CMDS), $(libdir)/qcmdsrc.file/$(srcmbr).mbr)
 FQRPGSRCMBRS = $(foreach srcmbr, $(MODS), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
 FQRPGGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
@@ -181,7 +182,10 @@ library:
 
 .PHONY: clean
 clean:
-	-rm $(FQPGMS) $(FQCMDS)
+	-rm $(FQCMDS)
+	-rm $(FQPGMS)
+	-rm $(FQMODS)
+	-rm $(FQGENMODS)
 	-rm $(FQSRCMBRS)
 	-rm $(LCLRPGGENMODSRC)
 	-rm *.rpgleinc *.js *.ts
