@@ -11,7 +11,7 @@
       /copy ecnctc.rpgleinc
 
       * Include data structs and buffer conversion prototypes
-      /copy vinapi.rpgleinc
+      /copy trfcapi.rpgleinc
 
       *****************************************************************
       * Data Definition Section
@@ -20,7 +20,7 @@
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
-     D  MyVinData      DS                  LikeDS(VinData)
+     D  MyCompare      DS                  LikeDS(Compare)
 
       *
       * Passed Parameters - Response
@@ -28,8 +28,8 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
-     D  MyResult       DS                  LikeDS(Result)
-     D  MyError        DS                  LikeDS(Error)
+     D  MyEccResult    DS                  LikeDS(EccResult)
+     D  MyTraffic      DS                  LikeDS(Traffic)
 
       *
       * Passed Parameter - both Request & Response
@@ -45,35 +45,33 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('getvehicledata')
+     D Cmd             C                   Const('gettrafficdata')
       *
       *****************************************************************
       * Interfaces
       *****************************************************************
       *
-     D DspVhclR        PR                  Extpgm('DSPVHCLR')
+     D DspTrfc         PR                  Extpgm('DSPTRFC')
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
-     D  In_Vin                       17A
-     D  In_Year                       4P 0
+     D  In_Type                      10A
       *
-     D DspVhclR        PI
+     D DspTrfc         PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
-     D  In_Vin                       17A
-     D  In_Year                       4P 0
+     D  In_Type                      10A
 
       *
      D Write_Msg       PR
      D  In_MsgDta                          Like(MsgDta) Const
 
-     D Write_Error     PR
-     D  In_Error                           LikeDS(Error) Const
+     D Write_EccMsg    PR
+     D  In_EccResult                       LikeDS(EccResult) Const
 
-     D Write_Result    PR
-     D  In_Result                          LikeDS(Result) Const
+     D Write_Traffic   PR
+     D  In_Traffic                         LikeDS(Traffic) Const
 
      D Write_Excp      PR
      D  In_ProcNm                    32A   Const
@@ -89,10 +87,9 @@
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         MyVinData.Vin = In_Vin;
-         MyVinData.Year = In_Year;
-         DataLen = 100;
-         VinDataToBuf(MyVinData:DataBuf);
+         MyCompare.Type = In_Type;
+         DataLen = 80;
+         CompareToBuf(MyCompare:DataBuf);
 
       // Send request
 
@@ -101,7 +98,7 @@
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   Write_Excp('EccSndReq':Psds);
-                  return;
+                  Return;
                 endif;
            When In_Mode = '*RCVONLY';
            Other;
@@ -113,7 +110,7 @@
 
       // Receive response
 
-         DataLen = 100;
+         DataLen = 80;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
@@ -131,15 +128,30 @@
 
       // Display The Result
 
-         BufToResult(DataBuf:MyResult);
+         BufToEccResult(DataBuf:MyEccResult);
 
-         If (MyResult.HttpSts < 200) or (MyResult.HttpSts >= 300);
-           BufToError(DataBuf:MyError);
-           Write_Error(MyError);
+         If MyEccResult.MsgId <> 'ECC0000';
+           Write_EccMsg(MyEccResult);
            Return;
          EndIf;
 
-         Write_Result(MyResult);
+         DoU Eoa;
+             DataLen = 80;
+             DataBuf = '';
+             CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
+                                DataLen:DataBuf);
+             if %error;
+               Write_Excp('EccRcvRes':Psds);
+               Return;
+             endif;
+
+             If (NoData);
+               Return;
+             Else;
+               BufToTraffic(DataBuf:MyTraffic);
+               Write_Traffic(MyTraffic);
+             EndIf;
+         EndDo;
 
          Return;
 
@@ -167,64 +179,71 @@
      P Write_Msg       E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Error
-      * Purpose.......:   Write error status of web service request
+      * Procedure Name:   Write_EccMsg
+      * Purpose.......:   Write result status of web service request
       * Returns.......:   None
-      * Parameters....:   Error data structure
+      * Parameters....:   EccResult data structure
       ***-----------------------------------------------------------***
-     P Write_Error     B
+     P Write_EccMsg    B
 
-     D Write_Error     PI
-     D  In_Error                           LikeDS(Error) Const
+     D Write_EccMsg    PI
+     D  Message                            Const LikeDS(EccResult)
 
      D Text            DS           132    Qualified
-     D  Sts                           3A
-     D                                3A   Inz(' - ')
-     D  Message                      77A
+     D  TmStmp                       23A
+     D                                3A   Inz('  ')
+     D  Id                            7A
+     D                                3A   Inz('  ')
+     D  Desc                         50A
 
-       Text.Sts = %char(In_Error.HttpSts);
-       Text.Message = In_Error.Message;
+
+       Text.TmStmp = %char(Message.MsgTime);
+       Text.Id = Message.MsgId;
+       Text.Desc = Message.MsgDesc;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Error     E
+     P Write_EccMsg    E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Result
-      * Purpose.......:   Write result
+      * Procedure Name:   Write_Traffic
+      * Purpose.......:   Write traffic report
       * Returns.......:   None
-      * Parameters....:   Result data structure
+      * Parameters....:   Traffic data structure
       ***-----------------------------------------------------------***
-     P Write_Result    B
+     P Write_Traffic   B
 
-     D Write_Result    PI
-     D  In_Result                          LikeDS(Result) Const
+     D Write_Traffic   PI
+     D  In_Traffic                         LikeDS(Traffic) Const
 
-     D Text1           DS           132    Qualified
-     D                                8A   Inz('Status: ')
-     D  Status                        3A
-     D                               25A   Inz(', Electrification level: ')
-     D  ElecLvl                      35A
+     D Text            DS           132    Qualified
+     D                                6A   Inz('Rank: ')
+     D  Rank                          2A
+     D                               10A   Inz(', Street: ')
+     D  Street                       30A
+     D                               13A   Inz(', Avg speed: ')
+     D  AvgSpd                        7A
+     D                               10A   Inz(', Length: ')
+     D  Length                        7A
+     D                               14A   Inz(', Jam factor: ')
+     D  JamFct                        8A
+     D                               14A   Inz(', Confidence: ')
+     D  Cnfdnc                        3A
 
-     D Text2           DS           132    Qualified
-     D                               14A   Inz('Primary fuel: ')
-     D  FlTypPrim                    25A
-     D                               18A   Inz(', Secondary fuel: ')
-     D  FlTypSec                     25A
+       Text.Rank   = %char(In_Traffic.TRank);
+       Text.Street = In_Traffic.TStrtNm;
+       Text.AvgSpd = %char(In_Traffic.TAvgSpd);
+       Text.Length = %char(In_Traffic.TLength);
+       Text.JamFct = %char(In_Traffic.TJamFct);
+       Text.Cnfdnc = %char(In_Traffic.TCnfdnc);
 
-       Text1.Status = %char(In_Result.HttpSts);
-       Text1.ElecLvl = In_Result.ElecLvl;
-       Text2.FlTypPrim = In_Result.FlTypPrim;
-       Text2.FlTypSec = In_Result.FlTypSec;
-
-       Write QSysPrt Text1;
-       Write QSysPrt Text2;
+       Write QSysPrt Text;
 
        Return;
 
-     P Write_Result    E
+     P Write_Traffic   E
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Excp

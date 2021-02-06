@@ -51,14 +51,14 @@
       * Interfaces
       *****************************************************************
       *
-     D DspWfR          PR                  Extpgm('DSPWFR')
+     D DspWf           PR                  Extpgm('DSPWF')
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
      D  In_Lat                        9P 6
      D  In_Lon                        9P 6
       *
-     D DspWfR          PI
+     D DspWf           PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A

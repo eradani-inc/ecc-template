@@ -12,21 +12,21 @@ TGTRLS?=V7R4M0
 
 
 MODS = dspjk \
-       dsptrfcr \
-       dspvhclr \
-       dspwfr \
+       dsptrfc \
+       dspvhcl \
+       dspwf \
        prtlbl
 
 PGMS = dspjk \
-       dsptrfcr \
-       dspvhclr \
-       dspwfr \
+       dsptrfc \
+       dspvhcl \
+       dspwf \
        prtlbl
 
 CMDS = dspjk \
-       dsptrfcr \
-       dspvhclr \
-       dspwfr \
+       dsptrfc \
+       dspvhcl \
+       dspwf \
        prtlbl
 
 GENSRC = icndbapi \
@@ -78,13 +78,13 @@ $(libdir)/%.cmd: %.cmd  $(libdir)/%.pgm
 $(libdir)/dspjk.pgm: $(libdir)/dspjk.module $(libdir)/icndbapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/icndbapi)"
 
-$(libdir)/dsptrfcr.pgm: $(libdir)/dsptrfcr.module $(libdir)/trfcapi.module
+$(libdir)/dsptrfc.pgm: $(libdir)/dsptrfc.module $(libdir)/trfcapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/trfcapi)"
 
-$(libdir)/dspvhclr.pgm: $(libdir)/dspvhclr.module $(libdir)/vinapi.module
+$(libdir)/dspvhcl.pgm: $(libdir)/dspvhcl.module $(libdir)/vinapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/vinapi)"
 
-$(libdir)/dspwfr.pgm: $(libdir)/dspwfr.module $(libdir)/wthfrcapi.module
+$(libdir)/dspwf.pgm: $(libdir)/dspwf.module $(libdir)/wthfrcapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/wthfrcapi)"
 
 $(libdir)/prtlbl.pgm: $(libdir)/prtlbl.module $(libdir)/lblapi.module
@@ -95,11 +95,11 @@ $(libdir)/%.module: %.rpgle
 
 $(libdir)/dspjk.module: icndbapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/dsptrfcr.module: trfcapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dsptrfc.module: trfcapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/dspvhclr.module: vinapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dspvhcl.module: vinapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/dspwfr.module: wthfrcapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dspwf.module: wthfrcapi.rpgleinc ecnctc.rpgleinc
 
 $(libdir)/prtlbl.module: lblapi.rpgleinc ecnctc.rpgleinc
 
@@ -126,7 +126,7 @@ $(libdir)/qrpgsrc.file/%.mbr: %.rpgleinc
 
 $(libdir)/dspjk.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
-$(libdir)/dspwfr.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
+$(libdir)/dspwf.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
 # Prevent gmake from deleting intermediate source members
 .PRECIOUS: $(FQSRCMBRS)

@@ -1,4 +1,4 @@
-DSPVHCLR:CMD PROMPT('Get Vehicle Data')
+DSPWF:CMD PROMPT('Test WF API')
 
   PARM KWD(MODE) TYPE(*CHAR) LEN(10) RSTD(*YES) +
        VALUES(*SNDRCV *RCVONLY) DFT('*SNDRCV') +
@@ -9,9 +9,9 @@ DSPVHCLR:CMD PROMPT('Get Vehicle Data')
 
   PARM KWD(REQKEY) TYPE(*CHAR) LEN(6) DFT('0     ') +
        PROMPT('Request key')
-       
-  PARM KWD(VIN) TYPE(*CHAR) LEN(17) DFT('5GAKRBKD9GJ289346') +
-       PROMPT('VIN')
 
-  PARM KWD(MODELYEAR) TYPE(*DEC) LEN(4) DFT(2016) +
-       PROMPT('Model Year')
+  PARM KWD(LAT) TYPE(*DEC) LEN(9 6) DFT(35.803635) +
+       PROMPT('Latitude')
+
+  PARM KWD(LONG) TYPE(*DEC) LEN(9 6) DFT(-83.584213) +
+       PROMPT('Longitude')
