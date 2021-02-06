@@ -7,7 +7,7 @@
 
      FQSYSPRT   O    F  132        Printer
 
-      * Include EccSndReq & EccRcvReq prototypes
+      * Include EccSndReq & EccRcvRes prototypes
       /copy ecnctc.rpgleinc
 
       * Include data structs and buffer conversion prototypes
@@ -28,8 +28,8 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
-     D  MyError        DS                  LikeDS(Error)
-     D  MyResult       DS                  LikeDS(Result)
+     D  MyEccResult    DS                  LikeDS(EccResult)
+     D  MyShipInfo     DS                  LikeDS(ShipInfo)
      D  MyLabel        DS                  LikeDS(Label)
 
       *
@@ -52,7 +52,7 @@
       * Interfaces
       *****************************************************************
       *
-     D PrtLblR         PR                  Extpgm('PRTLBLR')
+     D PrtLbl          PR                  Extpgm('PRTLBL')
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
@@ -69,7 +69,7 @@
      D  In_Length                     5A
      D  In_DimUnts                    2A
       *
-     D PrtLblR         PI
+     D PrtLbl          PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
@@ -90,11 +90,11 @@
      D Write_Msg       PR
      D  In_MsgDta                          Like(MsgDta) Const
 
-     D Write_Error     PR
-     D  In_Error                           LikeDS(Error) Const
+     D Write_EccMsg    PR
+     D  In_EccMsg                          LikeDS(EccResult) Const
 
-     D Write_Result    PR
-     D  In_Result                          LikeDS(Result) Const
+     D Write_ShipInfo  PR
+     D  In_ShipInfo                        LikeDS(ShipInfo) Const
 
      D Write_Label     PR
      D  In_Label                           LikeDS(Label) Const
@@ -163,17 +163,27 @@
          EndIf;
 
 
-      // Display The Result
 
-         BufToResult(DataBuf:MyResult);
+         BufToEccResult(DataBuf:MyEccResult);
 
-         If (MyResult.HttpSts < 200) or (MyResult.HttpSts >= 300);
-           BufToError(DataBuf:MyError);
-           Write_Error(MyError);
+         If MyEccResult.MsgId <> 'ECC0000';
+           Write_EccMsg(MyEccResult);
            Return;
          EndIf;
 
-         Write_Result(MyResult);
+      // Display the shipping info
+
+         DataLen = 80;
+         DataBuf = '';
+         CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
+                            DataLen:DataBuf);
+         if %error;
+           Write_Excp('EccRcvRes':Psds);
+           Return;
+         endif;
+
+         BufToShipInfo(DataBuf:MyShipInfo);
+         Write_ShipInfo(MyShipInfo);
 
          DataLen = 80;
          DataBuf = '';
@@ -213,45 +223,47 @@
      P Write_Msg       E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Error
+      * Procedure Name:   Write_EccMsg
       * Purpose.......:   Write error status of web service request
       * Returns.......:   None
-      * Parameters....:   Error data structure
+      * Parameters....:   EccResult data structure
       ***-----------------------------------------------------------***
-     P Write_Error     B
+     P Write_EccMsg    B
 
-     D Write_Error     PI
-     D  In_Error                           LikeDS(Error) Const
+     D Write_EccMsg    PI
+     D  In_EccRslt                         LikeDS(EccResult) Const
 
      D Text            DS           132    Qualified
-     D  Sts                           3A
-     D                                3A   Inz(' - ')
-     D  Message                      77A
+     D  TmStmp                       23A
+     D                                3A   Inz('  ')
+     D  Id                            7A
+     D                                3A   Inz('  ')
+     D  Desc                         50A
 
-       Text.Sts = %char(In_Error.HttpSts);
-       Text.Message = In_Error.Message;
+
+       Text.TmStmp = %char(In_EccRslt.MsgTime);
+       Text.Id = In_EccRslt.MsgId;
+       Text.Desc = In_EccRslt.MsgDesc;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Error     E
+     P Write_EccMsg    E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Result
-      * Purpose.......:   Write result
+      * Procedure Name:   Write_ShipInfo
+      * Purpose.......:   Write shipping inforamation
       * Returns.......:   None
-      * Parameters....:   Result data structure
+      * Parameters....:   ShipInfo data structure
       ***-----------------------------------------------------------***
-     P Write_Result    B
+     P Write_ShipInfo  B
 
-     D Write_Result    PI
-     D  In_Result                          LikeDS(Result) Const
+     D Write_ShipInfo  PI
+     D  In_ShipInfo                          LikeDS(ShipInfo) Const
 
      D Text1           DS           132    Qualified
-     D                                8A   Inz('Status: ')
-     D  Status                        3A
-     D                               16A   Inz(', Label status: ')
+     D                               16A   Inz('Label status: ')
      D  LblSts                       10A
      D                               15A   Inz(', Shipping ID: ')
      D  ShipId                       11A
@@ -268,21 +280,20 @@
      D                               25A   Inz(', Insurance currency: ')
      D  InsCur                        3A
 
-       Text1.Status = %char(In_Result.HttpSts);
-       Text1.LblSts = In_Result.LblSts;
-       Text1.ShipId = In_Result.ShipId;
-       Text1.LblId = In_Result.LblId;
-       Text2.ShipCost = %char(In_Result.ShipCost);
-       Text2.ShipCur = In_Result.ShipCur;
-       Text2.InsCost = %char(In_Result.InsCost);
-       Text2.InsCur = In_Result.InsCur;
+       Text1.LblSts = In_ShipInfo.LblSts;
+       Text1.ShipId = In_ShipInfo.ShipId;
+       Text1.LblId = In_ShipInfo.LblId;
+       Text2.ShipCost = %char(In_ShipInfo.ShipCost);
+       Text2.ShipCur = In_ShipInfo.ShipCur;
+       Text2.InsCost = %char(In_ShipInfo.InsCost);
+       Text2.InsCur = In_ShipInfo.InsCur;
 
        Write QSysPrt Text1;
        Write QSysPrt Text2;
 
        Return;
 
-     P Write_Result    E
+     P Write_ShipInfo  E
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Label

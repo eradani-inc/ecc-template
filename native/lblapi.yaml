@@ -53,26 +53,23 @@ formats:
         rpgName: DimUnts
         type: Character
         length: 2
-  Error:
+  EccResult:
     recordType: response
     length: 80
     subfields:
-      httpstatus:
-        rpgName: HttpSts
-        type: Packed
-        length: 3
-      message:
-        rpgName: Message
+      MsgId:
         type: Character
-        length: 77
-  Result:
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
+  ShipInfo:
     recordType: response
     length: 80
     subfields:
-      httpstatus:
-        rpgName: HttpSts
-        type: Packed
-        length: 3
       labelStatus:
         rpgName: LblSts
         type: Character
@@ -107,7 +104,7 @@ formats:
     recordType: response
     length: 80
     subfields:
-      trackingPacked:
+      trackingNumber:
         rpgName: TrackNbr
         type: Character
         length: 30

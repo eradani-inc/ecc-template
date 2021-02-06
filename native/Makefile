@@ -15,19 +15,19 @@ MODS = dspjk \
        dsptrfcr \
        dspvhclr \
        dspwfr \
-       prtlblr
+       prtlbl
 
 PGMS = dspjk \
        dsptrfcr \
        dspvhclr \
        dspwfr \
-       prtlblr
+       prtlbl
 
 CMDS = dspjk \
        dsptrfcr \
        dspvhclr \
        dspwfr \
-       prtlblr
+       prtlbl
 
 GENSRC = icndbapi \
          lblapi \
@@ -87,7 +87,7 @@ $(libdir)/dspvhclr.pgm: $(libdir)/dspvhclr.module $(libdir)/vinapi.module
 $(libdir)/dspwfr.pgm: $(libdir)/dspwfr.module $(libdir)/wthfrcapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/wthfrcapi)"
 
-$(libdir)/prtlblr.pgm: $(libdir)/prtlblr.module $(libdir)/lblapi.module
+$(libdir)/prtlbl.pgm: $(libdir)/prtlbl.module $(libdir)/lblapi.module
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/lblapi)"
 
 $(libdir)/%.module: %.rpgle
@@ -101,7 +101,7 @@ $(libdir)/dspvhclr.module: vinapi.rpgleinc ecnctc.rpgleinc
 
 $(libdir)/dspwfr.module: wthfrcapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/prtlblr.module: lblapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/prtlbl.module: lblapi.rpgleinc ecnctc.rpgleinc
 
 else
 

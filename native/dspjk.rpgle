@@ -197,7 +197,7 @@
       * Procedure Name:   Write_EccMsg
       * Purpose.......:   Write Message
       * Returns.......:   None
-      * Parameters....:   RetData3 data structure
+      * Parameters....:   EccResult data structure
       ***-----------------------------------------------------------***
      P Write_EccMsg    B
 
