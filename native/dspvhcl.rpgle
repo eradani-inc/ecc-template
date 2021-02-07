@@ -28,8 +28,8 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
-     D  MyResult       DS                  LikeDS(Result)
-     D  MyError        DS                  LikeDS(Error)
+     D  MyEccResult    DS                  LikeDS(EccResult)
+     D  MyVinInfo      DS                  LikeDS(VinInfo)
 
       *
       * Passed Parameter - both Request & Response
@@ -69,11 +69,11 @@
      D Write_Msg       PR
      D  In_MsgDta                          Like(MsgDta) Const
 
-     D Write_Error     PR
-     D  In_Error                           LikeDS(Error) Const
+     D Write_EccMsg    PR
+     D  In_EccResult                       LikeDS(EccResult) Const
 
-     D Write_Result    PR
-     D  In_Result                          LikeDS(Result) Const
+     D Write_VinInfo   PR
+     D  In_VinInfo                         LikeDS(VinInfo) Const
 
      D Write_Excp      PR
      D  In_ProcNm                    32A   Const
@@ -131,15 +131,24 @@
 
       // Display The Result
 
-         BufToResult(DataBuf:MyResult);
+         BufToEccResult(DataBuf:MyEccResult);
 
-         If (MyResult.HttpSts < 200) or (MyResult.HttpSts >= 300);
-           BufToError(DataBuf:MyError);
-           Write_Error(MyError);
+         If MyEccResult.MsgId <> 'ECC0000';
+           Write_EccMsg(MyEccResult);
            Return;
          EndIf;
 
-         Write_Result(MyResult);
+         DataLen = 100;
+         DataBuf = '';
+         CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
+                            DataLen:DataBuf);
+         if %error;
+           Write_Excp('EccRcvRes':Psds);
+           Return;
+         endif;
+
+         BufToVinInfo(DataBuf:MyVinInfo);
+         Write_VinInfo(MyVinInfo);
 
          Return;
 
@@ -167,45 +176,47 @@
      P Write_Msg       E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Error
+      * Procedure Name:   Write_EccMsg
       * Purpose.......:   Write error status of web service request
       * Returns.......:   None
-      * Parameters....:   Error data structure
+      * Parameters....:   EccResult data structure
       ***-----------------------------------------------------------***
-     P Write_Error     B
+     P Write_EccMsg    B
 
-     D Write_Error     PI
-     D  In_Error                           LikeDS(Error) Const
+     D Write_EccMsg    PI
+     D  Message                            LikeDS(EccResult) Const
 
      D Text            DS           132    Qualified
-     D  Sts                           3A
-     D                                3A   Inz(' - ')
-     D  Message                      77A
+     D  TmStmp                       23A
+     D                                3A   Inz('  ')
+     D  Id                            7A
+     D                                3A   Inz('  ')
+     D  Desc                         50A
 
-       Text.Sts = %char(In_Error.HttpSts);
-       Text.Message = In_Error.Message;
+
+       Text.TmStmp = %char(Message.MsgTime);
+       Text.Id = Message.MsgId;
+       Text.Desc = Message.MsgDesc;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Error     E
+     P Write_EccMsg    E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Result
+      * Procedure Name:   Write_VinInfo
       * Purpose.......:   Write result
       * Returns.......:   None
       * Parameters....:   Result data structure
       ***-----------------------------------------------------------***
-     P Write_Result    B
+     P Write_VinInfo   B
 
-     D Write_Result    PI
-     D  In_Result                          LikeDS(Result) Const
+     D Write_VinInfo   PI
+     D  In_VinInfo                         LikeDS(VinInfo) Const
 
      D Text1           DS           132    Qualified
-     D                                8A   Inz('Status: ')
-     D  Status                        3A
-     D                               25A   Inz(', Electrification level: ')
+     D                               25A   Inz('Electrification level: ')
      D  ElecLvl                      35A
 
      D Text2           DS           132    Qualified
@@ -214,17 +225,16 @@
      D                               18A   Inz(', Secondary fuel: ')
      D  FlTypSec                     25A
 
-       Text1.Status = %char(In_Result.HttpSts);
-       Text1.ElecLvl = In_Result.ElecLvl;
-       Text2.FlTypPrim = In_Result.FlTypPrim;
-       Text2.FlTypSec = In_Result.FlTypSec;
+       Text1.ElecLvl = In_VinInfo.ElecLvl;
+       Text2.FlTypPrim = In_VinInfo.FlTypPrim;
+       Text2.FlTypSec = In_VinInfo.FlTypSec;
 
        Write QSysPrt Text1;
        Write QSysPrt Text2;
 
        Return;
 
-     P Write_Result    E
+     P Write_VinInfo   E
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Excp

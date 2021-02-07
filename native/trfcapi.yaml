@@ -9,16 +9,17 @@ formats:
         rpgName: Type
         type: Character
         length: 10
-  Response:
+  EccResult:
     recordType: response
     length: 80
     subfields:
-      httpStatus:
-        rpgName: HttpSts
-        type: Packed
-        length: 3
-      message:
-        rpgName: Message
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
         type: Character
         length: 50
   Traffic:

@@ -36,10 +36,11 @@ exports.getTrafficData = async (reqkey, data) => {
       // Note: These error formats are dependent on the web service
       return response.sendObjectToCaller(
         {
-          httpStatus: err.response.status,
-          message: err.response.data.error_description
+          MsgId: "ECC1000",
+          MsgTime: new Date(),
+          MsgDesc: err.response.data.error_description,
         },
-        interface.convertObjectToResponse,
+        interface.convertObjectToEccResult,
         nextReqKey
       );
     }
@@ -49,10 +50,11 @@ exports.getTrafficData = async (reqkey, data) => {
     // mainly TCP/IP errors.
     return response.sendObjectToCaller(
       {
-        httpStatus: 999,
-        message: err.message,
+        MsgId: "ECC1000",
+        MsgTime: new Date(),
+        MsgDesc: err.message,
       },
-      interface.convertObjectToResponse,
+      interface.convertObjectToEccResult,
       nextReqKey
     );
   }
@@ -96,10 +98,11 @@ exports.getTrafficData = async (reqkey, data) => {
 
     nextReqKey = await response.sendObjectToCaller(
       {
-        httpStatus: 200,
-        message: "API Call Succeeded",
+        MsgId: "ECC0000",
+        MsgTime: new Date(),
+        MsgDesc: "Success",
       },
-      interface.convertObjectToResponse,
+      interface.convertObjectToEccResult,
       nextReqKey
     );
 
@@ -115,10 +118,11 @@ exports.getTrafficData = async (reqkey, data) => {
     console.log("TrafficAPI:", "Failed parsing results", e);
     return response.sendObjectToCaller(
       {
-        httpStatus: 404,
-        message: "No Route Found",
+        MsgId: "ECC1000",
+        MsgTime: new Date(),
+        MsgDesc: "No Route Found",
       },
-      interface.convertObjectToResponse,
+      interface.convertObjectToEccResult,
       nextReqKey
     );
   }
