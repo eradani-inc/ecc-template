@@ -38,7 +38,7 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('getjoke')
+     D Cmd             C                   Const('jokes.getjoke')
 
       *
       *****************************************************************
