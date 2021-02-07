@@ -28,7 +28,7 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
-     D  MyResult       DS                  LikeDS(Result)
+     D  MyEccResult    DS                  LikeDS(EccResult)
      D  MyForecast     DS                  LikeDS(Forecast)
 
       *
@@ -69,8 +69,8 @@
      D Write_Msg1      PR
      D  In_MsgDta                          Like(MsgDta) Const
 
-     D Write_Result    PR
-     D  In_Result                          LikeDS(Result) Const
+     D Write_EccMsg    PR
+     D  In_EccResult                       LikeDS(EccResult) Const
 
      D Write_Forecast  PR
      D  In_Forecast                        LikeDS(Forecast) Const
@@ -131,10 +131,10 @@
 
       // Display The Result
 
-         BufToResult(DataBuf:MyResult);
-         Write_Result(MyResult);
+         BufToEccResult(DataBuf:MyEccResult);
 
-         If (MyResult.HttpStatus < 200) or (MyResult.HttpStatus >= 300);
+         If MyEccResult.MsgId <> 'ECC0000';
+           Write_EccMsg(MyEccResult);
            Return;
          EndIf;
 
@@ -182,29 +182,33 @@
      P Write_Msg1      E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Result
+      * Procedure Name:   Write_EccMsg
       * Purpose.......:   Write result status of web service request
       * Returns.......:   None
-      * Parameters....:   Result data structure
+      * Parameters....:   EccMsg data structure
       ***-----------------------------------------------------------***
-     P Write_Result    B
+     P Write_EccMsg    B
 
-     D Write_Result    PI
-     D  In_Result                          LikeDS(Result) Const
+     D Write_EccMsg    PI
+     D  In_EccResult                       LikeDS(EccResult) Const
 
      D Text            DS           132    Qualified
-     D  Sts                           3A
-     D                                3A   Inz(' - ')
-     D  Message                      77A
+     D  TmStmp                       23A
+     D                                3A   Inz('  ')
+     D  Id                            7A
+     D                                3A   Inz('  ')
+     D  Desc                         50A
 
-       Text.Sts = %char(In_Result.HttpStatus);
-       Text.Message = In_Result.Message;
+
+       Text.TmStmp = %char(In_EccResult.MsgTime);
+       Text.Id = In_EccResult.MsgId;
+       Text.Desc = In_EccResult.MsgDesc;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Result    E
+     P Write_EccMsg    E
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Forecast

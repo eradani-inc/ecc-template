@@ -3,7 +3,7 @@ const { weather, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
 const {
   convertLocationToObject,
-  convertObjectToResult,
+  convertObjectToEccResult,
   convertObjectToForecast,
 } = require("./wthfrcapi");
 
@@ -34,10 +34,11 @@ exports.getforecast = async (reqkey, data) => {
       // Note: These error formats are dependent on the web service
       return ecc.sendObjectToCaller(
         {
-          httpstatus: err.response.status,
-          message: err.response.data.message,
+          MsgId: "ECC1000",
+          MsgTime: new Date(),
+          MsgDesc: err.response.data.message,
         },
-        convertObjectToResult,
+        convertObjectToEccResult,
         nextReqKey
       );
     }
@@ -47,10 +48,11 @@ exports.getforecast = async (reqkey, data) => {
     // mainly TCP/IP errors.
     return ecc.sendObjectToCaller(
       {
-        httpstatus: 999,
-        error: err.message,
+        MsgId: "ECC1000",
+        MsgTime: new Date(),
+        MsgDesc: err.message,
       },
-      convertObjectToResult,
+      convertObjectToEccResult,
       nextReqKey
     );
   }
@@ -58,10 +60,11 @@ exports.getforecast = async (reqkey, data) => {
   // Send success result to client
   nextReqKey = await ecc.sendObjectToCaller(
     {
-      httpstatus: result.status,
-      message: "",
+      MsgId: "ECC0000",
+      MsgTime: new Date(),
+      MsgDesc: "Success",
     },
-    convertObjectToResult,
+    convertObjectToEccResult,
     nextReqKey
   );
 

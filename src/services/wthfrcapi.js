@@ -26,14 +26,15 @@ exports.convertLocationToObject = function convertLocationToObject(dataIn) {
   return dataOut;
 }
 
-  // Convert JavaScript object to Result record
-exports.convertObjectToResult = function convertObjectToResult(dataIn) {
+  // Convert JavaScript object to EccResult record
+exports.convertObjectToEccResult = function convertObjectToEccResult(dataIn) {
   // Initialize the response record as string
   let dataOut = "";
 
   // Convert fields in object to fields in record as string
-  dataOut += dataIn.httpstatus.toFixed(0).substring(0, 5).padEnd(5);
-  dataOut += dataIn.message.substring(0, 77).padEnd(77);
+  dataOut += dataIn.MsgId.substring(0, 7).padEnd(7);
+  dataOut += toIbmiTimestamp(dataIn.MsgTime, 23);
+  dataOut += dataIn.MsgDesc.substring(0, 50).padEnd(50);
 
   // Return the response record as a string
   return dataOut;

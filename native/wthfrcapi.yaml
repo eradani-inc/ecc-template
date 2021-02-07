@@ -15,18 +15,19 @@ formats:
         type: Packed
         length: 9
         precision: 6
-  Result:
+  EccResult:
     recordType: response
     length: 80
     subfields:
-      httpstatus:
-        rpgName: HttpStatus
-        type: Packed
-        length: 3
-      message:
-        rpgName: Message
+      MsgId:
         type: Character
-        length: 77
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
   Forecast:
     recordType: response
     length: 80
