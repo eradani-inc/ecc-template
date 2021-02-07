@@ -1,48 +1,32 @@
 ---
 name: icndbapi
 formats:
-  Data:
+  ReqData:
     recordType: request
     length: 80
-    fields:
+    subfields:
       limitTo:
-        rpgName: D_Ctgry
+        rpgName: Category
+        type: Character
         length: 15
-        type: String
-  RetData:
+  EccResult:
     recordType: response
     length: 80
-    fields:
-      httpstatus:
-        rpgName: R_HttpSts
-        length: 3
-        type: Number
-      type:
-        rpgName: R_Type
-        length: 16
-        type: String
-      value:
-        rpgName: R_Value
-        length: -1
-        type: String
-  RetData2:
+    subfields:
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
+  ResData:
     recordType: response
     length: 80
-    fields:
+    subfields:
       joke:
-        rpgName: R2_Joke
-        length: -1
-        type: String
-  RetData3:
-    recordType: response
-    length: 80
-    fields:
-      httpstatus:
-        rpgName: R3_HttpSts
-        length: 3
-        type: Number
-      error:
-        rpgName: R3_Error
-        length: -1
-        type: String
-
+        rpgName: Joke
+        type: Character
+        length: 80

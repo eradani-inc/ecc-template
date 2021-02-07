@@ -1,21 +1,19 @@
      H Option(*srcstmt:*nodebugio)
      H Debug
-     H Actgrp(*NEW) Dftactgrp(*NO)
-
-      *****************************************************************
-      * File Definition Section
-      *****************************************************************
 
      FQSYSPRT   O    F  132        Printer
 
-      *****************************************************************
-      * Data Definition Section
-      *****************************************************************
+      * Include EccSndReq & EccRcvReq prototypes
+      /copy ecnctc.rpgleinc
+
+      * Include data structs and buffer conversion prototypes
+      /copy icndbapi.rpgleinc
+
       *
       * Passed Parameters - Request
       *
      D  FullCmd        S             32A
-     D  DataLen        S              5P 0
+     D  MyReqData      DS                  LikeDS(ReqData)
 
       *
       * Passed Parameters - Response
@@ -23,20 +21,16 @@
      D  Eod            S               N
      D  Eoa            S               N
      D  NoData         S               N
+     D  MyEccResult    DS                  LikeDS(EccResult)
+     D  MyResData      DS                  LikeDS(ResData)
 
       *
       * Passed Parameter - both Request & Response
       *
+     D  DataLen        S              5P 0
      D  DataBuf        S            512A
 
-      *
-      * Passed Pararmers for API call
-      *
-      /copy wthfrcapi.rpgleinc
-
       * Local Variables
-     D HttpStatusN     S             10I 0
-
      D MsgDta          S            132A
 
      D Psds           SDS                  Qualified
@@ -44,38 +38,32 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('getweatherforecast')
+     D Cmd             C                   Const('getjoke')
+
       *
       *****************************************************************
       * Interfaces
       *****************************************************************
       *
-     D DspWfR          PR                  Extpgm('DSPWFR')
+     D DspJk           PR                  ExtPgm('DSPJK')
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
-     D  In_Lat                       10A
-     D  In_Lon                       10A
       *
-     D DspWfR          PI
+     D DspJk           PI
      D  In_Mode                      10A
      D  In_WaitTm                     5P 0
      D  In_ReqKey                     6A
-     D  In_Lat                       10A
-     D  In_Lon                       10A
-
-      * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
 
       *
      D Write_Msg1      PR
      D  In_MsgDta                          Like(MsgDta) Const
 
-     D Write_Result    PR
-     D  In_Result                          LikeDS(Result) Const
+     D Write_Joke      PR
+     D  In_ResData                         LikeDS(ResData) Const
 
-     D Write_Forecast  PR
-     D  In_Forecast                        LikeDS(Forecast) Const
+     D Write_EccMsg    PR
+     D  In_Message                         Const LikeDS(EccResult)
 
      D Write_Excp      PR
      D  In_ProcNm                    32A   Const
@@ -86,13 +74,14 @@
       * Main Line
       *****************************************************************
 
+         *InLr = *On;
+
       // Assign Data To Variables
 
          FullCmd = Cmd;
-         Location.Lat = In_Lat;
-         Location.Lon = In_Lon;
-         DataLen = %len(Location);
-         DataBuf = Location;
+         MyReqData.Category = 'nerdy';
+         DataLen = 80;
+         ReqDataToBuf(MyReqData:DataBuf);
 
       // Send request
 
@@ -100,71 +89,63 @@
            When In_Mode = '*SNDRCV';
                 CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
-                  CallP Write_Excp('EccSndReq':Psds);
-                  *InLr = *On;
+                  Write_Excp('EccSndReq':Psds);
                   Return;
                 endif;
            When In_Mode = '*RCVONLY';
-           Other;
-             MsgDta = 'Invalid Mode';
-             CallP Write_Msg1(MsgDta);
-             *InLr = *On;
-             Return;
+         Other;
+           MsgDta = 'Invalid Mode';
+           Write_Msg1(MsgDta);
+           Return;
          EndSl;
 
 
       // Receive response
 
-         DataLen = %len(Result);
+         DataLen = 80;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
          if %error;
-           CallP Write_Excp('EccRcvRes':Psds);
-           *InLr = *On;
+           Write_Excp('EccRcvRes':Psds);
            Return;
          endif;
 
-         If (Eod and EoA And NoData);
+         If (NoData);
            MsgDta = 'Timeout Waiting On Response: ' + In_ReqKey;
-           CallP Write_Msg1(MsgDta);
-           *InLr = *On;
+           Write_Msg1(MsgDta);
            Return;
          EndIf;
 
 
       // Display The Result
 
-         Result = DataBuf;
-         CallP Write_Result(Result);
-
-         HttpStatusN = %Dec(Result.HttpStatus:10:0);
-         If (HttpStatusN < 200) or (HttpStatusN >= 300);
-           *InLr = *On;
+         BufToEccResult(DataBuf:MyEccResult);
+         if (MyEccResult.MsgId <> 'ECC0000');
+           Write_EccMsg(MyEccResult);
            Return;
-         EndIf;
+         endif;
 
-         DoU Eoa;
-             DataLen = %len(Forecast);
+      // Receive and display the remaining lines, if any
+         Eod = *Off;
+         DoW not Eod;
+             DataLen = 80;
              DataBuf = '';
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);
              if %error;
-               CallP Write_Excp('EccRcvRes':Psds);
-               *InLr = *On;
+               Write_Excp('EccRcvRes':Psds);
                Return;
              endif;
 
              If (NoData);
-               *InLr = *On;
                Return;
              Else;
-               Forecast = DataBuf;
-               CallP Write_Forecast(Forecast);
+               BufToResData(DataBuf:MyResData);
+               Write_Joke(MyResData);
              EndIf;
          EndDo;
 
-         *InLr = *On;
          Return;
 
 
@@ -191,61 +172,55 @@
      P Write_Msg1      E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Result
-      * Purpose.......:   Write result status of web service request
+      * Procedure Name:   Write_Joke
+      * Purpose.......:   Write joke
       * Returns.......:   None
-      * Parameters....:   Result data structure
+      * Parameters....:   ResData data structure
       ***-----------------------------------------------------------***
-     P Write_Result    B
+     P Write_Joke      B
 
-     D Write_Result    PI
-     D  In_Result                          LikeDS(Result) Const
+     D Write_Joke      PI
+     D  Data                               LikeDS(ResData) Const
 
-     D Text            DS           132    Qualified
-     D  Sts                           3A
-     D                                3A   Inz(' - ')
-     D  Message                      77A
+     D Text            DS           132
+     D  Joke                         80A
 
-       Text.Sts = In_Result.HttpStatus;
-       Text.Message = In_Result.Message;
+       Joke = Data.Joke;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Result    E
+     P Write_Joke      E
 
       ***-----------------------------------------------------------***
-      * Procedure Name:   Write_Forecast
-      * Purpose.......:   Write weather forecast
+      * Procedure Name:   Write_EccMsg
+      * Purpose.......:   Write Message
       * Returns.......:   None
-      * Parameters....:   Forecast data structure
+      * Parameters....:   EccResult data structure
       ***-----------------------------------------------------------***
-     P Write_Forecast  B
+     P Write_EccMsg    B
 
-     D Write_Forecast  PI
-     D  In_Forecast                        LikeDS(Forecast) Const
+     D Write_EccMsg    PI
+     D  Message                            Const LikeDS(EccResult)
 
      D Text            DS           132    Qualified
-     D                                6A   Inz('Date: ')
-     D  Date                         10A
-     D                                7A   Inz(', Min: ')
-     D  Min                           6A
-     D                                7A   Inz(', Max: ')
-     D  Max                           6A
-     D                                8A   Inz(', Desc: ')
-     D  Desc                         58A
+     D  TmStmp                       23A
+     D                                3A   Inz('  ')
+     D  Id                            7A
+     D                                3A   Inz('  ')
+     D  Desc                         50A
 
-       Text.Date = In_Forecast.Date;
-       Text.Min = In_Forecast.Min;
-       Text.Max = In_Forecast.Max;
-       Text.Desc = In_Forecast.Desc;
+
+       Text.TmStmp = %char(Message.MsgTime);
+       Text.Id = Message.MsgId;
+       Text.Desc = Message.MsgDesc;
 
        Write QSysPrt Text;
 
        Return;
 
-     P Write_Forecast  E
+     P Write_EccMsg    E
 
       ***-----------------------------------------------------------***
       * Procedure Name:   Write_Excp
@@ -261,11 +236,11 @@
 
      D Text            DS           132
      D  MsgId                         7A
-     D                                1A   Inz(' ')
+     D  Sep                           1A   Inz(' ')
      D  ExcpDta                      80A
 
        MsgDta = 'Error calling ' + In_ProcNm;
-       CallP Write_Msg1(MsgDta);
+       Write_Msg1(MsgDta);
 
        MsgId = In_Psds.MsgId;
        ExcpDta = In_Psds.ExcpDta;

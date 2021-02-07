@@ -10,29 +10,24 @@ LIB?=ECNCTAPP
 
 TGTRLS?=V7R4M0
 
-CLPGMS = dspjkc \
-         dsptrfcc \
-         dspvhclc \
-         prtlblc
 
-RPGPGMS = dspjkr \
-          dsptrfcr \
-          dspvhclr \
-          dspwfr \
-	  prtlblr
+MODS = dspjk \
+       dsptrfc \
+       dspvhcl \
+       dspwf \
+       prtlbl
 
-PGMS = $(CLPGMS) \
-       $(RPGPGMS)
+PGMS = dspjk \
+       dsptrfc \
+       dspvhcl \
+       dspwf \
+       prtlbl
 
-CMDS = dspjkc \
-       dspjkr \
-       dsptrfcc \
-       dsptrfcr \
-       dspvhclc \
-       dspvhclr \
-       dspwfr \
-       prtlblc \
-       prtlblr
+CMDS = dspjk \
+       dsptrfc \
+       dspvhcl \
+       dspwf \
+       prtlbl
 
 GENSRC = icndbapi \
          lblapi \
@@ -51,24 +46,22 @@ endif
 rootdir = $(shell cd ..; pwd)
 ecclient = $(rootdir)/bin/ec-client
 
-FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
+FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
+FQMODS = $(foreach mod, $(MODS), $(libdir)/$(mod).module)
+FQGENMODS = $(foreach mod, $(GENSRC), $(libdir)/$(mod).module)
 FQCMDSRCMBRS = $(foreach srcmbr, $(CMDS), $(libdir)/qcmdsrc.file/$(srcmbr).mbr)
-FQCLSRCMBRS = $(foreach srcmbr, $(CLPGMS), $(libdir)/qclsrc.file/$(srcmbr).mbr)
-FQCLGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qclsrc.file/$(srcmbr).mbr)
-FQRPGSRCMBRS = $(foreach srcmbr, $(RPGPGMS), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
+FQRPGSRCMBRS = $(foreach srcmbr, $(MODS), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
 FQRPGGENSRCMBRS = $(foreach srcmbr, $(GENSRC), $(libdir)/qrpgsrc.file/$(srcmbr).mbr)
 FQSRCMBRS = $(FQCMDSRCMBRS) \
-	    $(FQCLSRCMBRS) \
-	    $(FQCLGENSRCMBRS) \
 	    $(FQRPGSRCMBRS) \
 	    $(FQRPGGENSRCMBRS)
-
+LCLRPGGENMODSRC = $(foreach src, $(GENSRC), $(src).rpgle)
 
 # Rules
 #
 
-all: $(FQPGMS) $(FQCMDS)
+all: $(FQCMDS)
 
 
 # Programs
@@ -80,30 +73,35 @@ ecnctc.rpgleinc: ../node_modules/@eradani-inc/ec-client/native/ecnctc.rpgleinc
 ifeq ($(TGTRLS), V7R4M0)
 
 $(libdir)/%.cmd: %.cmd  $(libdir)/%.pgm
-	system "CRTCMD CMD($(LIB)/$(basename $(@F))) PGM($(LIB)/$(basename $(@F)))\
-	  SRCSTMF('$<')"
+	system "CRTCMD CMD($(LIB)/$(basename $(@F))) PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<')"
 
-$(libdir)/%.pgm: %.rpgle
-	system "CRTBNDRPG PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS))"
+$(libdir)/dspjk.pgm: $(libdir)/dspjk.module $(libdir)/icndbapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/icndbapi)"
 
-$(libdir)/%.pgm: %.clle
-	system "CRTBNDCL PGM($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTRLS($(TGTRLS))"
+$(libdir)/dsptrfc.pgm: $(libdir)/dsptrfc.module $(libdir)/trfcapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/trfcapi)"
 
-$(libdir)/dspjkr.pgm: icndbapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dspvhcl.pgm: $(libdir)/dspvhcl.module $(libdir)/vinapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/vinapi)"
 
-$(libdir)/dsptrfcr.pgm: trfcapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/dspwf.pgm: $(libdir)/dspwf.module $(libdir)/wthfrcapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/wthfrcapi)"
 
-$(libdir)/dspvhclr.pgm: vinapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/prtlbl.pgm: $(libdir)/prtlbl.module $(libdir)/lblapi.module
+	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE($(LIB)/$(basename $(@F)) $(LIB)/lblapi)"
 
-$(libdir)/dspwfr.pgm: wthfrcapi.rpgleinc ecnctc.rpgleinc
+$(libdir)/%.module: %.rpgle
+	system "CRTRPGMOD MODULE($(LIB)/$(basename $(@F))) SRCSTMF('$<') TGTCCSID(37) TGTRLS($(TGTRLS)) DBGVIEW(*LIST)"
 
-$(libdir)/dspjkc.pgm: icndbapi.clleinc
+$(libdir)/dspjk.module: icndbapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/dsptrfcc.pgm: trfcapi.clleinc
+$(libdir)/dsptrfc.module: trfcapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/dspvhclc.pgm: vinapi.clleinc
+$(libdir)/dspvhcl.module: vinapi.rpgleinc ecnctc.rpgleinc
 
-$(libdir)/prtlblc.pgm: lblapi.clleinc
+$(libdir)/dspwf.module: wthfrcapi.rpgleinc ecnctc.rpgleinc
+
+$(libdir)/prtlbl.module: lblapi.rpgleinc ecnctc.rpgleinc
 
 else
 
@@ -113,9 +111,6 @@ $(libdir)/%.cmd: $(libdir)/qcmdsrc.file/%.mbr  $(libdir)/%.pgm
 
 $(libdir)/%.pgm: $(libdir)/qrpgsrc.file/%.mbr
 	system "CRTBNDRPG PGM($(LIB)/$(basename $(@F))) SRCFILE($(LIB)/QRPGSRC) TGTRLS($(TGTRLS))"
-
-$(libdir)/%.pgm: $(libdir)/qclsrc.file/%.mbr
-	system "CRTBNDCL PGM($(LIB)/$(basename $(@F))) SRCFILE($(LIB)/QCLSRC) TGTRLS($(TGTRLS))"
 
 $(libdir)/qcmdsrc.file/%.mbr: %.cmd
 	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
@@ -129,30 +124,9 @@ $(libdir)/qrpgsrc.file/%.mbr: %.rpgle
 $(libdir)/qrpgsrc.file/%.mbr: %.rpgleinc
 	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
 
-$(libdir)/qclsrc.file/%.mbr: %2.clle
-	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
+$(libdir)/dspjk.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
-$(libdir)/qclsrc.file/%.mbr: %.clle
-	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
-
-$(libdir)/qclsrc.file/%.mbr: %.clleinc
-	system "CPYFRMSTMF FROMSTMF('$<') TOMBR('$@') MBROPT(*REPLACE)"
-
-$(libdir)/dspjkr.pgm: $(libdir)/qrpgsrc.file/icndbapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
-$(libdir)/dsptrfcc.pgm: $(libdir)/qrpgsrc.file/trfcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
-$(libdir)/dspvhclc.pgm: $(libdir)/qrpgsrc.file/vinapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
-$(libdir)/dspwfr.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
-
-$(libdir)/dspjkc.pgm: $(libdir)/qclsrc.file/icndbapi.mbr
-
-$(libdir)/dsptrfcc.pgm: $(libdir)/qclsrc.file/trfcapi.mbr
-
-$(libdir)/dspvhclc.pgm: $(libdir)/qclsrc.file/vinapi.mbr
-
-$(libdir)/prtlblc.pgm: $(libdir)/qclsrc.file/lblapi.mbr
+$(libdir)/dspwf.pgm: $(libdir)/qrpgsrc.file/wthfrcapi.mbr $(libdir)/qrpgsrc.file/ecnctc.mbr
 
 # Prevent gmake from deleting intermediate source members
 .PRECIOUS: $(FQSRCMBRS)
@@ -177,23 +151,23 @@ endif
 # Miscelaneous rules and dependencies
 #
 
-icndbapi.clleinc icndbapi.rpgleinc icndbapi.js: icndbapi.yaml
+icndbapi.rpgle icndbapi.rpgleinc icndbapi.ts icndbapi.js: icndbapi.yaml
 	npm run generate -- -f $<
 	cp icndbapi.js ../src/services
 
-trfcapi.clleinc trfcapi.rpgleinc trfcapi.js: trfcapi.yaml
+trfcapi.rpgle trfcapi.rpgleinc trfcapi.ts trfcapi.js: trfcapi.yaml
 	npm run generate -- -f $<
 	cp trfcapi.js ../src/services
 
-vinapi.clleinc vinapi.rpgleinc vinapi.js: vinapi.yaml
+vinapi.rpgle vinapi.rpgleinc vinapi.ts vinapi.js: vinapi.yaml
 	npm run generate -- -f $<
 	cp vinapi.js ../src/services
 
-wthfrcapi.clleinc wthfrcapi.rpgleinc wthfrcapi.js: wthfrcapi.yaml
+wthfrcapi.rpgle wthfrcapi.rpgleinc wthfrcapi.ts wthfrcapi.js: wthfrcapi.yaml
 	npm run generate -- -f $<
 	cp wthfrcapi.js ../src/services
 
-lblapi.clleinc lblapi.rpgleinc lblapi.js: lblapi.yaml
+lblapi.rpgle lblapi.rpgleinc lblapi.ts lblapi.js: lblapi.yaml
 	npm run generate -- -f $<
 	cp lblapi.js ../src/services
 
@@ -208,6 +182,10 @@ library:
 
 .PHONY: clean
 clean:
-	-rm $(FQPGMS) $(FQCMDS)
+	-rm $(FQCMDS)
+	-rm $(FQPGMS)
+	-rm $(FQMODS)
+	-rm $(FQGENMODS)
 	-rm $(FQSRCMBRS)
-	-rm *.clleinc *.rpgleinc *.js *.ts
+	-rm $(LCLRPGGENMODSRC)
+	-rm *.rpgleinc *.js *.ts
