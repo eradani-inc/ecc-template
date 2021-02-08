@@ -3,15 +3,8 @@
 // Module: icndbapi
 // Generated source -- do not modify
 
-import { ibmiConversions } from "@eradani-inc/ec-client";
-const {
-  fromIbmiDate,
-  fromIbmiTime,
-  fromIbmiTimestamp,
-  toIbmiDate,
-  toIbmiTime,
-  toIbmiTimestamp
-} = ibmiConversions;
+import { ibmiConversions } from '@eradani-inc/ec-client';
+const { fromIbmiDate, fromIbmiTime, fromIbmiTimestamp, toIbmiDate, toIbmiTime, toIbmiTimestamp } = ibmiConversions;
 
 /**
  * Output interface
@@ -20,20 +13,18 @@ export interface ReqData {
     /**
      * @size 15 characters
      */
-    limitTo: string
+    limitTo: string;
 }
 
 /**
  * Convert ReqData record to TypeScript object
  */
 export function convertReqDataToObject(dataIn: string): ReqData {
-  const dataOut: any =   {
-  
-    };
+    const dataOut: any = {};
 
-  dataOut.limitTo = dataIn.substring(0, 15).trimEnd();
+    dataOut.limitTo = dataIn.substring(0, 15).trimEnd();
 
-  return dataOut;
+    return dataOut;
 }
 
 /**
@@ -43,27 +34,27 @@ export interface EccResult {
     /**
      * @size 7 characters
      */
-    MsgId: string,
+    MsgId: string;
     /**
      */
-    MsgTime: Date,
+    MsgTime: Date;
     /**
      * @size 50 characters
      */
-    MsgDesc: string
+    MsgDesc: string;
 }
 
 /**
  * Convert JavaScript object to EccResult record
  */
 export function convertObjectToEccResult(dataIn: EccResult): string {
-  let dataOut = "";
+    let dataOut = '';
 
-  dataOut += dataIn.MsgId.substring(0, 7).padEnd(7);
-  dataOut += toIbmiTimestamp(dataIn.MsgTime, 23);
-  dataOut += dataIn.MsgDesc.substring(0, 50).padEnd(50);
+    dataOut += dataIn.MsgId.substring(0, 7).padEnd(7);
+    dataOut += toIbmiTimestamp(dataIn.MsgTime, 23);
+    dataOut += dataIn.MsgDesc.substring(0, 50).padEnd(50);
 
-  return dataOut;
+    return dataOut;
 }
 
 /**
@@ -73,18 +64,18 @@ export interface ResData {
     /**
      * @size 80 characters
      */
-    joke: string
+    joke: string;
 }
 
 /**
  * Convert JavaScript object to ResData record
  */
 export function convertObjectToResData(dataIn: ResData): string {
-  let dataOut = "";
+    let dataOut = '';
 
-  dataOut += dataIn.joke.substring(0, 80).padEnd(80);
+    dataOut += dataIn.joke.substring(0, 80).padEnd(80);
 
-  return dataOut;
+    return dataOut;
 }
 
 /* eslint-enable */

@@ -8,7 +8,7 @@ import * as converter from 'src/interfaces/icndbapi';
 
 const axiosInstance = axios.create(icndb);
 
-export const getJoke: ECCHandlerFunction = async function (reqkey, data, _, ecc) {
+export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
     logger.debug(`Received getJoke request`, { reqkey, data });
     // Get parameters from incomming data buffer
     const reqFields = converter.convertReqDataToObject(data);
