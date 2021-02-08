@@ -4,13 +4,17 @@ import config from 'config';
 import createLogger from 'src/services/logger';
 const logger = createLogger('commands/jokes');
 const { icndb } = config;
+import {
+  convertReqDataToObject,
+  convertObjectToEccResult
+} from 'src/interfaces/icndbapi';
 
 const axiosInstance = axios.create(icndb);
 
 export const getJoke: ECCHandlerFunction = async function (reqkey, data, converter, ecc) {
     logger.debug(`Received getJoke request`, { reqkey, data });
     // Get parameters from incomming data buffer
-    const reqFields = converter.convertDataToObject(data);
+    const reqFields = convertReqDataToObject(data);
 
     // Call web service
     let result;
@@ -24,10 +28,11 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, convert
             // Note: These error formats are dependent on the web service
             nextReqKey = await ecc.sendObjectToCaller(
                 {
-                    httpstatus: err.response.status,
-                    error: err.response.statusText
+                    MsgId: 'ECC1000',
+                    MsgTime: new Date(),
+                    MsgDesc: err.response.status + '-' + err.response.statusText
                 },
-                converter.convertObjectToRetData3,
+                convertObjectToEccResult,
                 nextReqKey
             );
         }
@@ -37,10 +42,11 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, convert
         // Mainly TCP/IP errors.
         return ecc.sendObjectToCaller(
             {
-                httpstatus: 999,
-                error: err.message
+                MsgId: 'ECC1000',
+                MsgTime: new Date(),
+                MsgDesc: err.message
             },
-            converter.convertObjectToRetData3,
+            convertObjectToEccResult,
             nextReqKey
         );
     }
@@ -48,8 +54,15 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, convert
     if (result.data.type !== 'success') {
         // If the request did not succeed
         // Note: if not successful value is a string containing the error
-        result.data.httpstatus = result.status;
-        return ecc.sendObjectToCaller(result.data, converter.convertObjectToRetData, nextReqKey);
+        return ecc.sendObjectToCaller(
+            {
+                MsgId: 'ECC1000',
+                MsgTime: new Date(),
+                MsgDesc: result.status + '-' + result.data.value
+            },
+            convertObjectToEccResult,
+            nextReqKey
+        );
     }
 
     // Else save the joke then change the value field so it is as expected
@@ -59,7 +72,15 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, convert
     result.data.value = '';
 
     // Send the result info
-    nextReqKey = await ecc.sendObjectToCaller(result.data, converter.convertObjectToRetData, nextReqKey);
+    nextReqKey = await ecc.sendObjectToCaller(
+        {
+            MsgId: 'ECC0000',
+            MsgTime: new Date(),
+            MsgDesc: 'Success'
+        },
+        converter.convertObjectToEccResult,
+        nextReqKey
+    );
 
     // Send the joke
     return ecc.sendFieldToCaller(joke, nextReqKey);
