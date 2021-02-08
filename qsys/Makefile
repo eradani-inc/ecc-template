@@ -153,23 +153,23 @@ endif
 
 icndbapi.rpgle icndbapi.rpgleinc icndbapi.ts icndbapi.js: icndbapi.yaml
 	npm run generate -- -f $<
-	#cp icndbapi.js ../src/services
+	cp icndbapi.ts ../src/interfaces
 
 trfcapi.rpgle trfcapi.rpgleinc trfcapi.ts trfcapi.js: trfcapi.yaml
 	npm run generate -- -f $<
-	#cp trfcapi.js ../src/services
+	cp trfcapi.ts ../src/interfaces
 
 vinapi.rpgle vinapi.rpgleinc vinapi.ts vinapi.js: vinapi.yaml
 	npm run generate -- -f $<
-	#cp vinapi.js ../src/services
+	cp vinapi.ts ../src/interfaces
 
 wthfrcapi.rpgle wthfrcapi.rpgleinc wthfrcapi.ts wthfrcapi.js: wthfrcapi.yaml
 	npm run generate -- -f $<
-	#cp wthfrcapi.js ../src/services
+	cp wthfrcapi.ts ../src/interfaces
 
 lblapi.rpgle lblapi.rpgleinc lblapi.ts lblapi.js: lblapi.yaml
 	npm run generate -- -f $<
-	#cp lblapi.js ../src/services
+	cp lblapi.ts ../src/interfaces
 
 
 .PHONY: library

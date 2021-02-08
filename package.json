@@ -28,8 +28,7 @@
         "config": "shx cp -r src/config dist/src",
         "generate-config": "cp ./src/config/overrides.json.sample ./src/config/overrides.json",
         "bump-version": "npm version -m \"chore(Version): Increment to %s\"",
-        "view-docs": "start docs/index.html",
-        "postgenerate": "cp qsys/*.js src/interfaces"
+        "view-docs": "start docs/index.html"
     },
     "repository": {
         "type": "git",
@@ -46,8 +45,8 @@
     },
     "homepage": "https://github.com/eradani-inc/ecc-template#readme",
     "dependencies": {
-        "@eradani-inc/ec-client": "^3.4.7-alpha.3",
-        "@eradani-inc/ecc-router": "^0.4.3",
+        "@eradani-inc/ec-client": "^3.4.7-alpha.4",
+        "@eradani-inc/ecc-router": "^0.5.0-beta.0",
         "axios": "^0.21.1",
         "config": "^3.3.3",
         "download": "^8.0.0",
@@ -58,7 +57,7 @@
         "winston-daily-rotate-file": "^4.5.0"
     },
     "devDependencies": {
-        "@eradani-inc/ec-generate": "^3.5.0-alpha.4",
+        "@eradani-inc/ec-generate": "^3.5.0-alpha.5",
         "@types/chai": "^4.2.14",
         "@types/config": "0.0.38",
         "@types/lodash": "^4.14.168",
