@@ -61,16 +61,16 @@ declare module '@eradani-inc/ec-client' {
     }
 
     namespace ibmiConversions {
-      export function fromIbmiDate(ibmiDate: string): Date;
+        export function fromIbmiDate(ibmiDate: string): Date;
 
-      export function fromIbmiTime(ibmiTime: string): Date;
+        export function fromIbmiTime(ibmiTime: string): Date;
 
-      export function fromIbmiTimestamp(ibmiTimestamp: string): Date;
+        export function fromIbmiTimestamp(ibmiTimestamp: string): Date;
 
-      export function toIbmiDate(jsDate: string | Date): string;
+        export function toIbmiDate(jsDate: string | Date): string;
 
-      export function toIbmiTime(jsDate: string | Date): string;
+        export function toIbmiTime(jsDate: string | Date): string;
 
-      export function toIbmiTimestamp(jsDate: string | Date, length: number): string;
+        export function toIbmiTimestamp(jsDate: string | Date, length: number): string;
     }
 }

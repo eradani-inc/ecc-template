@@ -4,17 +4,14 @@ import config from 'config';
 import createLogger from 'src/services/logger';
 const logger = createLogger('commands/jokes');
 const { icndb } = config;
-import {
-  convertReqDataToObject,
-  convertObjectToEccResult
-} from 'src/interfaces/icndbapi';
+import * as converter from 'src/interfaces/icndbapi';
 
 const axiosInstance = axios.create(icndb);
 
-export const getJoke: ECCHandlerFunction = async function (reqkey, data, converter, ecc) {
+export const getJoke: ECCHandlerFunction = async function (reqkey, data, _, ecc) {
     logger.debug(`Received getJoke request`, { reqkey, data });
     // Get parameters from incomming data buffer
-    const reqFields = convertReqDataToObject(data);
+    const reqFields = converter.convertReqDataToObject(data);
 
     // Call web service
     let result;
@@ -32,7 +29,7 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, convert
                     MsgTime: new Date(),
                     MsgDesc: err.response.status + '-' + err.response.statusText
                 },
-                convertObjectToEccResult,
+                converter.convertObjectToEccResult,
                 nextReqKey
             );
         }
@@ -46,7 +43,7 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, convert
                 MsgTime: new Date(),
                 MsgDesc: err.message
             },
-            convertObjectToEccResult,
+            converter.convertObjectToEccResult,
             nextReqKey
         );
     }
@@ -60,7 +57,7 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, convert
                 MsgTime: new Date(),
                 MsgDesc: result.status + '-' + result.data.value
             },
-            convertObjectToEccResult,
+            converter.convertObjectToEccResult,
             nextReqKey
         );
     }

@@ -1,15 +1,10 @@
+/* eslint-disable */
+// @ts-nocheck
 // Module: icndbapi
 // Generated source -- do not modify
 
-import eradaniClient from '@eradani-inc/ec-client';
-const {
-    fromIbmiDate,
-    fromIbmiTime,
-    fromIbmiTimestamp,
-    toIbmiDate,
-    toIbmiTime,
-    toIbmiTimestamp
-} = eradaniClient.ibmiConversions;
+import { ibmiConversions } from '@eradani-inc/ec-client';
+const { fromIbmiDate, fromIbmiTime, fromIbmiTimestamp, toIbmiDate, toIbmiTime, toIbmiTimestamp } = ibmiConversions;
 
 /**
  * Output interface
@@ -82,3 +77,5 @@ export function convertObjectToResData(dataIn: ResData): string {
 
     return dataOut;
 }
+
+/* eslint-enable */
