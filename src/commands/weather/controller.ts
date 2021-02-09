@@ -2,24 +2,19 @@ import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'config';
 import createLogger from 'src/services/logger';
-const logger = createLogger('commands/vehicle');
+const logger = createLogger('commands/weather');
 const { weather } = config;
 import * as converter from 'src/interfaces/wthfrcapi';
 
 const axiosInstance = axios.create(weather);
 
-interface WebSvcRequest extends converter.Location {
-  appid: string;
-  exclude: string;
-  units: string;
-}
-
 export const getForecast: ECCHandlerFunction = async (reqkey, data, ecc) => {
   // Get parameters from incomming data buffer
   const rpgFields = converter.convertLocationToObject(data);
 
-  const reqFields: WebSvcRequest = {
+  const reqFields = {
     ...rpgFields,
+
     // Add api key
     appid: weather.apikey,
 

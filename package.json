@@ -60,6 +60,7 @@
         "@eradani-inc/ec-generate": "^3.5.0-alpha.5",
         "@types/chai": "^4.2.14",
         "@types/config": "0.0.38",
+        "@types/download": "^6.2.4",
         "@types/lodash": "^4.14.168",
         "@types/mocha": "^8.2.0",
         "@types/node": "^14.14.22",
