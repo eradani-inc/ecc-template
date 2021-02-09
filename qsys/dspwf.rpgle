@@ -45,7 +45,7 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('getweatherforecast')
+     D Cmd             C                   Const('weather.getforecast')
       *
       *****************************************************************
       * Interfaces
