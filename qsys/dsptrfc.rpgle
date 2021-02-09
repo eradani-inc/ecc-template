@@ -45,7 +45,7 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('gettrafficdata')
+     D Cmd             C                   Const('traffic.getdata')
       *
       *****************************************************************
       * Interfaces
