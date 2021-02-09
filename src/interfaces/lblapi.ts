@@ -3,15 +3,8 @@
 // Module: lblapi
 // Generated source -- do not modify
 
-import { ibmiConversions } from "@eradani-inc/ec-client";
-const {
-  fromIbmiDate,
-  fromIbmiTime,
-  fromIbmiTimestamp,
-  toIbmiDate,
-  toIbmiTime,
-  toIbmiTimestamp
-} = ibmiConversions;
+import { ibmiConversions } from '@eradani-inc/ec-client';
+const { fromIbmiDate, fromIbmiTime, fromIbmiTimestamp, toIbmiDate, toIbmiTime, toIbmiTimestamp } = ibmiConversions;
 
 /**
  * Output interface
@@ -20,75 +13,73 @@ export interface LabelData {
     /**
      * @size 16 characters
      */
-    toName: string,
+    toName: string;
     /**
      * @size 20 characters
      */
-    toAddress: string,
+    toAddress: string;
     /**
      * @size 10 characters
      */
-    toCity: string,
+    toCity: string;
     /**
      * @size 2 characters
      */
-    toState: string,
+    toState: string;
     /**
      * @size 5 characters
      */
-    toZip: string,
+    toZip: string;
     /**
      * @size 3 characters
      */
-    toCountry: string,
+    toCountry: string;
     /**
      * @size 5 characters
      */
-    weight: string,
+    weight: string;
     /**
      * @size 2 characters
      */
-    weightUnits: string,
+    weightUnits: string;
     /**
      * @size 5 characters
      */
-    height: string,
+    height: string;
     /**
      * @size 5 characters
      */
-    width: string,
+    width: string;
     /**
      * @size 5 characters
      */
-    length: string,
+    length: string;
     /**
      * @size 2 characters
      */
-    sizeUnits: string
+    sizeUnits: string;
 }
 
 /**
  * Convert LabelData record to TypeScript object
  */
 export function convertLabelDataToObject(dataIn: string): LabelData {
-  const dataOut: any =   {
-  
-    };
+    const dataOut: any = {};
 
-  dataOut.toName = dataIn.substring(0, 16).trimEnd();
-  dataOut.toAddress = dataIn.substring(16, 36).trimEnd();
-  dataOut.toCity = dataIn.substring(36, 46).trimEnd();
-  dataOut.toState = dataIn.substring(46, 48).trimEnd();
-  dataOut.toZip = dataIn.substring(48, 53).trimEnd();
-  dataOut.toCountry = dataIn.substring(53, 56).trimEnd();
-  dataOut.weight = dataIn.substring(56, 61).trimEnd();
-  dataOut.weightUnits = dataIn.substring(61, 63).trimEnd();
-  dataOut.height = dataIn.substring(63, 68).trimEnd();
-  dataOut.width = dataIn.substring(68, 73).trimEnd();
-  dataOut.length = dataIn.substring(73, 78).trimEnd();
-  dataOut.sizeUnits = dataIn.substring(78, 80).trimEnd();
+    dataOut.toName = dataIn.substring(0, 16).trimEnd();
+    dataOut.toAddress = dataIn.substring(16, 36).trimEnd();
+    dataOut.toCity = dataIn.substring(36, 46).trimEnd();
+    dataOut.toState = dataIn.substring(46, 48).trimEnd();
+    dataOut.toZip = dataIn.substring(48, 53).trimEnd();
+    dataOut.toCountry = dataIn.substring(53, 56).trimEnd();
+    dataOut.weight = dataIn.substring(56, 61).trimEnd();
+    dataOut.weightUnits = dataIn.substring(61, 63).trimEnd();
+    dataOut.height = dataIn.substring(63, 68).trimEnd();
+    dataOut.width = dataIn.substring(68, 73).trimEnd();
+    dataOut.length = dataIn.substring(73, 78).trimEnd();
+    dataOut.sizeUnits = dataIn.substring(78, 80).trimEnd();
 
-  return dataOut;
+    return dataOut;
 }
 
 /**
@@ -98,27 +89,27 @@ export interface EccResult {
     /**
      * @size 7 characters
      */
-    MsgId: string,
+    MsgId: string;
     /**
      */
-    MsgTime: Date,
+    MsgTime: Date;
     /**
      * @size 50 characters
      */
-    MsgDesc: string
+    MsgDesc: string;
 }
 
 /**
  * Convert JavaScript object to EccResult record
  */
 export function convertObjectToEccResult(dataIn: EccResult): string {
-  let dataOut = "";
+    let dataOut = '';
 
-  dataOut += dataIn.MsgId.substring(0, 7).padEnd(7);
-  dataOut += toIbmiTimestamp(dataIn.MsgTime, 23);
-  dataOut += dataIn.MsgDesc.substring(0, 50).padEnd(50);
+    dataOut += dataIn.MsgId.substring(0, 7).padEnd(7);
+    dataOut += toIbmiTimestamp(dataIn.MsgTime, 23);
+    dataOut += dataIn.MsgDesc.substring(0, 50).padEnd(50);
 
-  return dataOut;
+    return dataOut;
 }
 
 /**
@@ -128,50 +119,50 @@ export interface ShipInfo {
     /**
      * @size 10 characters
      */
-    labelStatus: string,
+    labelStatus: string;
     /**
      * @size 11 characters
      */
-    shipmentId: string,
+    shipmentId: string;
     /**
      * @size 11 characters
      */
-    labelId: string,
+    labelId: string;
     /**
      * @size 10 digits
      * @precision 2 decimals
      */
-    shipmentCost: number,
+    shipmentCost: number;
     /**
      * @size 3 characters
      */
-    shipmentCostCurrency: string,
+    shipmentCostCurrency: string;
     /**
      * @size 10 digits
      * @precision 2 decimals
      */
-    insuranceCost: number,
+    insuranceCost: number;
     /**
      * @size 3 characters
      */
-    insuranceCostCurrency: string
+    insuranceCostCurrency: string;
 }
 
 /**
  * Convert JavaScript object to ShipInfo record
  */
 export function convertObjectToShipInfo(dataIn: ShipInfo): string {
-  let dataOut = "";
+    let dataOut = '';
 
-  dataOut += dataIn.labelStatus.substring(0, 10).padEnd(10);
-  dataOut += dataIn.shipmentId.substring(0, 11).padEnd(11);
-  dataOut += dataIn.labelId.substring(0, 11).padEnd(11);
-  dataOut += dataIn.shipmentCost.toFixed(2).substring(0, 12).padEnd(12);
-  dataOut += dataIn.shipmentCostCurrency.substring(0, 3).padEnd(3);
-  dataOut += dataIn.insuranceCost.toFixed(2).substring(0, 12).padEnd(12);
-  dataOut += dataIn.insuranceCostCurrency.substring(0, 3).padEnd(3);
+    dataOut += dataIn.labelStatus.substring(0, 10).padEnd(10);
+    dataOut += dataIn.shipmentId.substring(0, 11).padEnd(11);
+    dataOut += dataIn.labelId.substring(0, 11).padEnd(11);
+    dataOut += dataIn.shipmentCost.toFixed(2).substring(0, 12).padEnd(12);
+    dataOut += dataIn.shipmentCostCurrency.substring(0, 3).padEnd(3);
+    dataOut += dataIn.insuranceCost.toFixed(2).substring(0, 12).padEnd(12);
+    dataOut += dataIn.insuranceCostCurrency.substring(0, 3).padEnd(3);
 
-  return dataOut;
+    return dataOut;
 }
 
 /**
@@ -181,28 +172,28 @@ export interface Label {
     /**
      * @size 30 characters
      */
-    trackingNumber: string,
+    trackingNumber: string;
     /**
      * @size 23 characters
      */
-    labelPdfFile: string,
+    labelPdfFile: string;
     /**
      * @size 23 characters
      */
-    labelZplFile: string
+    labelZplFile: string;
 }
 
 /**
  * Convert JavaScript object to Label record
  */
 export function convertObjectToLabel(dataIn: Label): string {
-  let dataOut = "";
+    let dataOut = '';
 
-  dataOut += dataIn.trackingNumber.substring(0, 30).padEnd(30);
-  dataOut += dataIn.labelPdfFile.substring(0, 23).padEnd(23);
-  dataOut += dataIn.labelZplFile.substring(0, 23).padEnd(23);
+    dataOut += dataIn.trackingNumber.substring(0, 30).padEnd(30);
+    dataOut += dataIn.labelPdfFile.substring(0, 23).padEnd(23);
+    dataOut += dataIn.labelZplFile.substring(0, 23).padEnd(23);
 
-  return dataOut;
+    return dataOut;
 }
 
 /* eslint-enable */
