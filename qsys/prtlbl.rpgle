@@ -46,7 +46,7 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('getshippinglabel')
+     D Cmd             C                   Const('shipping.getlabel')
       *
       *****************************************************************
       * Interfaces
