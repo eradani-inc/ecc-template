@@ -2,7 +2,7 @@ import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'config';
 import createLogger from 'src/services/logger';
-const logger = createLogger('commands/jokes');
+const logger = createLogger('commands/traffic');
 const { traffic } = config;
 import * as converter from 'src/interfaces/trfcapi';
 
