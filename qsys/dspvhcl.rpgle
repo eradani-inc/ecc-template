@@ -45,7 +45,7 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('getvehicledata')
+     D Cmd             C                   Const('vehicle.getdata')
       *
       *****************************************************************
       * Interfaces
