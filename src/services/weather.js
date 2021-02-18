@@ -5,7 +5,7 @@ const {
   convertLocationToObject,
   convertObjectToEccResult,
   convertObjectToForecast,
-} = require("./wthfrcapi");
+} = require("../interfaces/wthfrcapi");
 
 const ecc = new ECClient(ecclient);
 
@@ -68,9 +68,6 @@ exports.getforecast = async (reqkey, data) => {
     nextReqKey
   );
 
-  console.log("Unmapped forecast received:");
-  console.log(JSON.stringify(result.data.daily));
-
   // Reduce response to an array of forecasts
   const forecasts = result.data.daily.map((obj) => {
     return {
@@ -80,9 +77,6 @@ exports.getforecast = async (reqkey, data) => {
       description: obj.weather[0].description,
     };
   });
-
-  console.log("Forcasts received:");
-  console.log(JSON.stringify(forecasts));
 
   // Send array of forecasts back to client
   return ecc.sendObjectsToCaller(

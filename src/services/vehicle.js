@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { vehicle, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
-const interface = require("./vinapi");
+const interface = require("../interfaces/vinapi");
 const response = new ECClient(ecclient);
 
 const axiosInstance = axios.create(vehicle);

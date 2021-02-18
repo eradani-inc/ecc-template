@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { traffic, ecclient } = require("../config");
 const { ECClient } = require("@eradani-inc/ec-client");
-const interface = require("./trfcapi");
+const interface = require("../interfaces/trfcapi");
 const response = new ECClient(ecclient);
 
 const axiosInstance = axios.create(traffic);

@@ -5,7 +5,7 @@ const {
   convertReqDataToObject,
   convertObjectToEccResult,
   convertObjectToResData,
-} = require("./icndbapi");
+} = require("../interfaces/icndbapi");
 const { ECClient } = require("@eradani-inc/ec-client");
 
 const agent = new HttpsProxyAgent(proxy);

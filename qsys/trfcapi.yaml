@@ -3,7 +3,6 @@ name: trfcapi
 formats:
   Compare:
     recordType: request
-    length: 80
     subfields:
       type:
         rpgName: Type
@@ -11,7 +10,6 @@ formats:
         length: 10
   EccResult:
     recordType: response
-    length: 80
     subfields:
       MsgId:
         type: Character
@@ -24,7 +22,6 @@ formats:
         length: 50
   Traffic:
     recordType: response
-    length: 80
     subfields:
       rank:
         rpgName: TRank

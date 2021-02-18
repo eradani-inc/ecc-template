@@ -35,7 +35,7 @@
       * Passed Parameter - both Request & Response
       *
      D  DataLen        S              5P 0
-     D  DataBuf        S            512A
+     D  DataBuf        S           1024A
 
       * Local Variables
      D MsgDta          S            132A
@@ -45,7 +45,7 @@
      D ExcpDta                91    170A
 
       * Constants
-     D Cmd             C                   Const('getvehicledata')
+     D Cmd             C                   Const('vehicle.getdata')
       *
       *****************************************************************
       * Interfaces
@@ -91,7 +91,7 @@
          FullCmd = Cmd;
          MyVinData.Vin = In_Vin;
          MyVinData.Year = In_Year;
-         DataLen = 100;
+         DataLen = VinDataLen;
          VinDataToBuf(MyVinData:DataBuf);
 
       // Send request
@@ -113,7 +113,7 @@
 
       // Receive response
 
-         DataLen = 100;
+         DataLen = EccResultLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
@@ -138,7 +138,7 @@
            Return;
          EndIf;
 
-         DataLen = 100;
+         DataLen = VinInfoLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);

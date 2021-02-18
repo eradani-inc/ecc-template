@@ -3,7 +3,6 @@ name: lblapi
 formats:
   LabelData:
     recordType: request
-    length: 80
     subfields:
       toName:
         rpgName: Name
@@ -55,7 +54,6 @@ formats:
         length: 2
   EccResult:
     recordType: response
-    length: 80
     subfields:
       MsgId:
         type: Character
@@ -68,7 +66,6 @@ formats:
         length: 50
   ShipInfo:
     recordType: response
-    length: 80
     subfields:
       labelStatus:
         rpgName: LblSts
@@ -102,7 +99,6 @@ formats:
         length: 3
   Label:
     recordType: response
-    length: 80
     subfields:
       trackingNumber:
         rpgName: TrackNbr

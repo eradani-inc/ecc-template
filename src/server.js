@@ -9,15 +9,15 @@ const { ecclient } = require("./config");
 
 async function handleRequest(data) {
   switch (data.command) {
-    case "getjoke":
+    case "jokes.getjoke":
       return getjoke(data.key, data.data);
-    case "getweatherforecast":
+    case "weather.getforecast":
       return getforecast(data.key, data.data);
-    case "getvehicledata":
+    case "vehicle.getdata":
       return getVehicleData(data.key, data.data);
-    case "gettrafficdata":
+    case "traffic.getdata":
       return getTrafficData(data.key, data.data);
-    case "getshippinglabel":
+    case "shipping.getlabel":
       return getShippingLabel(data.key, data.data);
     default:
       throw new RangeError(`"${data.command}" is not a valid command.`);
