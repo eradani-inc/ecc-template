@@ -3,7 +3,6 @@ name: wthfrcapi
 formats:
   Location:
     recordType: request
-    length: 80
     subfields:
       lat:
         rpgName: Lat
@@ -17,7 +16,6 @@ formats:
         precision: 6
   EccResult:
     recordType: response
-    length: 80
     subfields:
       MsgId:
         type: Character
@@ -30,7 +28,6 @@ formats:
         length: 50
   Forecast:
     recordType: response
-    length: 80
     subfields:
       date:
         rpgName: Date

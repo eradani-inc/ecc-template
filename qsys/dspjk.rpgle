@@ -28,7 +28,7 @@
       * Passed Parameter - both Request & Response
       *
      D  DataLen        S              5P 0
-     D  DataBuf        S            512A
+     D  DataBuf        S           1024A
 
       * Local Variables
      D MsgDta          S            132A
@@ -80,7 +80,7 @@
 
          FullCmd = Cmd;
          MyReqData.Category = 'nerdy';
-         DataLen = 80;
+         DataLen = ReqDataLen;
          ReqDataToBuf(MyReqData:DataBuf);
 
       // Send request
@@ -102,7 +102,7 @@
 
       // Receive response
 
-         DataLen = 80;
+         DataLen = EccResultLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
@@ -129,7 +129,7 @@
       // Receive and display the remaining lines, if any
          Eod = *Off;
          DoW not Eod;
-             DataLen = 80;
+             DataLen = ResDataLen;
              DataBuf = '';
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);

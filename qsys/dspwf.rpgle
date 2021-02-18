@@ -35,7 +35,7 @@
       * Passed Parameter - both Request & Response
       *
      D  DataLen        S              5P 0
-     D  DataBuf        S            512A
+     D  DataBuf        S           1024A
 
       * Local Variables
      D MsgDta          S            132A
@@ -91,7 +91,7 @@
          FullCmd = Cmd;
          MyLocation.Lat = In_Lat;
          MyLocation.Lon = In_Lon;
-         DataLen = 80;
+         DataLen = LocationLen;
          LocationToBuf(MyLocation:DataBuf);
 
       // Send request
@@ -113,7 +113,7 @@
 
       // Receive response
 
-         DataLen = 80;
+         DataLen = EccResultLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
@@ -139,7 +139,7 @@
          EndIf;
 
          DoU Eoa;
-             DataLen = 80;
+             DataLen = ForecastLen;
              DataBuf = '';
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);

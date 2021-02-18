@@ -36,7 +36,7 @@
       * Passed Parameter - both Request & Response
       *
      D  DataLen        S              5P 0
-     D  DataBuf        S            512A
+     D  DataBuf        S           1024A
 
       * Local Variables
      D MsgDta          S            132A
@@ -125,7 +125,7 @@
          MyLabelData.Width = In_Width;
          MyLabelData.Length = In_Length;
          MyLabelData.DimUnts = In_DimUnts;
-         DataLen = 80;
+         DataLen = LabelDataLen;
          LabelDataToBuf(MyLabelData:DataBuf);
 
       // Send request
@@ -147,7 +147,7 @@
 
       // Receive response
 
-         DataLen = 80;
+         DataLen = EccResultLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
@@ -173,7 +173,7 @@
 
       // Display the shipping info
 
-         DataLen = 80;
+         DataLen = ShipInfoLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
@@ -185,7 +185,7 @@
          BufToShipInfo(DataBuf:MyShipInfo);
          Write_ShipInfo(MyShipInfo);
 
-         DataLen = 80;
+         DataLen = LabelLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);

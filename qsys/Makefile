@@ -152,23 +152,23 @@ endif
 #
 
 icndbapi.rpgle icndbapi.rpgleinc icndbapi.ts icndbapi.js: icndbapi.yaml
-	npm run generate -- -f $<
+	npm run generate -- $<
 	cp icndbapi.ts ../src/interfaces
 
 trfcapi.rpgle trfcapi.rpgleinc trfcapi.ts trfcapi.js: trfcapi.yaml
-	npm run generate -- -f $<
+	npm run generate -- $<
 	cp trfcapi.ts ../src/interfaces
 
 vinapi.rpgle vinapi.rpgleinc vinapi.ts vinapi.js: vinapi.yaml
-	npm run generate -- -f $<
+	npm run generate -- $<
 	cp vinapi.ts ../src/interfaces
 
 wthfrcapi.rpgle wthfrcapi.rpgleinc wthfrcapi.ts wthfrcapi.js: wthfrcapi.yaml
-	npm run generate -- -f $<
+	npm run generate -- $<
 	cp wthfrcapi.ts ../src/interfaces
 
 lblapi.rpgle lblapi.rpgleinc lblapi.ts lblapi.js: lblapi.yaml
-	npm run generate -- -f $<
+	npm run generate -- $<
 	cp lblapi.ts ../src/interfaces
 
 

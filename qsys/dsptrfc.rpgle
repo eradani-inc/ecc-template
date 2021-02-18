@@ -35,7 +35,7 @@
       * Passed Parameter - both Request & Response
       *
      D  DataLen        S              5P 0
-     D  DataBuf        S            512A
+     D  DataBuf        S           1024A
 
       * Local Variables
      D MsgDta          S            132A
@@ -88,7 +88,7 @@
 
          FullCmd = Cmd;
          MyCompare.Type = In_Type;
-         DataLen = 80;
+         DataLen = CompareLen;
          CompareToBuf(MyCompare:DataBuf);
 
       // Send request
@@ -110,7 +110,7 @@
 
       // Receive response
 
-         DataLen = 80;
+         DataLen = EccResultLen;
          DataBuf = '';
          CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                             DataLen:DataBuf);
@@ -136,7 +136,7 @@
          EndIf;
 
          DoU Eoa;
-             DataLen = 80;
+             DataLen = TrafficLen;
              DataBuf = '';
              CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
                                 DataLen:DataBuf);

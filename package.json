@@ -45,8 +45,8 @@
     },
     "homepage": "https://github.com/eradani-inc/ecc-template#readme",
     "dependencies": {
-        "@eradani-inc/ec-client": "^3.4.7-alpha.5",
-        "@eradani-inc/ecc-router": "^0.5.3",
+        "@eradani-inc/ec-client": "^3.4.7-alpha.7",
+        "@eradani-inc/ecc-router": "^0.5.4",
         "axios": "^0.21.1",
         "config": "^3.3.3",
         "download": "^8.0.0",
@@ -57,7 +57,7 @@
         "winston-daily-rotate-file": "^4.5.0"
     },
     "devDependencies": {
-        "@eradani-inc/ec-generate": "^3.5.0-alpha.5",
+        "@eradani-inc/ec-generate": "^3.5.0-alpha.8",
         "@types/chai": "^4.2.14",
         "@types/config": "0.0.38",
         "@types/download": "^6.2.4",
