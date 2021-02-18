@@ -50,8 +50,8 @@ The full list of options can be found in `src/config/default.json`.
 ```shell
 make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native library
 make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native
-make TGTRLS=V7R3M0 -C native library
-make TGTRLS=V7R3M0 -C native
+make TGTRLS=V7R3M0 -C qsys library
+make TGTRLS=V7R3M0 -C qsys
 ```
 
 Where `TGTRLS` is set to the version of your IBM i OS.
