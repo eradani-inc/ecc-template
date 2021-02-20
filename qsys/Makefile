@@ -200,6 +200,7 @@ clean:
 	-rm $(FQGENMODS)
 	-rm $(FQSRCMBRS)
 	-rm $(libdir)/qrpglesrc.file/ecnctc.mbr
+	-rm ecnctc.rpgleinc
 	-rm $(LCLGENMODSRC)
 	-rm $(LCLGENHDRSRC)
 	-rm $(LCLGENTSSRC)
