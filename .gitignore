@@ -34,4 +34,3 @@ qsys/*.rpgleinc
 qsys/*.rpgle
 qsys/*.js
 qsys/*.ts
-src/interfaces/*
