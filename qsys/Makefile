@@ -193,3 +193,4 @@ clean:
 	-rm $(FQSRCMBRS)
 	-rm $(LCLRPGGENMODSRC)
 	-rm *.rpgleinc *.js *.ts
+	-rm $(FQTSGENSRC)
