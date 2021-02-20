@@ -56,7 +56,7 @@ ecclient = $(rootdir)/bin/ec-client
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
 FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
 FQMODS = $(foreach mod, $(MODS), $(libdir)/$(mod).module)
-FQGENMODS = $(foreach mod, $(GENSRC), $(libdir)/$(mod).module)
+FQGENMODS = $(foreach mod, $(GENMODSRC), $(libdir)/$(mod).module)
 
 # List of fully qualified source members
 FQCMDSRCMBRS = $(foreach srcmbr, $(CMDS), $(libdir)/qcmdsrc.file/$(srcmbr).mbr)
@@ -75,7 +75,7 @@ LCLGENMODSRC = $(foreach src, $(GENMODSRC), $(src).rpgle)
 LCLGENHDRSRC = $(foreach src, $(GENHDRSRC), $(src).rpgleinc)
 LCLGENTSSRC = $(foreach src, $(GENMODSRC), $(src).ts)
 LCLGENJSSRC = $(foreach src, $(GENMODSRC), $(src).js)
-FQJSGENSRC = $(foreach src, $(GENSRC), ../src/interfaces/$(src).js)
+FQJSGENSRC = $(foreach src, $(GENMODSRC), ../src/interfaces/$(src).js)
 
 # Rules
 #
