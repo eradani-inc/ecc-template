@@ -1,5 +1,6 @@
 ---
 name: trfcapi
+rpgIncName: trfcapi_h
 formats:
   Compare:
     recordType: request

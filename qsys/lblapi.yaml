@@ -1,5 +1,6 @@
 ---
 name: lblapi
+rpgIncName: lblapi_h
 formats:
   LabelData:
     recordType: request

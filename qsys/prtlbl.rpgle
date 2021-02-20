@@ -8,10 +8,10 @@
      FQSYSPRT   O    F  132        Printer
 
       * Include EccSndReq & EccRcvRes prototypes
-      /copy ecnctc.rpgleinc
+      /copy ecnctc
 
       * Include data structs and buffer conversion prototypes
-      /copy lblapi.rpgleinc
+      /copy lblapi_h
 
       *****************************************************************
       * Data Definition Section

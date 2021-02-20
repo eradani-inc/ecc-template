@@ -1,5 +1,6 @@
 ---
 name: icndbapi
+rpgIncName: icndbapi_h
 formats:
   ReqData:
     recordType: request

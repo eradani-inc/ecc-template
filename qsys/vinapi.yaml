@@ -1,5 +1,6 @@
 ---
 name: vinapi
+rpgIncName: vinapi_h
 formats:
   VinData:
     recordType: request
