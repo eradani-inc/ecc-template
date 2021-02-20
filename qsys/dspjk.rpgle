@@ -4,10 +4,10 @@
      FQSYSPRT   O    F  132        Printer
 
       * Include EccSndReq & EccRcvReq prototypes
-      /copy ecnctc.rpgleinc
+      /copy ecnctc
 
       * Include data structs and buffer conversion prototypes
-      /copy icndbapi.rpgleinc
+      /copy icndbapi_h
 
       *
       * Passed Parameters - Request

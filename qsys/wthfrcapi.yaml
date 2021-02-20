@@ -1,5 +1,6 @@
 ---
 name: wthfrcapi
+rpgIncName: wthfcapi_h
 formats:
   Location:
     recordType: request
