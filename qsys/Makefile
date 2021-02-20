@@ -57,6 +57,7 @@ FQSRCMBRS = $(FQCMDSRCMBRS) \
 	    $(FQRPGSRCMBRS) \
 	    $(FQRPGGENSRCMBRS)
 LCLRPGGENMODSRC = $(foreach src, $(GENSRC), $(src).rpgle)
+FQJSGENSRC = $(foreach src, $(GENSRC), ../src/interfaces/$(src).js)
 
 # Rules
 #
@@ -151,25 +152,28 @@ endif
 # Miscelaneous rules and dependencies
 #
 
-icndbapi.rpgle icndbapi.rpgleinc icndbapi.ts icndbapi.js: icndbapi.yaml
-	npm run generate -- $<
-	cp icndbapi.js ../src/interfaces
+.PHONEY: generatedjssrc
+generatedjssrc: $(FQJSGENSRC)
 
-trfcapi.rpgle trfcapi.rpgleinc trfcapi.ts trfcapi.js: trfcapi.yaml
+icndbapi.rpgle icndbapi.rpgleinc ../src/interfaces/icndbapi.js: icndbapi.yaml
 	npm run generate -- $<
-	cp trfcapi.js ../src/interfaces
+	cp icndbapi.js ../src/interfaces/icndbapi.js
 
-vinapi.rpgle vinapi.rpgleinc vinapi.ts vinapi.js: vinapi.yaml
+trfcapi.rpgle trfcapi.rpgleinc ../src/interfaces/trfcapi.js: trfcapi.yaml
 	npm run generate -- $<
-	cp vinapi.js ../src/interfaces
+	cp trfcapi.js ../src/interfaces/trfcapi.js
 
-wthfrcapi.rpgle wthfrcapi.rpgleinc wthfrcapi.ts wthfrcapi.js: wthfrcapi.yaml
+vinapi.rpgle vinapi.rpgleinc ../src/interfaces/vinapi.js: vinapi.yaml
 	npm run generate -- $<
-	cp wthfrcapi.js ../src/interfaces
+	cp vinapi.js ../src/interfaces/vinapi.js
 
-lblapi.rpgle lblapi.rpgleinc lblapi.ts lblapi.js: lblapi.yaml
+wthfrcapi.rpgle wthfrcapi.rpgleinc ../src/interfaces/wthfrcapi.js: wthfrcapi.yaml
 	npm run generate -- $<
-	cp lblapi.js ../src/interfaces
+	cp wthfrcapi.js ../src/interfaces/wthfrcapi.js
+
+lblapi.rpgle lblapi.rpgleinc ../src/interfaces/lblapi.js: lblapi.yaml
+	npm run generate -- $<
+	cp lblapi.js ../src/interfaces/lblapi.js
 
 
 .PHONY: library
@@ -189,3 +193,4 @@ clean:
 	-rm $(FQSRCMBRS)
 	-rm $(LCLRPGGENMODSRC)
 	-rm *.rpgleinc *.js *.ts
+	-rm $(FQJSGENSRC)
