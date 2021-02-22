@@ -1,6 +1,6 @@
 {
     "name": "@eradani-inc/ecc-template",
-    "version": "4.0.0",
+    "version": "3.5.0",
     "description": "Eradani Connect Client web service template",
     "main": "src/app.ts",
     "scripts": {
