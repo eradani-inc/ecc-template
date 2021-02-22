@@ -1,47 +1,42 @@
 ---
 name: vinapi
+rpgIncName: vinapi_h
 formats:
   VinData:
     recordType: request
-    length: 80
-    fields:
+    subfields:
       vin:
         rpgName: Vin
+        type: Character
         length: 17
-        type: String
       modelYear:
         rpgName: Year
+        type: Packed
         length: 4
-        type: Number
-  Error:
+  EccResult:
     recordType: response
-    length: 80
-    fields:
-      httpstatus:
-        rpgName: HttpSts1
-        length: 3
-        type: Number
-      message:
-        rpgName: Message
-        length: 77
-        type: String
-  Result:
+    subfields:
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
+  VinInfo:
     recordType: response
-    length: 80
-    fields:
-      httpstatus:
-        rpgName: HttpSts2
-        length: 3
-        type: Number
+    subfields:
       ElectrificationLevel:
         rpgName: ElecLvl
+        type: Character
         length: 35
-        type: String
       FuelTypePrimary:
         rpgName: FlTypPrim
+        type: Character
         length: 15
-        type: String
       FuelTypeSecondary:
         rpgName: FlTypSec
+        type: Character
         length: 25
-        type: String

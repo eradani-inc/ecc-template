@@ -1,22 +1,24 @@
-const axios = require('axios');
-const { traffic, ecclient } = require('../config');
-const { ECClient } = require('@eradani-inc/ec-client');
-const interface = require('./trfcapi');
-const response = new ECClient(ecclient);
+import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
+import axios from 'axios';
+import config from 'config';
+import createLogger from 'src/services/logger';
+const logger = createLogger('commands/traffic');
+const { traffic } = config;
+import * as converter from 'src/interfaces/trfcapi';
 
 const axiosInstance = axios.create(traffic);
 
-exports.getTrafficData = async (reqkey, data) => {
-    console.log('TrafficAPI:', 'Got data', data);
-    // get parameters from incomming data buffer
-    const compareData = interface.convertCompareToObject(data);
-    console.log('TrafficAPI:', 'Parsed data', compareData);
+export const getTrafficData: ECCHandlerFunction = async (reqkey, data, ecc) => {
+    logger.debug('TrafficAPI:', 'Got data', data);
+    // Get parameters from incomming data buffer
+    const compareData = converter.convertCompareToObject(data);
+    logger.debug('TrafficAPI:', 'Parsed data', compareData);
 
-    // call web service
+    // Call web service
     let result;
     let nextReqKey = reqkey;
     try {
-        console.log('TrafficAPI:', 'Sending Request', '/traffic/6.1/flow.json', {
+        logger.debug('TrafficAPI:', 'Sending Request', '/traffic/6.1/flow.json', {
             params: {
                 bbox: '37.8929,-122.3016;37.8851,-122.2744',
                 apiKey: traffic.apiKey
@@ -29,35 +31,37 @@ exports.getTrafficData = async (reqkey, data) => {
             }
         });
     } catch (err) {
-        console.log('TrafficAPI:', 'Got ERROR!', err);
+        logger.debug('TrafficAPI:', 'Got ERROR!', err);
         if (err.response) {
             // If the request was made and the server responded with a status code
-            // that falls out of the range of 2xx
+            // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
-            return response.sendObjectToCaller(
+            return ecc.sendObjectToCaller(
                 {
-                    httpStatus: err.response.status,
-                    message: err.response.data.error_description
+                    MsgId: 'ECC1000',
+                    MsgTime: new Date(),
+                    MsgDesc: err.response.data.error_description
                 },
-                interface.convertObjectToResponse,
+                converter.convertObjectToEccResult,
                 nextReqKey
             );
         }
 
         // Else the request was made but no response was received
         // Note: This error format has nothing to do with the web service. This is
-        // mainly TCP/IP errors.
-        return response.sendObjectToCaller(
+        // Mainly TCP/IP errors.
+        return ecc.sendObjectToCaller(
             {
-                httpStatus: 999,
-                message: err.message
+                MsgId: 'ECC1000',
+                MsgTime: new Date(),
+                MsgDesc: err.message
             },
-            interface.convertObjectToResponse,
+            converter.convertObjectToEccResult,
             nextReqKey
         );
     }
 
-    console.log('TrafficAPI:', 'Got Result from API call', result);
+    logger.debug('TrafficAPI:', 'Got Result from API call', result);
 
     try {
         let intersection;
@@ -94,27 +98,29 @@ exports.getTrafficData = async (reqkey, data) => {
             roads[i].rank = i + 1;
         }
 
-        nextReqKey = await response.sendObjectToCaller(
+        nextReqKey = await ecc.sendObjectToCaller(
             {
-                httpStatus: 200,
-                message: 'API Call Succeeded'
+                MsgId: 'ECC0000',
+                MsgTime: new Date(),
+                MsgDesc: 'Success'
             },
-            interface.convertObjectToResponse,
+            converter.convertObjectToEccResult,
             nextReqKey
         );
 
         // Send success result to client
 
-        console.log('TrafficAPI:', 'Sending success response', roads);
-        return response.sendObjectsToCaller(roads, interface.convertObjectToTraffic, nextReqKey);
+        logger.debug('TrafficAPI:', 'Sending success response', roads);
+        return ecc.sendObjectsToCaller(roads, converter.convertObjectToTraffic, nextReqKey);
     } catch (e) {
-        console.log('TrafficAPI:', 'Failed parsing results', e);
-        return response.sendObjectToCaller(
+        logger.debug('TrafficAPI:', 'Failed parsing results', e);
+        return ecc.sendObjectToCaller(
             {
-                httpStatus: 404,
-                message: 'No Route Found'
+                MsgId: 'ECC1000',
+                MsgTime: new Date(),
+                MsgDesc: 'No Route Found'
             },
-            interface.convertObjectToResponse,
+            converter.convertObjectToEccResult,
             nextReqKey
         );
     }

@@ -5,7 +5,7 @@
     "main": "src/app.ts",
     "scripts": {
         "setup": "npm run reset-git && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run package:release",
-        "generate": "cd qsys && ec-generate",
+        "generate": "cd qsys && ec-generate -f",
         "build-qsys": "make -C qsys",
         "build-connectors": "cd node_modules/@eradani-inc/ec-client && make -C native library && make -C native",
         "package:dev": "npm run format && npm run lint && npm run build:dev && npm run copy:dev && npm run config && npm run install-npm && npm run test && npm run docs",
@@ -28,8 +28,7 @@
         "config": "shx cp -r src/config dist/src",
         "generate-config": "cp ./src/config/overrides.json.sample ./src/config/overrides.json",
         "bump-version": "npm version -m \"chore(Version): Increment to %s\"",
-        "view-docs": "start docs/index.html",
-        "postgenerate": "cp qsys/*.js src/interfaces"
+        "view-docs": "start docs/index.html"
     },
     "repository": {
         "type": "git",
@@ -46,8 +45,8 @@
     },
     "homepage": "https://github.com/eradani-inc/ecc-template#readme",
     "dependencies": {
-        "@eradani-inc/ec-client": "^3.4.6",
-        "@eradani-inc/ecc-router": "^0.4.3",
+        "@eradani-inc/ec-client": "^3.5.0",
+        "@eradani-inc/ecc-router": "^0.5.4",
         "axios": "^0.21.1",
         "config": "^3.3.3",
         "download": "^8.0.0",
@@ -58,9 +57,10 @@
         "winston-daily-rotate-file": "^4.5.0"
     },
     "devDependencies": {
-        "@eradani-inc/ec-generate": "^3.4.6",
+        "@eradani-inc/ec-generate": "^3.5.0",
         "@types/chai": "^4.2.14",
         "@types/config": "0.0.38",
+        "@types/download": "^6.2.4",
         "@types/lodash": "^4.14.168",
         "@types/mocha": "^8.2.0",
         "@types/node": "^14.14.22",

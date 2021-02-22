@@ -2,32 +2,42 @@ import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'config';
 import createLogger from 'src/services/logger';
-const logger = createLogger('commands/jokes');
-const { icndb } = config;
-import * as converter from 'src/interfaces/icndbapi';
+const logger = createLogger('commands/weather');
+const { weather } = config;
+import * as converter from 'src/interfaces/wthfrcapi';
 
-const axiosInstance = axios.create(icndb);
+const axiosInstance = axios.create(weather);
 
-export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
-    logger.debug(`Received getJoke request`, { reqkey, data });
+export const getForecast: ECCHandlerFunction = async (reqkey, data, ecc) => {
     // Get parameters from incomming data buffer
-    const reqFields = converter.convertReqDataToObject(data);
+    const rpgFields = converter.convertLocationToObject(data);
+
+    const reqFields = {
+        ...rpgFields,
+
+        // Add api key
+        appid: weather.apikey,
+
+        // Add constraints
+        exclude: 'current,minutely,hourly',
+        units: 'imperial'
+    };
 
     // Call web service
     let result;
     let nextReqKey = reqkey;
     try {
-        result = await axiosInstance.get('/jokes/random', { params: reqFields });
+        result = await axiosInstance.get('onecall', { params: reqFields });
     } catch (err) {
         if (err.response) {
             // If the request was made and the server responded with a status code
             // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
-            nextReqKey = await ecc.sendObjectToCaller(
+            return ecc.sendObjectToCaller(
                 {
                     MsgId: 'ECC1000',
                     MsgTime: new Date(),
-                    MsgDesc: err.response.status + '-' + err.response.statusText
+                    MsgDesc: err.response.data.message
                 },
                 converter.convertObjectToEccResult,
                 nextReqKey
@@ -48,27 +58,7 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
         );
     }
 
-    if (result.data.type !== 'success') {
-        // If the request did not succeed
-        // Note: if not successful value is a string containing the error
-        return ecc.sendObjectToCaller(
-            {
-                MsgId: 'ECC1000',
-                MsgTime: new Date(),
-                MsgDesc: result.status + '-' + result.data.value
-            },
-            converter.convertObjectToEccResult,
-            nextReqKey
-        );
-    }
-
-    // Else save the joke then change the value field so it is as expected
-    // Note: if successful value is an object containing the joke and other info
-    const { joke } = result.data.value;
-    result.data.httpstatus = result.status;
-    result.data.value = '';
-
-    // Send the result info
+    // Send success result to client
     nextReqKey = await ecc.sendObjectToCaller(
         {
             MsgId: 'ECC0000',
@@ -79,6 +69,22 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
         nextReqKey
     );
 
-    // Send the joke
-    return ecc.sendFieldToCaller(joke, nextReqKey);
+    logger.debug('Unmapped forecast received:');
+    logger.debug(JSON.stringify(result.data.daily));
+
+    // Reduce response to an array of forecasts
+    const forecasts = result.data.daily.map((obj: any) => {
+        return {
+            date: new Date(obj.dt * 1000),
+            min: obj.temp.min,
+            max: obj.temp.max,
+            description: obj.weather[0].description
+        };
+    });
+
+    logger.debug('Forcasts received:');
+    logger.debug(JSON.stringify(forecasts));
+
+    // Send array of forecasts back to client
+    return ecc.sendObjectsToCaller(forecasts, converter.convertObjectToForecast, nextReqKey);
 };

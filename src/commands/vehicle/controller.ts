@@ -2,32 +2,45 @@ import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'config';
 import createLogger from 'src/services/logger';
-const logger = createLogger('commands/jokes');
-const { icndb } = config;
-import * as converter from 'src/interfaces/icndbapi';
+const logger = createLogger('commands/vehicle');
+const { vehicle } = config;
+import * as converter from 'src/interfaces/vinapi';
 
-const axiosInstance = axios.create(icndb);
+const axiosInstance = axios.create(vehicle);
 
-export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
-    logger.debug(`Received getJoke request`, { reqkey, data });
+export const getVehicleData: ECCHandlerFunction = async (reqkey, data, ecc) => {
+    logger.debug('VinAPI:', 'Got data', data);
     // Get parameters from incomming data buffer
-    const reqFields = converter.convertReqDataToObject(data);
+    const vinData = converter.convertVinDataToObject(data);
+    logger.debug('VinAPI:', 'Parsed data', vinData);
 
     // Call web service
     let result;
     let nextReqKey = reqkey;
     try {
-        result = await axiosInstance.get('/jokes/random', { params: reqFields });
+        logger.debug('VinAPI:', 'Sending Request', '/vehicles/decodevinvalues/' + vinData.vin, {
+            params: {
+                format: 'json',
+                modelyear: vinData.modelYear
+            }
+        });
+        result = await axiosInstance.get('/vehicles/decodevinvalues/' + vinData.vin, {
+            params: {
+                format: 'json',
+                modelyear: vinData.modelYear
+            }
+        });
     } catch (err) {
+        logger.debug('VinAPI:', 'Got ERROR!', err);
         if (err.response) {
             // If the request was made and the server responded with a status code
             // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
-            nextReqKey = await ecc.sendObjectToCaller(
+            return ecc.sendObjectToCaller(
                 {
                     MsgId: 'ECC1000',
                     MsgTime: new Date(),
-                    MsgDesc: err.response.status + '-' + err.response.statusText
+                    MsgDesc: err.response.data.message
                 },
                 converter.convertObjectToEccResult,
                 nextReqKey
@@ -48,27 +61,21 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
         );
     }
 
-    if (result.data.type !== 'success') {
-        // If the request did not succeed
-        // Note: if not successful value is a string containing the error
+    logger.debug('VinAPI:', 'Got Result from API call', result);
+    if (!result || !result.data || !result.data.Results || !result.data.Results.length || vinData.modelYear >= 2030) {
+        logger.debug('VinAPI:', 'No data in response, sending 404');
         return ecc.sendObjectToCaller(
             {
                 MsgId: 'ECC1000',
                 MsgTime: new Date(),
-                MsgDesc: result.status + '-' + result.data.value
+                MsgDesc: 'No Results Found'
             },
             converter.convertObjectToEccResult,
             nextReqKey
         );
     }
 
-    // Else save the joke then change the value field so it is as expected
-    // Note: if successful value is an object containing the joke and other info
-    const { joke } = result.data.value;
-    result.data.httpstatus = result.status;
-    result.data.value = '';
-
-    // Send the result info
+    // Send success result to client
     nextReqKey = await ecc.sendObjectToCaller(
         {
             MsgId: 'ECC0000',
@@ -79,6 +86,7 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
         nextReqKey
     );
 
-    // Send the joke
-    return ecc.sendFieldToCaller(joke, nextReqKey);
+    const responseData = result.data.Results[0];
+    logger.debug('VinAPI:', 'Sending vin info', responseData);
+    return ecc.sendObjectToCaller(responseData, converter.convertObjectToVinInfo, nextReqKey);
 };

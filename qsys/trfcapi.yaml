@@ -1,51 +1,53 @@
 ---
 name: trfcapi
+rpgIncName: trfcapi_h
 formats:
   Compare:
     recordType: request
-    length: 80
-    fields:
+    subfields:
       type:
         rpgName: Type
+        type: Character
         length: 10
-        type: String
-  Response:
+  EccResult:
     recordType: response
-    length: 80
-    fields:
-      httpStatus:
-        rpgName: HttpSts
-        length: 3
-        type: Number
-      message:
-        rpgName: Message
-        length: 77
-        type: String
+    subfields:
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
   Traffic:
     recordType: response
-    length: 80
-    fields:
+    subfields:
       rank:
         rpgName: TRank
+        type: Packed
         length: 2
-        type: Number
       streetName:
         rpgName: TStrtNm
+        type: Character
         length: 30
-        type: String
       averageSpeed:
         rpgName: TAvgSpd
-        length: 7
-        type: Number
+        type: Packed
+        length: 4
+        precision: 1
       length:
         rpgName: TLength
+        type: Packed
         length: 7
-        type: Number
+        precision: 5
       jamFactor:
         rpgName: TJamFct
+        type: Packed
         length: 8
-        type: Number
+        precision: 5
       confidence:
         rpgName: TCnfdnc
+        type: Packed
         length: 3
-        type: Number

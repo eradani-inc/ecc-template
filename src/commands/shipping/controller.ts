@@ -1,25 +1,27 @@
-const axios = require('axios');
-const download = require('download');
-const { shipping, ecclient } = require('../config');
-const { ECClient } = require('@eradani-inc/ec-client');
-const logger = require('./logger').forContext('services/shipping');
-const converter = require('./lblapi');
-const response = new ECClient(ecclient);
+import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
+import axios from 'axios';
+import download from 'download';
+import config from 'config';
+import createLogger from 'src/services/logger';
+const logger = createLogger('commands/shipping');
+const { shipping } = config;
+import * as converter from 'src/interfaces/lblapi';
 
 const axiosInstance = axios.create(shipping);
 
-exports.getShippingLabel = async (reqkey, data) => {
+export const getLabel: ECCHandlerFunction = async (reqkey, data, ecc) => {
     logger.debug('Got data');
     logger.silly(JSON.stringify(data));
-    // get parameters from incomming data buffer
+    // Get parameters from incomming data buffer
     const labelInput = converter.convertLabelDataToObject(data);
     logger.debug('Parsed data');
     logger.silly(JSON.stringify(labelInput));
 
-    // call web service
+    // Call web service
     let result;
     let nextReqKey = reqkey;
     try {
+        /* eslint-disable */
         let reqData = {
             shipment: {
                 service_code: 'usps_priority_mail',
@@ -49,6 +51,7 @@ exports.getShippingLabel = async (reqkey, data) => {
                 ]
             }
         };
+        /* eslint-enable */
 
         logger.debug('Sending Request to "/labels"');
         logger.silly(JSON.stringify(reqData));
@@ -67,14 +70,15 @@ exports.getShippingLabel = async (reqkey, data) => {
             logger.warn('Sending http failure response');
 
             // If the request was made and the server responded with a status code
-            // that falls out of the range of 2xx
+            // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
-            return response.sendObjectToCaller(
+            return ecc.sendObjectToCaller(
                 {
-                    httpstatus: err.response.status,
-                    message: err.response.data.errors[0].message
+                    MsgId: 'ECC1000',
+                    MsgTime: new Date(),
+                    MsgDesc: err.response.status + '-' + err.response.data.errors[0].message
                 },
-                converter.convertObjectToError,
+                converter.convertObjectToEccResult,
                 nextReqKey
             );
         }
@@ -83,13 +87,14 @@ exports.getShippingLabel = async (reqkey, data) => {
 
         // Else the request was made but no response was received
         // Note: This error format has nothing to do with the web service. This is
-        // mainly TCP/IP errors.
-        return response.sendObjectToCaller(
+        // Mainly TCP/IP errors.
+        return ecc.sendObjectToCaller(
             {
-                httpstatus: 999,
-                error: err.message
+                MsgId: 'ECC1000',
+                MsgTime: new Date(),
+                MsgDesc: err.message
             },
-            converter.convertObjectToError,
+            converter.convertObjectToEccResult,
             nextReqKey
         );
     }
@@ -97,7 +102,7 @@ exports.getShippingLabel = async (reqkey, data) => {
     logger.debug('Got success result from API call');
     logger.silly(result);
 
-    const resultData = {
+    const shippingInfo = {
         httpstatus: result.status,
         labelStatus: result.data.status,
         shipmentId: result.data.shipment_id,
@@ -126,14 +131,23 @@ exports.getShippingLabel = async (reqkey, data) => {
     ]);
 
     // Send success result to client
+    nextReqKey = await ecc.sendObjectToCaller(
+        {
+            MsgId: 'ECC0000',
+            MsgTime: new Date(),
+            MsgDesc: 'Success'
+        },
+        converter.convertObjectToEccResult,
+        nextReqKey
+    );
 
-    logger.debug('Sending Result Data');
-    logger.silly(JSON.stringify(resultData));
+    logger.debug('Sending Shipping Info');
+    logger.silly(JSON.stringify(shippingInfo));
 
-    nextReqKey = await response.sendObjectToCaller(resultData, converter.convertObjectToResult, nextReqKey);
+    nextReqKey = await ecc.sendObjectToCaller(shippingInfo, converter.convertObjectToShipInfo, nextReqKey);
 
     logger.debug('Sending Label Data');
     logger.silly(JSON.stringify(labelData));
 
-    return response.sendObjectToCaller(labelData, converter.convertObjectToLabel, nextReqKey);
+    return ecc.sendObjectToCaller(labelData, converter.convertObjectToLabel, nextReqKey);
 };
