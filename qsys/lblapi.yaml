@@ -1,119 +1,115 @@
 ---
 name: lblapi
+rpgIncName: lblapi_h
 formats:
   LabelData:
     recordType: request
-    length: 80
-    fields:
+    subfields:
       toName:
         rpgName: Name
+        type: Character
         length: 16
-        type: String
       toAddress:
         rpgName: Addr
+        type: Character
         length: 20
-        type: String
       toCity:
         rpgName: City
+        type: Character
         length: 10
-        type: String
       toState:
         rpgName: State
+        type: Character
         length: 2
-        type: String
       toZip:
         rpgName: Zip
+        type: Character
         length: 5
-        type: String
       toCountry:
         rpgName: Country
+        type: Character
         length: 3
-        type: String
       weight:
         rpgName: Wgt
+        type: Character
         length: 5
-        type: String
       weightUnits:
         rpgName: WgtUnts
+        type: Character
         length: 2
-        type: String
       height:
         rpgName: Height
+        type: Character
         length: 5
-        type: String
       width:
         rpgName: Width
+        type: Character
         length: 5
-        type: String
       length:
         rpgName: Length
+        type: Character
         length: 5
-        type: String
       sizeUnits:
         rpgName: DimUnts
+        type: Character
         length: 2
-        type: String
-  Error:
+  EccResult:
     recordType: response
-    length: 80
-    fields:
-      httpstatus:
-        rpgName: HttpSts2
-        length: 3
-        type: Number
-      message:
-        rpgName: Message
-        length: 77
-        type: String
-  Result:
+    subfields:
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
+  ShipInfo:
     recordType: response
-    length: 80
-    fields:
-      httpstatus:
-        rpgName: HttpSts
-        length: 3
-        type: Number
+    subfields:
       labelStatus:
         rpgName: LblSts
+        type: Character
         length: 10
-        type: String
       shipmentId:
         rpgName: ShipId
+        type: Character
         length: 11
-        type: String
       labelId:
         rpgName: LblId
+        type: Character
         length: 11
-        type: String
       shipmentCost:
         rpgName: ShipCost
+        type: Packed
         length: 10
-        type: Number
+        precision: 2
       shipmentCostCurrency:
         rpgName: ShipCur
+        type: Character
         length: 3
-        type: String
       insuranceCost:
         rpgName: InsCost
+        type: Packed
         length: 10
-        type: Number
+        precision: 2
       insuranceCostCurrency:
         rpgName: InsCur
+        type: Character
         length: 3
-        type: String
   Label:
     recordType: response
-    length: 80
-    fields:
+    subfields:
       trackingNumber:
         rpgName: TrackNbr
+        type: Character
         length: 30
-        type: String
       labelPdfFile:
         rpgName: LblPdf
+        type: Character
         length: 23
-        type: String
       labelZplFile:
         rpgName: LblZpl
+        type: Character
         length: 23
-        type: String

@@ -1,0 +1,30 @@
+---
+name: icndbapi
+rpgIncName: icndbapi_h
+formats:
+  ReqData:
+    recordType: request
+    subfields:
+      limitTo:
+        rpgName: Category
+        type: Character
+        length: 15
+  EccResult:
+    recordType: response
+    subfields:
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
+  ResData:
+    recordType: response
+    subfields:
+      joke:
+        rpgName: Joke
+        type: Character
+        length: 80

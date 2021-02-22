@@ -1,0 +1,42 @@
+---
+name: vinapi
+rpgIncName: vinapi_h
+formats:
+  VinData:
+    recordType: request
+    subfields:
+      vin:
+        rpgName: Vin
+        type: Character
+        length: 17
+      modelYear:
+        rpgName: Year
+        type: Packed
+        length: 4
+  EccResult:
+    recordType: response
+    subfields:
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
+  VinInfo:
+    recordType: response
+    subfields:
+      ElectrificationLevel:
+        rpgName: ElecLvl
+        type: Character
+        length: 35
+      FuelTypePrimary:
+        rpgName: FlTypPrim
+        type: Character
+        length: 15
+      FuelTypeSecondary:
+        rpgName: FlTypSec
+        type: Character
+        length: 25

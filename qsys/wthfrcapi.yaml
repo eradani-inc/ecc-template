@@ -1,0 +1,49 @@
+---
+name: wthfrcapi
+rpgIncName: wthfcapi_h
+formats:
+  Location:
+    recordType: request
+    subfields:
+      lat:
+        rpgName: Lat
+        type: Packed
+        length: 9
+        precision: 6
+      lon:
+        rpgName: Lon
+        type: Packed
+        length: 9
+        precision: 6
+  EccResult:
+    recordType: response
+    subfields:
+      MsgId:
+        type: Character
+        length: 7
+      MsgTime:
+        type: Timestamp
+        length: 23
+      MsgDesc:
+        type: Character
+        length: 50
+  Forecast:
+    recordType: response
+    subfields:
+      date:
+        rpgName: Date
+        type: Date
+      min:
+        rpgName: Min
+        type: Packed
+        length: 5
+        precision: 2
+      max:
+        rpgName: Max
+        type: Packed
+        length: 5
+        precision: 2
+      description:
+        rpgName: Desc
+        type: Character
+        length: 58

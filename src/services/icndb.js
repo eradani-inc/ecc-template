@@ -2,10 +2,10 @@ const axios = require("axios");
 const HttpsProxyAgent = require("https-proxy-agent");
 const { icndb, proxy, ecclient } = require("../config");
 const {
-  convertDataToObject,
-  convertObjectToRetData,
-  convertObjectToRetData3
-} = require("./icndbapi");
+  convertReqDataToObject,
+  convertObjectToEccResult,
+  convertObjectToResData,
+} = require("../interfaces/icndbapi");
 const { ECClient } = require("@eradani-inc/ec-client");
 
 const agent = new HttpsProxyAgent(proxy);
@@ -20,7 +20,7 @@ const axiosInstance = axios.create(icndb);
 
 exports.getJoke = async (reqkey, data) => {
   // get parameters from incomming data buffer
-  const reqFields = convertDataToObject(data);
+  const reqFields = convertReqDataToObject(data);
 
   // call web service
   let result;
@@ -34,10 +34,11 @@ exports.getJoke = async (reqkey, data) => {
       // Note: These error formats are dependent on the web service
       nextReqKey = await ecc.sendObjectToCaller(
         {
-          httpstatus: err.response.status,
-          error: err.response.statusText
+          MsgId: "ECC1000",
+          MsgTime: new Date(),
+          MsgDesc: err.response.status + "-" + err.response.statusText,
         },
-        convertObjectToRetData3,
+        convertObjectEccResult,
         nextReqKey
       );
     }
@@ -47,10 +48,11 @@ exports.getJoke = async (reqkey, data) => {
     // mainly TCP/IP errors.
     return ecc.sendObjectToCaller(
       {
-        httpstatus: 999,
-        error: err.message
+        MsgId: "ECC1000",
+        MsgTime: new Date(),
+        MsgDesc: err.message,
       },
-      convertObjectToRetData3,
+      convertObjectToEccResult,
       nextReqKey
     );
   }
@@ -58,8 +60,15 @@ exports.getJoke = async (reqkey, data) => {
   if (result.data.type !== "success") {
     // If the request did not succeed
     // Note: if not successful value is a string containing the error
-    result.data.httpstatus = result.status;
-    return ecc.sendObjectToCaller(result.data, convertObjectToRetData, nextReqKey);
+    return ecc.sendObjectToCaller(
+      {
+        MsgId: "ECC1000",
+        MsgTime: new Date(),
+        MsgDesc: result.status + "-" + result.data.value,
+      },
+      convertObjectToEccResult,
+      nextReqKey
+    );
   }
 
   // Else save the joke then change the value field so it is as expected
@@ -70,8 +79,12 @@ exports.getJoke = async (reqkey, data) => {
 
   // Send the result info
   nextReqKey = await ecc.sendObjectToCaller(
-    result.data,
-    convertObjectToRetData,
+    {
+      MsgId: "ECC0000",
+      MsgTime: new Date(),
+      MsgDesc: "Success",
+    },
+    convertObjectToEccResult,
     nextReqKey
   );
 
