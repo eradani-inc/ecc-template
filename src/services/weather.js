@@ -71,7 +71,7 @@ exports.getforecast = async (reqkey, data) => {
   // Reduce response to an array of forecasts
   const forecasts = result.data.daily.map((obj) => {
     return {
-      date: new Date(obj.dt * 1000),
+      date: obj.dt * 1000, // new Date(obj.dt * 1000),
       min: obj.temp.min,
       max: obj.temp.max,
       description: obj.weather[0].description,
