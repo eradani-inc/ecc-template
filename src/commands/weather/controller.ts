@@ -75,7 +75,7 @@ export const getForecast: ECCHandlerFunction = async (reqkey, data, ecc) => {
     // Reduce response to an array of forecasts
     const forecasts = result.data.daily.map((obj: any) => {
         return {
-            date: new Date(obj.dt * 1000),
+            date: obj.dt * 1000,
             min: obj.temp.min,
             max: obj.temp.max,
             description: obj.weather[0].description
