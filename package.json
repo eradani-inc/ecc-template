@@ -45,7 +45,7 @@
     },
     "homepage": "https://github.com/eradani-inc/ecc-template#readme",
     "dependencies": {
-        "@eradani-inc/ec-client": "^3.5.0",
+        "@eradani-inc/ec-client": "^3.5.1-alpha.0",
         "@eradani-inc/ecc-router": "^0.5.4",
         "axios": "^0.21.1",
         "config": "^3.3.3",
