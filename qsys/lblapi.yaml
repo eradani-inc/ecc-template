@@ -53,18 +53,6 @@ formats:
         rpgName: DimUnts
         type: Character
         length: 2
-  EccResult:
-    recordType: response
-    subfields:
-      MsgId:
-        type: Character
-        length: 7
-      MsgTime:
-        type: Timestamp
-        length: 23
-      MsgDesc:
-        type: Character
-        length: 50
   ShipInfo:
     recordType: response
     subfields:
