@@ -72,13 +72,9 @@ export const getLabel: ECCHandlerFunction = async (reqkey, data, ecc) => {
             // If the request was made and the server responded with a status code
             // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
-            return ecc.sendObjectToCaller(
-                {
-                    MsgId: 'ECC1000',
-                    MsgTime: new Date(),
-                    MsgDesc: err.response.status + '-' + err.response.data.errors[0].message
-                },
-                converter.convertObjectToEccResult,
+            return ecc.sendEccResult(
+                'ECC1000',
+                err.response.status + '-' + err.response.data.errors[0].message,
                 nextReqKey
             );
         }
@@ -88,15 +84,7 @@ export const getLabel: ECCHandlerFunction = async (reqkey, data, ecc) => {
         // Else the request was made but no response was received
         // Note: This error format has nothing to do with the web service. This is
         // Mainly TCP/IP errors.
-        return ecc.sendObjectToCaller(
-            {
-                MsgId: 'ECC1000',
-                MsgTime: new Date(),
-                MsgDesc: err.message
-            },
-            converter.convertObjectToEccResult,
-            nextReqKey
-        );
+        return ecc.sendEccResult('ECC1000', err.message, nextReqKey);
     }
 
     logger.debug('Got success result from API call');
@@ -131,15 +119,7 @@ export const getLabel: ECCHandlerFunction = async (reqkey, data, ecc) => {
     ]);
 
     // Send success result to client
-    nextReqKey = await ecc.sendObjectToCaller(
-        {
-            MsgId: 'ECC0000',
-            MsgTime: new Date(),
-            MsgDesc: 'Success'
-        },
-        converter.convertObjectToEccResult,
-        nextReqKey
-    );
+    nextReqKey = await ecc.sendEccResult('ECC0000', 'Success', nextReqKey);
 
     logger.debug('Sending Shipping Info');
     logger.silly(JSON.stringify(shippingInfo));

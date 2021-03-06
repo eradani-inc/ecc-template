@@ -36,55 +36,23 @@ export const getVehicleData: ECCHandlerFunction = async (reqkey, data, ecc) => {
             // If the request was made and the server responded with a status code
             // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
-            return ecc.sendObjectToCaller(
-                {
-                    MsgId: 'ECC1000',
-                    MsgTime: new Date(),
-                    MsgDesc: err.response.data.message
-                },
-                converter.convertObjectToEccResult,
-                nextReqKey
-            );
+            return ecc.sendEccResult('ECC1000', err.response.data.message, nextReqKey);
         }
 
         // Else the request was made but no response was received
         // Note: This error format has nothing to do with the web service. This is
         // Mainly TCP/IP errors.
-        return ecc.sendObjectToCaller(
-            {
-                MsgId: 'ECC1000',
-                MsgTime: new Date(),
-                MsgDesc: err.message
-            },
-            converter.convertObjectToEccResult,
-            nextReqKey
-        );
+        return ecc.sendEccResult('ECC1000', err.message, nextReqKey);
     }
 
     logger.debug('VinAPI:', 'Got Result from API call', result);
     if (!result || !result.data || !result.data.Results || !result.data.Results.length || vinData.modelYear >= 2030) {
         logger.debug('VinAPI:', 'No data in response, sending 404');
-        return ecc.sendObjectToCaller(
-            {
-                MsgId: 'ECC1000',
-                MsgTime: new Date(),
-                MsgDesc: 'No Results Found'
-            },
-            converter.convertObjectToEccResult,
-            nextReqKey
-        );
+        return ecc.sendEccResult('ECC1000', 'No Results Found', nextReqKey);
     }
 
     // Send success result to client
-    nextReqKey = await ecc.sendObjectToCaller(
-        {
-            MsgId: 'ECC0000',
-            MsgTime: new Date(),
-            MsgDesc: 'Success'
-        },
-        converter.convertObjectToEccResult,
-        nextReqKey
-    );
+    nextReqKey = await ecc.sendEccResult('ECC0000', 'Success', nextReqKey);
 
     const responseData = result.data.Results[0];
     logger.debug('VinAPI:', 'Sending vin info', responseData);

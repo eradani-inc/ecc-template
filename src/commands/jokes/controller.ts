@@ -23,43 +23,19 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
             // If the request was made and the server responded with a status code
             // That falls out of the range of 2xx
             // Note: These error formats are dependent on the web service
-            nextReqKey = await ecc.sendObjectToCaller(
-                {
-                    MsgId: 'ECC1000',
-                    MsgTime: new Date(),
-                    MsgDesc: err.response.status + '-' + err.response.statusText
-                },
-                converter.convertObjectToEccResult,
-                nextReqKey
-            );
+            return ecc.sendEccResult('ECC1000', err.response.status + '-' + err.response.statusText, nextReqKey);
         }
 
         // Else the request was made but no response was received
         // Note: This error format has nothing to do with the web service. This is
         // Mainly TCP/IP errors.
-        return ecc.sendObjectToCaller(
-            {
-                MsgId: 'ECC1000',
-                MsgTime: new Date(),
-                MsgDesc: err.message
-            },
-            converter.convertObjectToEccResult,
-            nextReqKey
-        );
+        return ecc.sendEccResult('ECC1000', err.message, nextReqKey);
     }
 
     if (result.data.type !== 'success') {
         // If the request did not succeed
         // Note: if not successful value is a string containing the error
-        return ecc.sendObjectToCaller(
-            {
-                MsgId: 'ECC1000',
-                MsgTime: new Date(),
-                MsgDesc: result.status + '-' + result.data.value
-            },
-            converter.convertObjectToEccResult,
-            nextReqKey
-        );
+        return ecc.sendEccResult('ECC1000', result.status + '-' + result.data.value, nextReqKey);
     }
 
     // Else save the joke then change the value field so it is as expected
@@ -69,15 +45,7 @@ export const getJoke: ECCHandlerFunction = async function (reqkey, data, ecc) {
     result.data.value = '';
 
     // Send the result info
-    nextReqKey = await ecc.sendObjectToCaller(
-        {
-            MsgId: 'ECC0000',
-            MsgTime: new Date(),
-            MsgDesc: 'Success'
-        },
-        converter.convertObjectToEccResult,
-        nextReqKey
-    );
+    nextReqKey = await ecc.sendEccResult('ECC0000', 'Success', nextReqKey);
 
     // Send the joke
     return ecc.sendFieldToCaller(joke, nextReqKey);
