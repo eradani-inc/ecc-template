@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { weather, ecclient } = require("../config");
-const { ECClient } = require("@eradani-inc/ec-client");
+const { ECClient, sendEccResult } = require("@eradani-inc/ec-client");
 const {
   convertLocationToObject,
   convertObjectToEccResult,
@@ -32,13 +32,9 @@ exports.getforecast = async (reqkey, data) => {
       // If the request was made and the server responded with a status code
       // that falls out of the range of 2xx
       // Note: These error formats are dependent on the web service
-      return ecc.sendObjectToCaller(
-        {
-          MsgId: "ECC1000",
-          MsgTime: new Date(),
-          MsgDesc: err.response.data.message,
-        },
-        convertObjectToEccResult,
+      return ecc.sendEccResult(
+        "ECC1000",
+        err.response.data.message,
         nextReqKey
       );
     }
@@ -46,27 +42,11 @@ exports.getforecast = async (reqkey, data) => {
     // Else the request was made but no response was received
     // Note: This error format has nothing to do with the web service. This is
     // mainly TCP/IP errors.
-    return ecc.sendObjectToCaller(
-      {
-        MsgId: "ECC1000",
-        MsgTime: new Date(),
-        MsgDesc: err.message,
-      },
-      convertObjectToEccResult,
-      nextReqKey
-    );
+    return ecc.sendEccResult("ECC1000", err.message, nextReqKey);
   }
 
   // Send success result to client
-  nextReqKey = await ecc.sendObjectToCaller(
-    {
-      MsgId: "ECC0000",
-      MsgTime: new Date(),
-      MsgDesc: "Success",
-    },
-    convertObjectToEccResult,
-    nextReqKey
-  );
+  nextReqKey = await ecc.sendEccResult("ECC0000", "Success", nextReqKey);
 
   // Reduce response to an array of forecasts
   const forecasts = result.data.daily.map((obj) => {

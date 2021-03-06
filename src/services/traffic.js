@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { traffic, ecclient } = require("../config");
-const { ECClient } = require("@eradani-inc/ec-client");
+const { ECClient, sendEccResult } = require("@eradani-inc/ec-client");
 const interface = require("../interfaces/trfcapi");
 const response = new ECClient(ecclient);
 
@@ -34,13 +34,9 @@ exports.getTrafficData = async (reqkey, data) => {
       // If the request was made and the server responded with a status code
       // that falls out of the range of 2xx
       // Note: These error formats are dependent on the web service
-      return response.sendObjectToCaller(
-        {
-          MsgId: "ECC1000",
-          MsgTime: new Date(),
-          MsgDesc: err.response.data.error_description,
-        },
-        interface.convertObjectToEccResult,
+      return response.sendEccResult(
+        "ECC1000",
+        err.response.data.error_description,
         nextReqKey
       );
     }
@@ -48,15 +44,7 @@ exports.getTrafficData = async (reqkey, data) => {
     // Else the request was made but no response was received
     // Note: This error format has nothing to do with the web service. This is
     // mainly TCP/IP errors.
-    return response.sendObjectToCaller(
-      {
-        MsgId: "ECC1000",
-        MsgTime: new Date(),
-        MsgDesc: err.message,
-      },
-      interface.convertObjectToEccResult,
-      nextReqKey
-    );
+    return response.sendEccResult("ECC1000", err.message, nextReqKey);
   }
 
   console.log("TrafficAPI:", "Got Result from API call", result);
@@ -96,15 +84,7 @@ exports.getTrafficData = async (reqkey, data) => {
       roads[i].rank = i + 1;
     }
 
-    nextReqKey = await response.sendObjectToCaller(
-      {
-        MsgId: "ECC0000",
-        MsgTime: new Date(),
-        MsgDesc: "Success",
-      },
-      interface.convertObjectToEccResult,
-      nextReqKey
-    );
+    nextReqKey = await response.sendEccResult("ECC0000", "Success", nextReqKey);
 
     // Send success result to client
 
@@ -116,14 +96,6 @@ exports.getTrafficData = async (reqkey, data) => {
     );
   } catch (e) {
     console.log("TrafficAPI:", "Failed parsing results", e);
-    return response.sendObjectToCaller(
-      {
-        MsgId: "ECC1000",
-        MsgTime: new Date(),
-        MsgDesc: "No Route Found",
-      },
-      interface.convertObjectToEccResult,
-      nextReqKey
-    );
+    return response.sendEccResult("ECC1000", "No Route Found", nextReqKey);
   }
 };
