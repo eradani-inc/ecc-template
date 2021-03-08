@@ -58,7 +58,7 @@ NQGENMODS = $(foreach mod, $(GENMODS), $(LIB)/$(mod))
 # List of fully qualified commands, programs and modules
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
 FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
-FQSVCPGMS = $(foreach svcpgm, $(SVCPGMS), $(libdir)/$(svcpgm).svcpgm)
+FQSRVPGMS = $(foreach srvpgm, $(SRVPGMS), $(libdir)/$(srvpgm).srvpgm)
 FQMODS = $(foreach mod, $(MODS), $(libdir)/$(mod).module)
 FQGENMODS = $(foreach mod, $(GENMODS), $(libdir)/$(mod).module)
 
@@ -91,19 +91,19 @@ all: $(FQCMDS)
 $(libdir)/%.cmd: $(libdir)/qcmdsrc.file/%.mbr  $(libdir)/%.pgm
 	system "CRTCMD CMD($(LIB)/$(basename $(@F))) PGM($(LIB)/$(basename $(@F))) SRCFILE($(LIB)/QCMDSRC)"
 
-$(libdir)/dspjk.pgm: $(libdir)/dspjk.module $(libdir)/icndbapi.module
+$(libdir)/dspjk.pgm: $(libdir)/dspjk.module $(libdir)/ecctmpgen.srvpgm
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE(*PGM) BNDSRVPGM((ECNCTAPP/ECCTMPGEN) (ECNCT/ECNCTC))"
 
-$(libdir)/dsptrfc.pgm: $(libdir)/dsptrfc.module $(libdir)/trfcapi.module
+$(libdir)/dsptrfc.pgm: $(libdir)/dsptrfc.module $(libdir)/ecctmpgen.srvpgm
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE(*PGM) BNDSRVPGM((ECNCTAPP/ECCTMPGEN) (ECNCT/ECNCTC))"
 
-$(libdir)/dspvhcl.pgm: $(libdir)/dspvhcl.module $(libdir)/vinapi.module
+$(libdir)/dspvhcl.pgm: $(libdir)/dspvhcl.module $(libdir)/ecctmpgen.srvpgm
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE(*PGM) BNDSRVPGM((ECNCTAPP/ECCTMPGEN) (ECNCT/ECNCTC))"
 
-$(libdir)/dspwf.pgm: $(libdir)/dspwf.module $(libdir)/wthfrcapi.module
+$(libdir)/dspwf.pgm: $(libdir)/dspwf.module $(libdir)/ecctmpgen.srvpgm
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE(*PGM) BNDSRVPGM((ECNCTAPP/ECCTMPGEN) (ECNCT/ECNCTC))"
 
-$(libdir)/prtlbl.pgm: $(libdir)/prtlbl.module $(libdir)/lblapi.module
+$(libdir)/prtlbl.pgm: $(libdir)/prtlbl.module $(libdir)/ecctmpgen.srvpgm
 	system "CRTPGM PGM($(LIB)/$(basename $(@F))) MODULE(*PGM) BNDSRVPGM((ECNCTAPP/ECCTMPGEN) (ECNCT/ECNCTC))"
 
 $(libdir)/ecctmpgen.srvpgm: $(FQGENMODS)
@@ -203,7 +203,7 @@ library:
 clean:
 	-rm $(FQCMDS)
 	-rm $(FQPGMS)
-	-rm $(FQSVCPGMS)
+	-rm $(FQSRVPGMS)
 	-rm $(FQMODS)
 	-rm $(FQGENMODS)
 	-rm $(FQSRCMBRS)
