@@ -58,7 +58,7 @@ NQGENMODS = $(foreach mod, $(GENMODS), $(LIB)/$(mod))
 # List of fully qualified commands, programs and modules
 FQCMDS = $(foreach cmd, $(CMDS), $(libdir)/$(cmd).cmd)
 FQPGMS = $(foreach pgm, $(PGMS), $(libdir)/$(pgm).pgm)
-FQSVCPGMS = $(foreach svcpgm, $(SVCPGMS), $(libdir)/$(svcpgm).svcpgm)
+FQSRVPGMS = $(foreach srvpgm, $(SRVPGMS), $(libdir)/$(srvpgm).srvpgm)
 FQMODS = $(foreach mod, $(MODS), $(libdir)/$(mod).module)
 FQGENMODS = $(foreach mod, $(GENMODS), $(libdir)/$(mod).module)
 
@@ -203,7 +203,7 @@ library:
 clean:
 	-rm $(FQCMDS)
 	-rm $(FQPGMS)
-	-rm $(FQSVCPGMS)
+	-rm $(FQSRVPGMS)
 	-rm $(FQMODS)
 	-rm $(FQGENMODS)
 	-rm $(FQSRCMBRS)
