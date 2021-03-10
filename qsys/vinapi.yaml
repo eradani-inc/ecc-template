@@ -13,18 +13,6 @@ formats:
         rpgName: Year
         type: Packed
         length: 4
-  EccResult:
-    recordType: response
-    subfields:
-      MsgId:
-        type: Character
-        length: 7
-      MsgTime:
-        type: Timestamp
-        length: 23
-      MsgDesc:
-        type: Character
-        length: 50
   VinInfo:
     recordType: response
     subfields:

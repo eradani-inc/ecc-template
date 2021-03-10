@@ -15,18 +15,6 @@ formats:
         type: Packed
         length: 9
         precision: 6
-  EccResult:
-    recordType: response
-    subfields:
-      MsgId:
-        type: Character
-        length: 7
-      MsgTime:
-        type: Timestamp
-        length: 23
-      MsgDesc:
-        type: Character
-        length: 50
   Forecast:
     recordType: response
     subfields:
