@@ -9,18 +9,6 @@ formats:
         rpgName: Category
         type: Character
         length: 15
-  EccResult:
-    recordType: response
-    subfields:
-      MsgId:
-        type: Character
-        length: 7
-      MsgTime:
-        type: Timestamp
-        length: 23
-      MsgDesc:
-        type: Character
-        length: 50
   ResData:
     recordType: response
     subfields:

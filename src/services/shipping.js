@@ -1,7 +1,7 @@
 const axios = require("axios");
 const download = require("download");
 const { shipping, ecclient } = require("../config");
-const { ECClient } = require("@eradani-inc/ec-client");
+const { ECClient, sendEccResult } = require("@eradani-inc/ec-client");
 const logger = require("./logger").forContext("services/shipping");
 const converter = require("../interfaces/lblapi");
 const response = new ECClient(ecclient);
@@ -69,14 +69,9 @@ exports.getShippingLabel = async (reqkey, data) => {
       // If the request was made and the server responded with a status code
       // that falls out of the range of 2xx
       // Note: These error formats are dependent on the web service
-      return response.sendObjectToCaller(
-        {
-          MsgId: "ECC1000",
-          MsgTime: new Date(),
-          MsgDesc:
-            err.response.status + "-" + err.response.data.errors[0].message,
-        },
-        converter.convertObjectToEccResult,
+      return response.sendEccResult(
+        "ECC1000",
+        err.response.status + "-" + err.response.data.errors[0].message,
         nextReqKey
       );
     }
@@ -86,15 +81,7 @@ exports.getShippingLabel = async (reqkey, data) => {
     // Else the request was made but no response was received
     // Note: This error format has nothing to do with the web service. This is
     // mainly TCP/IP errors.
-    return response.sendObjectToCaller(
-      {
-        MsgId: "ECC1000",
-        MsgTime: new Date(),
-        MsgDesc: err.message,
-      },
-      converter.convertObjectToEccResult,
-      nextReqKey
-    );
+    return response.sendEccResult("ECC1000", err.message, nextReqKey);
   }
 
   logger.debug("Got success result from API call");
@@ -129,15 +116,7 @@ exports.getShippingLabel = async (reqkey, data) => {
   ]);
 
   // Send success result to client
-  nextReqKey = await response.sendObjectToCaller(
-    {
-      MsgId: "ECC0000",
-      MsgTime: new Date(),
-      MsgDesc: "Success",
-    },
-    converter.convertObjectToEccResult,
-    nextReqKey
-  );
+  nextReqKey = await response.sendEccResult("ECC0000", "Success", nextReqKey);
 
   logger.debug("Sending Shipping Info");
   logger.silly(JSON.stringify(shippingInfo));

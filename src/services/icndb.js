@@ -6,7 +6,7 @@ const {
   convertObjectToEccResult,
   convertObjectToResData,
 } = require("../interfaces/icndbapi");
-const { ECClient } = require("@eradani-inc/ec-client");
+const { ECClient, sendEccResult } = require("@eradani-inc/ec-client");
 
 const agent = new HttpsProxyAgent(proxy);
 
@@ -32,13 +32,9 @@ exports.getJoke = async (reqkey, data) => {
       // If the request was made and the server responded with a status code
       // that falls out of the range of 2xx
       // Note: These error formats are dependent on the web service
-      nextReqKey = await ecc.sendObjectToCaller(
-        {
-          MsgId: "ECC1000",
-          MsgTime: new Date(),
-          MsgDesc: err.response.status + "-" + err.response.statusText,
-        },
-        convertObjectEccResult,
+      return ecc.sendEccResult(
+        "ECC1000",
+        err.response.status + "-" + err.response.statusText,
         nextReqKey
       );
     }
@@ -46,27 +42,15 @@ exports.getJoke = async (reqkey, data) => {
     // Else the request was made but no response was received
     // Note: This error format has nothing to do with the web service. This is
     // mainly TCP/IP errors.
-    return ecc.sendObjectToCaller(
-      {
-        MsgId: "ECC1000",
-        MsgTime: new Date(),
-        MsgDesc: err.message,
-      },
-      convertObjectToEccResult,
-      nextReqKey
-    );
+    return ecc.sendEccResult("ECC1000", err.message, nextReqKey);
   }
 
   if (result.data.type !== "success") {
     // If the request did not succeed
     // Note: if not successful value is a string containing the error
-    return ecc.sendObjectToCaller(
-      {
-        MsgId: "ECC1000",
-        MsgTime: new Date(),
-        MsgDesc: result.status + "-" + result.data.value,
-      },
-      convertObjectToEccResult,
+    return ecc.sendEccResult(
+      "ECC1000",
+      result.status + "-" + result.data.value,
       nextReqKey
     );
   }
@@ -78,15 +62,7 @@ exports.getJoke = async (reqkey, data) => {
   result.data.value = "";
 
   // Send the result info
-  nextReqKey = await ecc.sendObjectToCaller(
-    {
-      MsgId: "ECC0000",
-      MsgTime: new Date(),
-      MsgDesc: "Success",
-    },
-    convertObjectToEccResult,
-    nextReqKey
-  );
+  nextReqKey = await ecc.sendEccResult("ECC0000", "Success", nextReqKey);
 
   // Send the joke
   return ecc.sendFieldToCaller(joke, nextReqKey);
