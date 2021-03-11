@@ -1,0 +1,74 @@
+      ************************************
+      * Module: lblapi
+      * Generated RPG data structures
+      * and prototypes
+      * Do not modify
+      ************************************
+
+      ************************************
+      * LabelData data structure
+      * Record length: 80
+      ************************************
+     DLabelDataLen     C                   80
+     DLabelData        DS                  Qualified
+     D                                     Template
+     DName                           16A
+     DAddr                           20A
+     DCity                           10A
+     DState                           2A
+     DZip                             5A
+     DCountry                         3A
+     DWgt                             5A
+     DWgtUnts                         2A
+     DHeight                          5A
+     DWidth                           5A
+     DLength                          5A
+     DDimUnts                         2A
+
+      ************************************
+      * Convert LabelData to buffer
+      ************************************
+     DLabelDataToBuf   PR
+     DDataStruct                           LikeDS(LabelData)
+     D                                     Const
+     DBuffer                        500A
+
+      ************************************
+      * ShipInfo data structure
+      * Record length: 62
+      ************************************
+     DShipInfoLen      C                   62
+     DShipInfo         DS                  Qualified
+     D                                     Template
+     DLblSts                         10A
+     DShipId                         11A
+     DLblId                          11A
+     DShipCost                       10P 2
+     DShipCur                         3A
+     DInsCost                        10P 2
+     DInsCur                          3A
+
+      ************************************
+      * Convert buffer to ShipInfo
+      ************************************
+     DBufToShipInfo    PR
+     DBuffer                        500A
+     DDataStruct                           LikeDS(ShipInfo)
+
+      ************************************
+      * Label data structure
+      * Record length: 76
+      ************************************
+     DLabelLen         C                   76
+     DLabel            DS                  Qualified
+     D                                     Template
+     DTrackNbr                       30A
+     DLblPdf                         23A
+     DLblZpl                         23A
+
+      ************************************
+      * Convert buffer to Label
+      ************************************
+     DBufToLabel       PR
+     DBuffer                        500A
+     DDataStruct                           LikeDS(Label)

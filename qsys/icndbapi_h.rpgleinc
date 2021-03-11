@@ -1,0 +1,39 @@
+      ************************************
+      * Module: icndbapi
+      * Generated RPG data structures
+      * and prototypes
+      * Do not modify
+      ************************************
+
+      ************************************
+      * ReqData data structure
+      * Record length: 15
+      ************************************
+     DReqDataLen       C                   15
+     DReqData          DS                  Qualified
+     D                                     Template
+     DCategory                       15A
+
+      ************************************
+      * Convert ReqData to buffer
+      ************************************
+     DReqDataToBuf     PR
+     DDataStruct                           LikeDS(ReqData)
+     D                                     Const
+     DBuffer                        500A
+
+      ************************************
+      * ResData data structure
+      * Record length: 80
+      ************************************
+     DResDataLen       C                   80
+     DResData          DS                  Qualified
+     D                                     Template
+     DJoke                           80A
+
+      ************************************
+      * Convert buffer to ResData
+      ************************************
+     DBufToResData     PR
+     DBuffer                        500A
+     DDataStruct                           LikeDS(ResData)

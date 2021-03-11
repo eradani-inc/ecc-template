@@ -1,0 +1,42 @@
+      ************************************
+      * Module: vinapi
+      * Generated RPG data structures
+      * and prototypes
+      * Do not modify
+      ************************************
+
+      ************************************
+      * VinData data structure
+      * Record length: 23
+      ************************************
+     DVinDataLen       C                   23
+     DVinData          DS                  Qualified
+     D                                     Template
+     DVin                            17A
+     DYear                            4P 0
+
+      ************************************
+      * Convert VinData to buffer
+      ************************************
+     DVinDataToBuf     PR
+     DDataStruct                           LikeDS(VinData)
+     D                                     Const
+     DBuffer                        500A
+
+      ************************************
+      * VinInfo data structure
+      * Record length: 75
+      ************************************
+     DVinInfoLen       C                   75
+     DVinInfo          DS                  Qualified
+     D                                     Template
+     DElecLvl                        35A
+     DFlTypPrim                      15A
+     DFlTypSec                       25A
+
+      ************************************
+      * Convert buffer to VinInfo
+      ************************************
+     DBufToVinInfo     PR
+     DBuffer                        500A
+     DDataStruct                           LikeDS(VinInfo)

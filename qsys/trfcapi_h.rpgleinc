@@ -1,0 +1,44 @@
+      ************************************
+      * Module: trfcapi
+      * Generated RPG data structures
+      * and prototypes
+      * Do not modify
+      ************************************
+
+      ************************************
+      * Compare data structure
+      * Record length: 10
+      ************************************
+     DCompareLen       C                   10
+     DCompare          DS                  Qualified
+     D                                     Template
+     DType                           10A
+
+      ************************************
+      * Convert Compare to buffer
+      ************************************
+     DCompareToBuf     PR
+     DDataStruct                           LikeDS(Compare)
+     D                                     Const
+     DBuffer                        500A
+
+      ************************************
+      * Traffic data structure
+      * Record length: 64
+      ************************************
+     DTrafficLen       C                   64
+     DTraffic          DS                  Qualified
+     D                                     Template
+     DTRank                           2P 0
+     DTStrtNm                        30A
+     DTAvgSpd                         4P 1
+     DTLength                         7P 5
+     DTJamFct                         8P 5
+     DTCnfdnc                         3P 0
+
+      ************************************
+      * Convert buffer to Traffic
+      ************************************
+     DBufToTraffic     PR
+     DBuffer                        500A
+     DDataStruct                           LikeDS(Traffic)

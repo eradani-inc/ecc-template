@@ -158,8 +158,8 @@ ecnctc.rpgleinc: ../node_modules/@eradani-inc/ec-client/native/ecnctc.rpgleinc
 # Miscelaneous rules and dependencies
 #
 
-.PHONEY: generatedjssrc
-generatedjssrc: $(FQJSGENSRC)
+.PHONEY: generatedsource
+generatedsource: $(FQJSGENSRC)
 
 $(libdir)/qrpglesrc.file/icndbapi.mbr $(libdir)/qrpglesrc.file/icndbapi_h.mbr ../src/interfaces/icndbapi.js: icndbapi.yaml
 	npx ec-generate -f $<

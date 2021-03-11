@@ -1,0 +1,43 @@
+      ************************************
+      * Module: wthfrcapi
+      * Generated RPG data structures
+      * and prototypes
+      * Do not modify
+      ************************************
+
+      ************************************
+      * Location data structure
+      * Record length: 22
+      ************************************
+     DLocationLen      C                   22
+     DLocation         DS                  Qualified
+     D                                     Template
+     DLat                             9P 6
+     DLon                             9P 6
+
+      ************************************
+      * Convert Location to buffer
+      ************************************
+     DLocationToBuf    PR
+     DDataStruct                           LikeDS(Location)
+     D                                     Const
+     DBuffer                        500A
+
+      ************************************
+      * Forecast data structure
+      * Record length: 82
+      ************************************
+     DForecastLen      C                   82
+     DForecast         DS                  Qualified
+     D                                     Template
+     DDate                             D
+     DMin                             5P 2
+     DMax                             5P 2
+     DDesc                           58A
+
+      ************************************
+      * Convert buffer to Forecast
+      ************************************
+     DBufToForecast    PR
+     DBuffer                        500A
+     DDataStruct                           LikeDS(Forecast)
