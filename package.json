@@ -27,7 +27,7 @@
         "copy:dev": "(shx mkdir dist/logs || shx echo Logs directory already exists) && shx cp -r tests qsys LICENSE README.md package.json dist && shx cp -r src/interfaces dist/src",
         "copy:release": "shx mkdir dist/logs && shx cp -r tests qsys LICENSE README.md package.json dist && shx cp -r src/interfaces dist/src",
         "config": "shx cp -r src/config dist/src",
-        "generate-config": "cp ./src/config/overrides.json.sample ./src/config/overrides.json",
+        "generate-config": "cp ./src/config/default.json ./src/config/development.json",
         "bump-version": "npm version -m \"chore(Version): Increment to %s\"",
         "view-docs": "start docs/index.html"
     },
