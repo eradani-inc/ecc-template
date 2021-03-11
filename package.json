@@ -4,7 +4,7 @@
     "description": "Eradani Connect Client web service template",
     "main": "src/app.ts",
     "scripts": {
-        "setup": "npm run reset-git && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run package:release",
+        "setup": "npm run link-keys && npm run reset-git && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run package:release",
         "generate": "cd qsys && ec-generate -f",
         "build-qsys": "make -C qsys",
         "build-connectors": "cd node_modules/@eradani-inc/ec-client && make -C native library && make -C native",
