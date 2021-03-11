@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/eradani-inc/ecc-template#readme",
   "dependencies": {
-    "@eradani-inc/ec-client": "^3.5.1-alpha.5",
+    "@eradani-inc/ec-client": "^3.5.1-alpha.6",
     "axios": "^0.19.2",
     "download": "^8.0.0",
     "https-proxy-agent": "^3.0.1",
