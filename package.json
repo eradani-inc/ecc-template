@@ -4,10 +4,10 @@
     "description": "Eradani Connect Client web service template",
     "main": "src/app.ts",
     "scripts": {
-        "setup": "npm run link-keys && npm run reset-git && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run build-qsys-genjs && npm run package:release",
+        "setup": "npm run link-keys && npm run reset-git && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run build-qsys-gents && npm run package:release",
         "generate": "cd qsys && ec-generate -f",
         "build-qsys": "make -C qsys",
-        "build-qsys-genjs": "make -C qsys generatedjssrc",
+        "build-qsys-gents": "make -C qsys generatedtssrc",
         "build-connectors": "cd node_modules/@eradani-inc/ec-client && make -C native library && make -C native",
         "package:dev": "npm run format && npm run lint && npm run build:dev && npm run copy:dev && npm run config && npm run install-npm && npm run test && npm run docs",
         "package:fresh": "npm run clean && npm run format && npm run lint && npm run build:dev && npm run copy:dev && npm run config && npm run install-npm && npm run test && npm run docs",
