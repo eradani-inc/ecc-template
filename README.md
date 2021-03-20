@@ -82,6 +82,7 @@ node src/server
 Add the sample application's library to your library list:
 
 ```
+ADDLIBLE ECNCT
 ADDLIBLE ECNCTAPP
 ```
 
