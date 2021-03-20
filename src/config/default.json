@@ -53,11 +53,12 @@
     },
 
     "ecclient": {
-        "responseLen": 80,
-        "requestLen": 80,
+        "appLibrary": "ECNCTAPP",
+        "responseLen": 256,
+        "requestLen": 256,
         "debug": false,
         "pooling": false,
-        "connectionString": "Driver={IBM i Access ODBC Driver};System=eradani-connect-test.eradani.com;Uid=ECTEST;Pwd=testtest",
+        "connectionString": "Driver=DSN=*LOCAL",
         "useIbmiServices": false
     }
 }
