@@ -33,6 +33,7 @@ Create the `development.json` configuration file to override default configurati
       "apiKey": "0000000000000000000000000000000000000000000"
   },
   "ecclient": {
+    "appLibrary": "ECNCTAPP",
     "debug": true,
     "pooling": false
   }
@@ -48,13 +49,21 @@ The full list of options can be found in `src/config/default.json`.
 ##### 6. Create the IBM i objects
 
 ```shell
-make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native library
-make TGTRLS=V7R3M0 -C node_modules/\@eradani-inc/ec-client/native
-make TGTRLS=V7R3M0 -C qsys library
-make TGTRLS=V7R3M0 -C qsys
+make -C node_modules/\@eradani-inc/ec-client/native library
+make -C node_modules/\@eradani-inc/ec-client/native
+make -C qsys library
+liblist -a ecnct
+liblist -a ecnctapp
+make -C qsys
 ```
 
-Where `TGTRLS` is set to the version of your IBM i OS.
+##### 7. Create DTAQs and DTAARAs
+
+```
+ADDLIBLE ECNCT
+ADDLIBLE ECNCTAPP
+ECCCRTDTAQ LIB(ECNCTAPP)
+```
 
 ## Running the sample programs
 
