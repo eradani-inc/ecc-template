@@ -6,7 +6,7 @@
     "scripts": {
         "setup": "npm run link-keys && npm run reset-git && npm run create-user && npm run create-objects && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run build-qsys-gents && npm run package:release && npm run update-eol && npm run set-permissions",
         "generate": "cd qsys && ec-generate -f",
-        "build-qsys": "(npm run os:ibmi && make -C qsys) || make -C qsys generatedtssrc",
+        "build-qsys": "(echo $OSTYPE | grep os400 && make -C qsys) || make -C qsys generatedtssrc",
         "build-qsys-gents": "make -C qsys library && make -C qsys generatedtssrc",
         "build-connectors": "cd node_modules/@eradani-inc/ec-client && make -C native library && make -C native","create-user": "(system \"CRTUSRPRF USRPRF(ECNCT) INLPGM(*NONE) INLMNU(*SIGNOFF) TEXT('Eradani Connect user profile') JOBD(QGPL/QDFTJOBD) MSGQ(QUSRSYS/ECNCT) PWDEXPITV(*NOMAX)\")",
         "create-user": "(system \"CRTUSRPRF USRPRF(ECNCT) INLPGM(*NONE) INLMNU(*SIGNOFF) TEXT('Eradani Connect user profile') JOBD(QGPL/QDFTJOBD) MSGQ(QUSRSYS/ECNCT) PWDEXPITV(*NOMAX)\" || echo \"ECNCT User Creation Failed\")",
@@ -20,7 +20,7 @@
         "start:debug": "node --inspect dist/src/app.js && printf \"\u001b[1;36mOpen an SSH Tunnel on your local machine with \u001b[1;32mssh -L 9229:localhost:9229 user@your.server.address\u001b[0m\"&& printf \"\u001b[1;36mThen the Chrome interactive debugger \u001b[1;32mopen chrome://inspect in Google Chrome and click Open Dedicated Development Tools for Node\u001b[0m\"",
         "test": "mocha ./dist/tests",
         "clean": "rm -rf dist",
-        "docs": "npm run os:ibmi || typedoc --out docs src && printf \"\u001b[1;36mView Generated Documentation with \u001b[1;32mnpm run view-docs\u001b[0m\"",
+        "docs": "echo $OSTYPE | grep os400 || typedoc --out docs src && printf \"\u001b[1;36mView Generated Documentation with \u001b[1;32mnpm run view-docs\u001b[0m\"",
         "install-npm": "cd dist && rm -rf node_modules && shx ln -s ../node_modules node_modules && cd ..",
         "install-deps": "((ls /QOpenSys && yum group install \"Development Tools\" -y && yum install git make-gnu unzip nodejs14 unixODBC unixODBC-devel -y) || echo \"Installing without Yum\") && npm install -g pm2 && (ln -s /QOpenSys/pkgs/lib/nodejs14/bin/pm2 /QOpenSys/pkgs/bin/pm2 || echo \"PM2 already set up\")",
         "reset-git": "((rm -rf .git && git init && git add . && git commit -am \"chore(Setup): Clone Eradani TypeScript Template App v2.1.0\") || echo \"No remote git repo connected\") && printf \"\u001b[1;32m===== Disconnected from template GitHub Repo. You should connect to your own with [git remote add origin <url>] =====\u001b[0m\"",
