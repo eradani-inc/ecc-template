@@ -6,7 +6,7 @@
     "scripts": {
         "setup": "npm run link-keys && npm run reset-git && npm run create-user && npm run create-objects && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run build-qsys-gents && npm run package:release && npm run update-eol && npm run set-permissions",
         "generate": "cd qsys && ec-generate -f",
-        "build-qsys": "make -C qsys",
+        "build-qsys": "(npm run os:ibmi && make -C qsys) || make -C generatedtssrc",
         "build-qsys-gents": "make -C qsys library && make -C qsys generatedtssrc",
         "build-connectors": "cd node_modules/@eradani-inc/ec-client && make -C native library && make -C native","create-user": "(system \"CRTUSRPRF USRPRF(ECNCT) INLPGM(*NONE) INLMNU(*SIGNOFF) TEXT('Eradani Connect user profile') JOBD(QGPL/QDFTJOBD) MSGQ(QUSRSYS/ECNCT) PWDEXPITV(*NOMAX)\")",
         "create-user": "(system \"CRTUSRPRF USRPRF(ECNCT) INLPGM(*NONE) INLMNU(*SIGNOFF) TEXT('Eradani Connect user profile') JOBD(QGPL/QDFTJOBD) MSGQ(QUSRSYS/ECNCT) PWDEXPITV(*NOMAX)\" || echo \"ECNCT User Creation Failed\")",
