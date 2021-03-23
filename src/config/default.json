@@ -58,7 +58,7 @@
         "requestLen": 256,
         "debug": false,
         "pooling": false,
-        "connectionString": "Driver=DSN=*LOCAL",
+        "connectionString": "DSN=*LOCAL;NAM=1;CCSID=1208",
         "useIbmiServices": false
     }
 }

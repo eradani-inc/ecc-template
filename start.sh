@@ -8,4 +8,4 @@ export NODE_ENV
 PATH=$NODE_HOME:$PATH
 
 cd $ECNCT_HOME
-node src/app.js
+node dist/src/app.js
