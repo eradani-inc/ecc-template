@@ -22,7 +22,7 @@
         "clean": "rm -rf dist",
         "docs": "echo $OSTYPE | grep os400 || typedoc --out docs src && printf \"\u001b[1;36mView Generated Documentation with \u001b[1;32mnpm run view-docs\u001b[0m\"",
         "install-npm": "cd dist && rm -rf node_modules && shx ln -s ../node_modules node_modules && cd ..",
-        "install-deps": "((ls /QOpenSys && yum group install \"Development Tools\" -y && yum install git make-gnu unzip nodejs14 unixODBC unixODBC-devel -y) || echo \"Installing without Yum\") && npm install -g pm2 && (ln -s /QOpenSys/pkgs/lib/nodejs14/bin/pm2 /QOpenSys/pkgs/bin/pm2 || echo \"PM2 already set up\")",
+        "install-deps": "((ls /QOpenSys && yum group install \"Development Tools\" -y && yum install git make-gnu unzip nodejs14 unixODBC unixODBC-devel -y) || echo \"Installing without Yum\") && (which pm2 || (npm install -g pm2 && ln -s /QOpenSys/pkgs/lib/nodejs14/bin/pm2 /QOpenSys/pkgs/bin/pm2) || echo \"PM2 already set up\")",
         "reset-git": "((rm -rf .git && git init && git add . && git commit -am \"chore(Setup): Clone Eradani TypeScript Template App v2.1.0\") || echo \"No remote git repo connected\") && printf \"\u001b[1;32m===== Disconnected from template GitHub Repo. You should connect to your own with [git remote add origin <url>] =====\u001b[0m\"",
         "link-keys": "(ln -s /QOpenSys/opt/eradani/.npmrc .npmrc) || echo \"Product Key Link Failed. Consult terminal output for details.\"",
         "build:dev": "npx ttsc --p ./tsconfig.json",
