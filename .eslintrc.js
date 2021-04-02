@@ -39,7 +39,7 @@ module.exports = {
         '@typescript-eslint/unified-signatures': 'error',
         'filenames/match-regex': ['warn', '^[a-z-0-9.]+$'],
         'arrow-parens': ['off', 'as-needed'],
-        camelcase: 'error',
+        camelcase: 'warn',
         'capitalized-comments': 'warn',
         curly: ['error', 'multi-line'],
         'eol-last': 'off',
