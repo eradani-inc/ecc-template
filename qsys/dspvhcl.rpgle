@@ -35,7 +35,7 @@
       * Passed Parameter - both Request & Response
       *
      D  DataLen        S              5P 0
-     D  DataBuf        S           1024A
+     D  DataBuf        S          64512A
 
       * Local Variables
      D MsgDta          S            132A
@@ -98,7 +98,7 @@
 
          Select;
            When In_Mode = '*SNDRCV';
-                CallP(e) EccSndReq(FullCmd:DataLen:DataBuf:In_ReqKey);
+                CallP(e) ecc_sendRequest(FullCmd:DataLen:DataBuf:In_ReqKey);
                 if %error;
                   Write_Excp('EccSndReq':Psds);
                   return;
@@ -115,8 +115,8 @@
 
          DataLen = EccResultLen;
          DataBuf = '';
-         CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
-                            DataLen:DataBuf);
+         CallP(e) ecc_receiveResult(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
+                                    DataLen:DataBuf);
          if %error;
            Write_Excp('EccRcvRes':Psds);
            Return;
@@ -140,8 +140,8 @@
 
          DataLen = VinInfoLen;
          DataBuf = '';
-         CallP(e) EccRcvRes(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
-                            DataLen:DataBuf);
+         CallP(e) ecc_receiveResult(In_WaitTm:In_ReqKey:Eod:Eoa:NoData:
+                                    DataLen:DataBuf);
          if %error;
            Write_Excp('EccRcvRes':Psds);
            Return;
