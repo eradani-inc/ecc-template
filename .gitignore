@@ -31,6 +31,5 @@ docs/**
 .DS_Store
 qsys/*.clleinc
 qsys/*.rpgleinc
-qsys/*.rpgle
 qsys/*.js
 qsys/*.ts
