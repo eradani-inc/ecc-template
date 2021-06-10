@@ -2,8 +2,8 @@ import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import download from 'download';
 import config from 'config';
-import createLogger from 'src/services/logger';
-const logger = createLogger('commands/shipping');
+import { createLogger } from '@eradani-inc/ec-logger';
+const logger = createLogger('commands/shipping', !!config.debug);
 const { shipping } = config;
 import * as converter from 'src/interfaces/lblapi';
 
@@ -88,7 +88,7 @@ export const getLabel: ECCHandlerFunction = async (reqkey, data, ecc) => {
     }
 
     logger.debug('Got success result from API call');
-    logger.silly(result);
+    logger.silly(JSON.stringify(result));
 
     const shippingInfo = {
         httpstatus: result.status,

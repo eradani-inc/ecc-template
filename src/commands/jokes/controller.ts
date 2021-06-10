@@ -1,8 +1,8 @@
 import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'config';
-import createLogger from 'src/services/logger';
-const logger = createLogger('commands/jokes');
+import { createLogger } from '@eradani-inc/ec-logger';
+const logger = createLogger('commands/jokes', !!config.debug);
 const { icndb } = config;
 import * as converter from 'src/interfaces/icndbapi';
 

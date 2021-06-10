@@ -1,24 +1,24 @@
 import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'config';
-import createLogger from 'src/services/logger';
-const logger = createLogger('commands/traffic');
+import { createLogger } from '@eradani-inc/ec-logger';
+const logger = createLogger('commands/traffic', !!config.debug);
 const { traffic } = config;
 import * as converter from 'src/interfaces/trfcapi';
 
 const axiosInstance = axios.create(traffic);
 
 export const getTrafficData: ECCHandlerFunction = async (reqkey, data, ecc) => {
-    logger.debug('TrafficAPI:', 'Got data', data);
+    logger.debug('TrafficAPI:Got data', data);
     // Get parameters from incomming data buffer
     const compareData = converter.convertCompareToObject(data);
-    logger.debug('TrafficAPI:', 'Parsed data', compareData);
+    logger.debug('TrafficAPI:Parsed data', compareData);
 
     // Call web service
     let result;
     let nextReqKey = reqkey;
     try {
-        logger.debug('TrafficAPI:', 'Sending Request', '/traffic/6.1/flow.json', {
+        logger.debug('TrafficAPI:Sending Request /traffic/6.1/flow.json', {
             params: {
                 bbox: '37.8929,-122.3016;37.8851,-122.2744',
                 apiKey: traffic.apiKey
@@ -31,7 +31,7 @@ export const getTrafficData: ECCHandlerFunction = async (reqkey, data, ecc) => {
             }
         });
     } catch (err) {
-        logger.debug('TrafficAPI:', 'Got ERROR!', err);
+        logger.debug('TrafficAPI:Got ERROR!', err);
         if (err.response) {
             // If the request was made and the server responded with a status code
             // That falls out of the range of 2xx
@@ -45,7 +45,7 @@ export const getTrafficData: ECCHandlerFunction = async (reqkey, data, ecc) => {
         return ecc.sendEccResult('ECC1000', err.message, nextReqKey);
     }
 
-    logger.debug('TrafficAPI:', 'Got Result from API call', result);
+    logger.debug('TrafficAPI:Got Result from API call', result);
 
     try {
         let intersection;
@@ -86,10 +86,10 @@ export const getTrafficData: ECCHandlerFunction = async (reqkey, data, ecc) => {
 
         // Send success result to client
 
-        logger.debug('TrafficAPI:', 'Sending success response', roads);
+        logger.debug('TrafficAPI:Sending success response', roads);
         return ecc.sendObjectsToCaller(roads, converter.convertObjectToTraffic, nextReqKey);
     } catch (e) {
-        logger.debug('TrafficAPI:', 'Failed parsing results', e);
+        logger.debug('TrafficAPI:Failed parsing results', e);
         return ecc.sendEccResult('ECC1000', 'No Route Found', nextReqKey);
     }
 };
