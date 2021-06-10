@@ -53,15 +53,14 @@
     "homepage": "https://github.com/eradani-inc/ecc-template#readme",
     "dependencies": {
         "@eradani-inc/ec-client": "3.5.1-alpha.11",
+        "@eradani-inc/ec-logger": "^0.1.1",
         "@eradani-inc/ecc-router": "^0.5.6",
         "axios": "^0.21.1",
         "config": "^3.3.3",
         "download": "^8.0.0",
         "https-proxy-agent": "^5.0.0",
         "lodash": "^4.17.20",
-        "safe-json-stringify": "^1.2.0",
-        "winston": "^3.3.3",
-        "winston-daily-rotate-file": "^4.5.0"
+        "safe-json-stringify": "^1.2.0"
     },
     "devDependencies": {
         "@eradani-inc/ec-generate": "^3.5.0",

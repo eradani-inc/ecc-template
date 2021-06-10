@@ -1,8 +1,8 @@
 import { ECCHandlerFunction } from '@eradani-inc/ecc-router/types';
 import axios from 'axios';
 import config from 'config';
-import createLogger from 'src/services/logger';
-const logger = createLogger('commands/weather');
+import { createLogger } from '@eradani-inc/ec-logger';
+const logger = createLogger('commands/weather', !!config.debug);
 const { weather } = config;
 import * as converter from 'src/interfaces/wthfrcapi';
 
