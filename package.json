@@ -4,7 +4,7 @@
     "description": "Eradani Connect Client web service template",
     "main": "src/app.ts",
     "scripts": {
-        "setup": "npm run link-keys && npm run reset-git && npm run create-user && npm run create-objects && npm run install-deps && npm install && npm run build-connectors && npm run generate-config && npm run build-qsys-gents && npm run package:release && npm run update-eol && npm run set-permissions",
+        "setup": "npm install && npm run build-connectors && npm run generate-config && npm run build-qsys-gents && npm run package:release && npm run update-eol",
         "generate": "cd qsys && ec-generate -f",
         "build-qsys": "(echo $OSTYPE | grep os400 && make -C qsys) || echo \"IBM i Asset Build Failed\"",
         "build-qsys-gents": "make -C qsys library && make -C qsys generatedtssrc",
