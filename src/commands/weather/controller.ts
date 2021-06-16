@@ -61,6 +61,8 @@ export const getForecast: ECCHandlerFunction = async (reqkey, data, ecc) => {
     logger.debug('Forcasts received:');
     logger.debug(JSON.stringify(forecasts));
 
-    // Send array of forecasts back to client
-    return ecc.sendObjectsToCaller(forecasts, converter.convertObjectToForecast, nextReqKey);
+    let weatherReport: converter.Weather = { Forecasts: forecasts };
+
+    // Send weather report back to client
+    return ecc.sendObjectToCaller(weatherReport, converter.convertObjectToWeather, nextReqKey);
 };
