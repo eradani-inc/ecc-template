@@ -1,26 +1,18 @@
 ---
 name: wthfrcapi
 rpgIncName: wthfcapi_h
-formats:
-  Location:
-    recordType: request
-    subfields:
-      lat:
-        rpgName: Lat
-        type: Packed
-        length: 9
-        precision: 6
-      lon:
-        rpgName: Lon
-        type: Packed
-        length: 9
-        precision: 6
+codeblocks:
+  typescript:
+    - import eradaniConnect from "@eradani-inc/eradani-connect";
+    - const { dataTypes } = eradaniConnect;
+datastructures:
   Forecast:
-    recordType: response
+    qualified: true
     subfields:
       date:
         rpgName: Date
         type: Date
+        format: "*MDY"
       min:
         rpgName: Min
         type: Packed
@@ -35,3 +27,24 @@ formats:
         rpgName: Desc
         type: Character
         length: 58
+formats:
+  Location:
+    recordType: request
+    subfields:
+      lat:
+        rpgName: Lat
+        type: Packed
+        length: 9
+        precision: 6
+      lon:
+        rpgName: Lon
+        type: Packed
+        length: 9
+        precision: 6
+  Weather:
+    recordType: response
+    subfields:
+      Forecasts:
+        type: DataStruct
+        dsName: Forecast
+        dim: 8
