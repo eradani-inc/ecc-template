@@ -15,4 +15,4 @@ formats:
       joke:
         rpgName: Joke
         type: Character
-        length: 80
+        length: 1000

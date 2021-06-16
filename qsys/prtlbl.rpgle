@@ -36,7 +36,7 @@
       * Passed Parameter - both Request & Response
       *
      D  DataLen        S              5P 0
-     D  DataBuf        S           1024A
+     D  DataBuf        S          32767A
 
       * Local Variables
      D MsgDta          S            132A
