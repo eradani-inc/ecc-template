@@ -182,12 +182,16 @@
      D Write_Joke      PI
      D  Data                               LikeDS(ResData) Const
 
+     D i               S             10U 0
+     D begin           S             10U 0
+     D end             S             10U 0
      D Text            DS           132
-     D  Joke                         80A
+     D  Joke                        100A
 
-       Joke = Data.Joke;
-
-       Write QSysPrt Text;
+       for i = 1 to 10;
+         Joke = %subst(Data.Joke: (i - 1) * 100 + 1: 100);
+         Write QSysPrt Text;
+       endfor;
 
        Return;
 
